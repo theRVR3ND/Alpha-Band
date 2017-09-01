@@ -1,6 +1,7 @@
 /**
- * Kilo - Java Multiplayer Engine | ui_Table
- * by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | ui_Table
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  * 
@@ -90,23 +91,25 @@ public class ui_Table{
       g2.drawRect(getX(), getY(), getWidth(), getHeight());
       
       //Draw scrollbar (all ye who enter, abandon all hope)
-      short barHeight = (short)(((h / rowGap) / contents.size()) * h * cg_Client.SCREEN_HEIGHT),
-                 barY = (short)(((scrollInd * 1.0 / contents.size()) * h + y) * cg_Client.SCREEN_HEIGHT);
-      
-      if(barHeight > h * cg_Client.SCREEN_HEIGHT)
-         barHeight = (short)(h * cg_Client.SCREEN_HEIGHT);
-      
-      if(barY < getY())
-         barY = getY();
-      
-      g2.setColor(ui_Menu.HIGHLIGHT);
-      g2.fillRect((short)((x + w) * cg_Client.SCREEN_WIDTH) + 1, barY,
-                  (short)(0.01 * cg_Client.SCREEN_WIDTH), barHeight);
-      
-      //Draw highlight box for hovered row
-      if(hoverRow >= 0){
-         g2.fillRect(getX() + 1, (short)((y + hoverRow * rowGap) * cg_Client.SCREEN_HEIGHT + 1),
-                     getWidth() - 1, (short)(rowGap * cg_Client.SCREEN_HEIGHT) - 2);
+      if(!contents.isEmpty()){
+         short barHeight = (short)(((h / rowGap) / contents.size()) * h * cg_Client.SCREEN_HEIGHT),
+                    barY = (short)(((scrollInd * 1.0 / contents.size()) * h + y) * cg_Client.SCREEN_HEIGHT);
+         
+         if(barHeight > h * cg_Client.SCREEN_HEIGHT)
+            barHeight = (short)(h * cg_Client.SCREEN_HEIGHT);
+         
+         if(barY < getY())
+            barY = getY();
+         
+         g2.setColor(ui_Menu.HIGHLIGHT);
+         g2.fillRect((short)((x + w) * cg_Client.SCREEN_WIDTH) + 1, barY,
+                     (short)(0.01 * cg_Client.SCREEN_WIDTH), barHeight);
+         
+         //Draw highlight box for hovered row
+         if(hoverRow >= 0){
+            g2.fillRect(getX() + 1, (short)((y + hoverRow * rowGap) * cg_Client.SCREEN_HEIGHT + 1),
+                        getWidth() - 1, (short)(rowGap * cg_Client.SCREEN_HEIGHT) - 2);
+         }
       }
       
       //Draw table contents

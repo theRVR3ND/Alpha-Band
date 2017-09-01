@@ -1,6 +1,7 @@
 /**
- * Kilo - Java Multiplayer Engine | ui_Slider
- * by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | ui_Slider
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  * 
@@ -76,7 +77,7 @@ public class ui_Slider{
       
       //Draw slider value bar
       g2.setColor(ui_Menu.HIGHLIGHT);
-      g2.fillRect(getX() + 1, getY() + 1, (short)(getWidth() * (1.0 * val / (max - min))) - 2, getHeight() - 2);
+      g2.fillRect(getX(), getY(), (short)(getWidth() * (1.0 * val / (max - min))), getHeight());
       
       //Draw value
       g2.setColor(ui_Menu.TEXT);

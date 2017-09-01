@@ -1,6 +1,7 @@
 /**
- * Kilo - Java Multiplayer Engine | cg_Client
- * by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | cg_Client
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  *
@@ -35,13 +36,13 @@ public class cg_Client{
       ui_Menu.preload();
       
       //Initialize and launch frame
-      frame = new JFrame("Kilo Engine | Client");
+      frame = new JFrame("Alpha Band");
       
-      frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-      //frame.setUndecorated(true);
-      //frame.setResizable(false);
+      //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+      frame.setUndecorated(true);
+      frame.setResizable(false);
       frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-      frame.setIconImage(util_Utilities.loadImage("menu/Icon.png"));
+      frame.setIconImage(util_Utilities.loadImage("menu/icon.png"));
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       
       //Enable OpenGL (dunno if it does anything)

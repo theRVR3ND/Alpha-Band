@@ -1,6 +1,7 @@
 /**
- * Kilo - Java Multiplayer Engine | ui_ColorWheel
- * by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | ui_ColorWheel
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  * 
@@ -65,7 +66,7 @@ public class ui_ColorWheel{
             theta + selColor + (currRot - startRot), 360 / numSlice
          );
       }
-      g2.setColor(ui_Menu.BLUE);
+      g2.setColor(ui_Menu.MAIN);
       g2.fillOval(
          getX() + getDiameter() / 4,
          getY() + getDiameter() / 4,

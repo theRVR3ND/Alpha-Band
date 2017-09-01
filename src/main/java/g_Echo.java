@@ -1,5 +1,7 @@
 /**
- * Kilo - 2D Java Multiplayer Engine | g_Echo
+ * Alpha Band - Multiplayer Rythym Game | g_Echo
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  *

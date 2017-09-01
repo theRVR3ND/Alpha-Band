@@ -1,6 +1,7 @@
 /**
- * Kilo - Java Multiplayer Engine | cg_Connection
- * by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | cg_Connection
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  * 

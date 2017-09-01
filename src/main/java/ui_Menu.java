@@ -1,6 +1,7 @@
 /**
- * Kilo - Java Multiplayer Engine | ui_Menu
- * by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | ui_Menu
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  * 
@@ -61,7 +62,7 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
    /**
     * Theme color for client.
     */
-   public static Color BLUE, HIGHLIGHT, TEXT, OUTLINE;
+   public static Color MAIN, HIGHLIGHT, TEXT, OUTLINE;
    
    /**
     * Default set font for graphics.
@@ -76,9 +77,9 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
     * Pre-loading of stuff for splash screen use.
     */
    public static void preload(){
-           BLUE = new Color(0, 148, 255);
+           MAIN = Color.WHITE;
       HIGHLIGHT = new Color(128, 128, 128, 112);
-           TEXT = Color.WHITE;
+           TEXT = Color.BLACK;
         OUTLINE = Color.DARK_GRAY;
    }
    
@@ -121,7 +122,7 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
       //Draw background
-      g2.setColor(BLUE);
+      g2.setColor(MAIN);
       g2.fillRect(0, 0, getWidth(), getHeight());
       
       //Draw buttons
@@ -133,7 +134,7 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
       g2.setFont(defaultFont);
       
       //Write program info (so I don't waste another hour changing the wrong project)
-      g2.drawString("Kilo Engine | By: Kelvin Peng, '18", 10, getHeight() - 10);
+      g2.drawString("Alpha Band | By: Shae McMillan & Kelvin Peng, '18", 10, getHeight() - 10);
    }
    
    /**

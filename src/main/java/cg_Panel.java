@@ -1,6 +1,7 @@
 /**
- * Kilo - Java Multiplayer Engine | cg_Panel
- * by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | cg_Panel
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  * 
@@ -185,7 +186,8 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       
       //Starting chat message
       }else{
-         if(bindTable.get((short)(e.getKeyCode())) == CHAT){
+         if(bindTable.containsKey((short)(e.getKeyCode())) &&
+            bindTable.get((short)(e.getKeyCode())) == CHAT){
             chatMessage = "";
          }
       }

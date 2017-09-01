@@ -1,6 +1,7 @@
 /**
- * Kilo - Java Multiplayer Engine | ui_Splash
- * by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | ui_Splash
+ * Concept and game by Shae McMillan
+ * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  * 
@@ -36,7 +37,7 @@ public class ui_Splash extends JPanel{
    /**
     * Number of frame updates for each splash screen.
     */
-   private final short SPLASH_LENGTH = 150;
+   private final short SPLASH_LENGTH = 250;
    
    /**
     * Maximum number of times paintComponent() should
@@ -50,7 +51,7 @@ public class ui_Splash extends JPanel{
    public ui_Splash(){
       //Add any splash images you want in here (up to 127 images)
       splashImages = new BufferedImage[] {
-         util_Utilities.loadImage("menu/Icon.png"),
+         util_Utilities.loadImage("menu/logo.png"),
       };
       
       splashInd = 0;
@@ -88,7 +89,7 @@ public class ui_Splash extends JPanel{
       }
       
       //Draw splash background
-      g2.setColor(ui_Menu.BLUE);
+      g2.setColor(Color.WHITE);
       g2.fillRect(0, 0, getWidth(), getHeight());
       
       //Draw splash screen
