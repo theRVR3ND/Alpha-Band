@@ -24,13 +24,13 @@ public interface bg_Constants{
    /**
     * Standard format request from client for connection.
     */
-   public static final String REQUEST_MESSAGE = "KILO_REQUEST";
+   public static final String REQUEST_MESSAGE = "SAM_HYDE?";
    
    /**
     * Maximum number of clients allowed in a server.
     * Limiting is needed to not crash or something.
     */
-   public static final byte MAX_PLAYERS = 24;
+   public static final byte MAX_PLAYERS = 4;
    
    /**
     * Stream tag. Identifies type of communication
@@ -51,16 +51,7 @@ public interface bg_Constants{
       First value must equal 0 and following
       values must increment up by one.
    */
-   public static final byte MOVE_UP = 0,
-                          MOVE_LEFT = 1,
-                          MOVE_DOWN = 2,
-                         MOVE_RIGHT = 3,
-                               JUMP = 4,
-                             CROUCH = 5,
-                               FIRE = 6,
-                             RELOAD = 7,
-                      SWITCH_WEAPON = 8,
-                               CHAT = 9;
+   public static final byte CHAT = 0;
    
    /**
     * Visible (to client) dimensions. Any entity within
@@ -72,5 +63,10 @@ public interface bg_Constants{
    /**
     * Entity type.
     */
-   public static final byte PLAYER = 0;
+   public static final byte PLAYER = 0,
+                              NOTE = 1;
+   
+   /**
+    * Game mode.
+    */
 }

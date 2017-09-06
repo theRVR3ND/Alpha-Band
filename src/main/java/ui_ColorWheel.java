@@ -128,28 +128,23 @@ public class ui_ColorWheel{
     */
    public boolean checkPress(short pX, short pY){
       //Click on color wheel
-      if(pX > getX() && pX < getX() + getDiameter() &&
-         pY > getY() && pY < getY() + getDiameter()){
-         short cX = (short)(getX() + getDiameter() / 2),
-               cY = (short)(getY() + getDiameter() / 2);
-         short dist = (short)(Math.sqrt(Math.pow(pX - cX, 2) + Math.pow(pY - cY, 2)));
-         
-         //Avoid / by zero error
-         if(pX == cX)
-            cX++;
-         
-         //Check if press is on color wheel (not in donut hole or outside big circle)
-         if(dist > getDiameter() / 4 && dist < getDiameter() / 2){
-            startRot = (short)(Math.toDegrees(-Math.atan((1.0 * pY - cY) / (pX - cX))));
-            if(cX > pX)
-               startRot += 180;
-            currRot = startRot;
-            return true;
-         }else
-            return false;
-      }else{
+      short cX = (short)(getX() + getDiameter() / 2),
+            cY = (short)(getY() + getDiameter() / 2);
+      short dist = (short)(Math.sqrt(Math.pow(pX - cX, 2) + Math.pow(pY - cY, 2)));
+      
+      //Avoid / by zero error
+      if(pX == cX)
+         cX++;
+      
+      //Check if press is on color wheel (not in donut hole or outside big circle)
+      if(dist > getDiameter() / 4 && dist < getDiameter() / 2){
+         startRot = (short)(Math.toDegrees(-Math.atan((1.0 * pY - cY) / (pX - cX))));
+         if(cX > pX)
+            startRot += 180;
+         currRot = startRot;
+         return true;
+      }else
          return false;
-      }
    }
    
    /**
@@ -168,7 +163,7 @@ public class ui_ColorWheel{
     * @param dY                  Mouse y-coordinate
     */
    public void checkDrag(short dX, short dY){
-      if(currRot != Integer.MAX_VALUE){//Currently being rotated
+      if(currRot != Short.MAX_VALUE){//Currently being rotated
          short cX = (short)(getX() + getDiameter() / 2),
                cY = (short)(getY() + getDiameter() / 2);
          if(dX == cX)//Avoid / by zero error

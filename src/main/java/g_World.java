@@ -93,24 +93,10 @@ public class g_World extends bg_World{
     */
    public LinkedList<byte[]> getRelevantData(final byte clientID){
       bg_Player player = getPlayer(clientID);
-      HashMap<Short, byte[]> visible = new HashMap<Short, byte[]>();
-      
-      //Find entities that are within view area
-      for(Short key : entities.keySet()){
-         bg_Entity ent = entities.get(key);
-         short distX = (short)(player.getPosition().getX() - ent.getPosition().getX()),
-               distY = (short)(player.getPosition().getY() - ent.getPosition().getY());
-         if(Math.abs(distX) < VIEW_WIDTH && Math.abs(distY) < VIEW_HEIGHT){
-            visible.put(
-               key, dataToBytes(ent.getData(new LinkedList<Object>()))
-            );
-         }
-      }
-      
       LinkedList<byte[]> ret = new LinkedList<byte[]>();
       
       //Find difference between visible and client's snapshot
-      for(Short key : visible.keySet()){
+      for(Short key : entities.keySet()){
          //Bytes to compress data into
          byte[] comp = new byte[visible.get(key).length];
          for(byte i = 0; i < comp.length; i++)
@@ -136,7 +122,12 @@ public class g_World extends bg_World{
          add[0] = keyBytes[0];
          add[1] = keyBytes[1];
          
-         add[2] = PLAYER;
+         if(entities.get(key) instanceof bg_Player)
+            add[2] = PLAYER;
+         else if(entities.get(key) instanceof bg_Note)
+            add[2] = NOTE;
+         else
+            add[2] = 'F';//udge
          
          for(byte i = 0; i < comp.length; i++)
             add[i + 3] = comp[i];

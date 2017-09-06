@@ -22,9 +22,14 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
    private ui_Textbox nameTextbox;
    
    /**
+    * List of all available songs.
+    */
+   private ui_Table songList;
+   
+   /**
     * List of all available map types or game modes.
     */
-   private ui_Table mapList;
+   private ui_Table gamemodeList;
    
    /**
     * Constructor. Load map list from text file.
@@ -41,20 +46,25 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       );
       nameTextbox.setContents("Server");
       
-      mapList = new ui_Table(
-         0.1f, 0.3f, 0.8f, 0.3f,
-         new String[] {"Map", "Game Mode"},
-         new float[] {0.11f, 0.6f}
+      //List available songs
+      songList = new ui_Table(
+         0.1f, 0.3f, 0.37f, 0.3f,
+         new String[] {"Song", "Duration"},
+         new float[] {0.11f, 0.4f}
       );
+      ArrayList<String[]> allSongs = new ArrayList<String[]>();
       
-      //Fill map list table thing
-      String[] maps = util_Utilities.readFromFile("Menu/Maps.cfg");
-      ArrayList<String[]> tableCont = new ArrayList<String[]>(maps.length);
-      for(byte i = 0; i < maps.length; i++){
-         tableCont.add(maps[i].split("%"));
-      }
-      mapList.setContents(tableCont);
-      mapList.setHoverRow((byte)0);
+      //List available game modes
+      gamemodeList = new ui_Table(
+         0.53f, 0.3f, 0.37f, 0.3f,
+         new String[] {"Game Mode"},
+         new float[] {0.54f}
+      );
+      ArrayList<String[]> modeList = new ArrayList<String[]>();
+      modeList.add(new String[] {"Competition"});
+      modeList.add(new String[] {"Band"});
+      gamemodeList.setContents(modeList);
+      gamemodeList.setHoverRow((byte)0);
       
       //Add listeners
       this.setFocusable(true);
@@ -82,7 +92,8 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       nameTextbox.draw(g2);
       
       //Draw table
-      mapList.draw(g2);
+      gamemodeList.draw(g2);
+      songList.draw(g2);
       
       repaint();
    }
@@ -111,10 +122,9 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       //Redirect to other menus
       if(buttons[0].isDown()){
          //Launch server
-         byte currMap = (byte)(mapList.getScrollInd() + mapList.getHoverRow());
-         String mapName = mapList.getContents().get(currMap)[0];
+         byte currMode = (byte)(gamemodeList.getScrollInd() + gamemodeList.getHoverRow());
          
-         g_Server server = new g_Server(nameTextbox.getContents());
+         g_Server server = new g_Server(nameTextbox.getContents(), currMode);
          (new Thread(server)).start();
          
          //Join said server. Use loopback IP address.
@@ -130,10 +140,17 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
          }
          
          //Check if table row clicked
-         byte oldHoverRow = mapList.getHoverRow();
-         mapList.checkHover((short)e.getX(), (short)e.getY());
-         if(mapList.getHoverRow() < 0)
-            mapList.setHoverRow(oldHoverRow);
+         byte oldHoverRow = gamemodeList.getHoverRow();
+         gamemodeList.checkHover((short)e.getX(), (short)e.getY());
+         if(gamemodeList.getHoverRow() < 0){
+            gamemodeList.setHoverRow(oldHoverRow);
+            return;
+         }
+         
+         oldHoverRow = songList.getHoverRow();
+         songList.checkHover((short)e.getX(), (short)e.getY());
+         if(songList.getHoverRow() < 0)
+            songList.setHoverRow(oldHoverRow);
          
          return;
       }
@@ -162,7 +179,13 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
     */
    public void mouseWheelMoved(MouseWheelEvent e){
       //Tell table to scroll
-      mapList.checkScroll(
+      gamemodeList.checkScroll(
+         (short)e.getX(),
+         (short)e.getY(),
+         (byte)e.getWheelRotation()
+      );
+      
+      songList.checkScroll(
          (short)e.getX(),
          (short)e.getY(),
          (byte)e.getWheelRotation()

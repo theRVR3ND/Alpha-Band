@@ -23,6 +23,11 @@ public class cg_World extends bg_World{
    private static final BufferedImage screwImage = util_Utilities.loadImage("game/screwImage.png");
    
    /**
+    * Theme color. Value changed in settings.
+    */
+   public static Color BACKGROUND = Color.BLACK, NOTE_COLOR = Color.WHITE;
+   
+   /**
     * Constructor.
     */
    public cg_World(){
@@ -42,68 +47,7 @@ public class cg_World extends bg_World{
       g2.setColor(Color.BLACK);
       g2.fillRect(0, 0, cg_Client.SCREEN_WIDTH, cg_Client.SCREEN_HEIGHT);
       
-      //Save current rotation
-      AffineTransform orig = g2.getTransform();
       
-      //Draw note box background
-      g2.setColor(Color.DARK_GRAY);
-      g2.fillRoundRect(
-         (int)(0.2 * cg_Client.SCREEN_WIDTH),
-         (int)(0.9 * cg_Client.SCREEN_HEIGHT),
-         (int)(0.6 * cg_Client.SCREEN_WIDTH),
-         (int)(0.1 * cg_Client.SCREEN_HEIGHT),
-         (int)(0.1 * cg_Client.SCREEN_HEIGHT),
-         (int)(0.1 * cg_Client.SCREEN_HEIGHT)
-      );
-      
-      //Draw note boxes
-      float drawX = 0.225f;
-      Color[] colors = new Color[] {
-         Color.RED,
-         Color.GREEN,
-         Color.BLUE,
-         Color.YELLOW
-      };
-      for(byte i = 0; i < colors.length; i++){
-         //Draw box
-         g2.setColor(colors[i]);
-         g2.fillRoundRect(
-            (int)(drawX * cg_Client.SCREEN_WIDTH),
-            (int)(0.92 * cg_Client.SCREEN_HEIGHT),
-            (int)(0.1 * cg_Client.SCREEN_WIDTH),
-            (int)(0.06 * cg_Client.SCREEN_HEIGHT),
-            (int)(0.03 * cg_Client.SCREEN_HEIGHT),
-            (int)(0.03 * cg_Client.SCREEN_HEIGHT)
-         );
-         
-         drawX += 0.15;
-         
-         //Draw screws
-         if(i != colors.length - 1){
-            //Rotate screw to look random
-            AffineTransform rot = new AffineTransform();
-            rot.setToRotation(
-               Math.toRadians((i + 1) * 57),
-               (int)((drawX - 0.025) * cg_Client.SCREEN_WIDTH),
-               (int)(0.95 * cg_Client.SCREEN_HEIGHT)
-            );
-            g2.setTransform(rot);
-            
-            //Draw screw
-            final int drawWidth = (int)(0.06 * cg_Client.SCREEN_HEIGHT);
-            g2.drawImage(
-               screwImage,
-               (int)((drawX - 0.025) * cg_Client.SCREEN_WIDTH - drawWidth / 2),
-               (int)(0.92 * cg_Client.SCREEN_HEIGHT),
-               drawWidth,
-               drawWidth,
-               null
-            );
-         
-            //Reset transform
-            g2.setTransform(orig);
-         }
-      }
    }
    
    /**
@@ -115,13 +59,15 @@ public class cg_World extends bg_World{
       //Retreive entity's ID from bytes
       short ID = bytesToShort(delta, (byte)0);
       
-      //Check if we need to spawn a new entity
+      //Check if we need to add a new player or note
       if(entities.get(ID) == null){
          bg_Entity spawn = null;
          byte entType = delta[2];
          
          if(entType == PLAYER)
             spawn = new bg_Player();
+         else if(entType == NOTE)
+            spawn = new bg_Note();
          
          entities.put(ID, spawn);
       }

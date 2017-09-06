@@ -29,6 +29,11 @@ public class bg_Player extends bg_Entity implements bg_Constants{
    private byte controller;
    
    /**
+    * Number of points player has.
+    */
+   private short score;
+   
+   /**
     * Constructor.
     * 
     * @param name          Player name.
@@ -36,10 +41,11 @@ public class bg_Player extends bg_Entity implements bg_Constants{
     * @param controller    Controller's ID.
     */
    public bg_Player(String name, Color color, byte controller){
-      super((short)0, (short)0, (short)0);
       this.name = name;
       this.color = color;
       this.controller = controller;
+      
+      score = 0;
    }
    
    /**
@@ -105,6 +111,10 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       this.color = color;
    }
    
+   public short getScore(){
+      return score;
+   }
+   
    /**
     * Execute action based on action code.
     * 
@@ -112,21 +122,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
     */
    public void processAction(final byte action){
       switch(action){
-         case(MOVE_UP):
-            position.setY((short)(position.getY() + 2));
-            break;
-         
-         case(MOVE_DOWN):
-            position.setY((short)(position.getY() - 2));
-            break;
-         
-         case(MOVE_LEFT):
-            position.setX((short)(position.getX() - 2));
-            break;
-         
-         case(MOVE_RIGHT):
-            position.setX((short)(position.getX() + 2));
-            break;
+      
       }
    }
    
@@ -136,12 +132,11 @@ public class bg_Player extends bg_Entity implements bg_Constants{
     * @param list          List to fill with data.
     */
    public LinkedList<Object> getData(LinkedList<Object> list){
-      super.getData(list);
-      
-      //Add player-specific data
       list.add(name);
       list.add(color);
       list.add(controller);
+      
+      list.add(score);
       
       return list;
    }
@@ -152,11 +147,10 @@ public class bg_Player extends bg_Entity implements bg_Constants{
     * @param data          New data to set to.
     */
    public void setData(LinkedList<Object> data){
-      super.setData(data);
-      
-      //Retrieve player-specific data
       name = (String)(data.remove(0));
       color = (Color)(data.remove(0));
       controller = (Byte)(data.remove(0));
+      
+      score = (Short)(data.remove(0));
    }
 }
