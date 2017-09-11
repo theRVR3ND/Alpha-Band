@@ -95,12 +95,15 @@ public class g_World extends bg_World{
       bg_Player player = getPlayer(clientID);
       LinkedList<byte[]> ret = new LinkedList<byte[]>();
       
-      //Find difference between visible and client's snapshot
+      //Compile world's data
       for(Short key : entities.keySet()){
          //Bytes to compress data into
-         byte[] comp = new byte[visible.get(key).length];
-         for(byte i = 0; i < comp.length; i++)
-            comp[i] = visible.get(key)[i];
+         byte[] comp = dataToBytes(entities.get(key).getData(new LinkedList<Object>()));
+         
+         //Update client's snapshot
+         snapshots.get(clientID).put(
+            key, comp
+         );
          
          //Check if we can save byte space
          if(snapshots.get(clientID).containsKey(key)){
@@ -126,20 +129,11 @@ public class g_World extends bg_World{
             add[2] = PLAYER;
          else if(entities.get(key) instanceof bg_Note)
             add[2] = NOTE;
-         else
-            add[2] = 'F';//udge
          
          for(byte i = 0; i < comp.length; i++)
             add[i + 3] = comp[i];
          
          ret.add(add);
-      }
-      
-      //Update client's snapshot
-      for(Short key : visible.keySet()){
-         snapshots.get(clientID).put(
-            key, visible.get(key)
-         );
       }
       
       return ret;

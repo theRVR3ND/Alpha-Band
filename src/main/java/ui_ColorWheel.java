@@ -63,7 +63,8 @@ public class ui_ColorWheel{
             getX(), getY(),
             getDiameter(),
             getDiameter(),
-            theta + selColor + (currRot - startRot), 360 / numSlice
+            theta + selColor + (currRot - startRot) - 2,
+            360 / numSlice + 2
          );
       }
       g2.setColor(ui_Menu.MAIN);
@@ -100,7 +101,7 @@ public class ui_ColorWheel{
     * Return current rotation of this, in degrees.
     */
    public short getRotation(){
-      return (short)(selColor + (currRot - startRot));
+      return (short)((selColor + (currRot - startRot)) % 360);
    }
    
    /**

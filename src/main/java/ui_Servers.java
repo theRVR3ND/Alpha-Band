@@ -38,7 +38,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
       buttons = new ui_Button[] {
          new ui_Button(util_Utilities.loadImage("menu/ButtonJOIN.png"),   0.5f, 0.55f),
          new ui_Button(util_Utilities.loadImage("menu/ButtonCREATE.png"), 0.5f, 0.7f),
-         new ui_Button(util_Utilities.loadImage("Menu/ButtonBACK.png"),   0.5f, 0.85f)
+         new ui_Button(util_Utilities.loadImage("menu/ButtonBACK.png"),   0.5f, 0.85f)
       };
       
       //Initialize stuff

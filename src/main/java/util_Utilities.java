@@ -43,6 +43,7 @@ public class util_Utilities{
       RenderingHints rh = new RenderingHints(null);
       
       //Add the highest quality values. Gud gud.
+      rh.put(RenderingHints.KEY_ANTIALIASING,      RenderingHints.VALUE_ANTIALIAS_ON);
       rh.put(RenderingHints.KEY_INTERPOLATION,     RenderingHints.VALUE_INTERPOLATION_BICUBIC);
       rh.put(RenderingHints.KEY_RENDERING,         RenderingHints.VALUE_RENDER_QUALITY);
       rh.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
