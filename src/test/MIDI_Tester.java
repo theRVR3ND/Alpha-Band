@@ -5,14 +5,14 @@ public class MIDI_Tester{
       try{
          Synthesizer synth = MidiSystem.getSynthesizer();
          synth.open();
+         MidiChannel[] channels = synth.getChannels();
+         Instrument[] instr = synth.getDefaultSoundbank().getInstruments();
          
-         final MidiChannel[] mc = synth.getChannels();
-         
-         Instrument[] inst = synth.getDefaultSoundbank().getInstruments();
-         
-         mc[5].noteOn(60, 600);
-      }catch(Exception e){
-         e.printStackTrace();
-      }
+         channels[0].programChange(instr[0].getPatch().getProgram());
+      
+         Thread.sleep(100);
+         channels[0].noteOn(60, 100);
+         Thread.sleep(1000);
+      }catch (Exception ignored){}
    }
 }
