@@ -1,9 +1,13 @@
 1. Set BPM - determines how fast song will be
+
 2. Set length of song
+
 3. Choose Key
 	- look in ScaleMutator Panel, check how keys are saved, probably in arrays
+
 4. Choose Scale
 	- look in ScaleMutator Panel, check how scales are saved, probably in arrays
+
 5. Difficulty:
 	- Easy - only whole and half notes
 	- Medium - "" + quarter notes
@@ -11,9 +15,20 @@
  	- Insane - "" + thirty-second notes
 	* all note lengths saved in array; location in array as a power of 2 = note length
 
+6. Number of instruments:							MIDI value:
+	- 1 player: Piano								- 1
+	- 2 player: Previous + Electric Guitar (Clean)					- 28
+	- 3 player: Previous + Drums							- 36
+	- 4 player: Previous + Bass							- 35
+	- 5 player: Previous + Electric Guitar (Distorted)				- 31
+	- 6 player: Previous + Cowbell (Secret mode easter egg xD)			- 56
+
 Additional 6th option:
 	Randomness:
 	- have preset rhythyms that are randomly chosen; as randomness increases, more individual notes are picked 	  instead of having different preset rhythyms picked
+
+Drums Idea:
+	- Left 4 fingers are constant beat (constant), right 4 are filler notes (unique, different)
 
 THEN:
 Random number chooses whether or not an individual note from the scale is played or a preset rhythym is played and another random number chooses how long the note will be played for
