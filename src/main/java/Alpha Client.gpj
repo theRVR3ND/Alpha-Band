@@ -11,7 +11,7 @@ s#i0
 s#k0
 s#j0
 s#l0
-!595;g
+!616;g
 %\011ui_Guide.java
 %\011bg_Note.java
 %\011ui_Setup.java
@@ -30,6 +30,7 @@ s#l0
 %\011ui_Settings.java
 %\011bg_World.java
 %\011ui_Main.java
+%\011util_Music.java
 %\011cg_GamePanel.java
 %\011ui_ColorWheel.java
 %\011ui_Player.java
@@ -41,7 +42,7 @@ s#l0
 %\011bg_Constants.java
 %\011bg_Vector.java
 %\011ui_CreateServer.java
-!595;f
+!616;f
 %\011ui_Guide.java
 %\011bg_Note.java
 %\011ui_Setup.java
@@ -60,6 +61,7 @@ s#l0
 %\011ui_Settings.java
 %\011bg_World.java
 %\011ui_Main.java
+%\011util_Music.java
 %\011cg_GamePanel.java
 %\011ui_ColorWheel.java
 %\011ui_Player.java
