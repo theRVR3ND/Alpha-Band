@@ -143,6 +143,10 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       connection = null;
    }
    
+   public static cg_Connection getConnection(){
+      return connection;
+   }
+   
    /**
     * Add message to running list.
     * 

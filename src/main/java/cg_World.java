@@ -20,8 +20,6 @@ public class cg_World extends bg_World{
     */
    private HashMap<Short, byte[]> gamestate;
    
-   private static final BufferedImage screwImage = util_Utilities.loadImage("game/screwImage.png");
-   
    /**
     * Theme color. Value changed in settings.
     */
@@ -47,6 +45,9 @@ public class cg_World extends bg_World{
       g2.setColor(Color.BLACK);
       g2.fillRect(0, 0, cg_Client.SCREEN_WIDTH, cg_Client.SCREEN_HEIGHT);
       
+      //Draw incomming notes
+      bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
+      final byte instrument = player.getInstrument();
       
    }
    

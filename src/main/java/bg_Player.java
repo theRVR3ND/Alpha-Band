@@ -29,6 +29,11 @@ public class bg_Player extends bg_Entity implements bg_Constants{
    private byte controller;
    
    /**
+    * Instrument that player plays.
+    */
+   private byte instrument;
+   
+   /**
     * Number of points player has.
     */
    private short score;
@@ -44,6 +49,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       this.name = name;
       this.color = color;
       this.controller = controller;
+      instrument = (byte)(util_Music.INSTRUMENTS[0] + Byte.MAX_VALUE);
       
       score = 0;
    }
@@ -91,6 +97,10 @@ public class bg_Player extends bg_Entity implements bg_Constants{
     */
    public byte getController(){
       return controller;
+   }
+   
+   public byte getInstrument(){
+      return instrument;
    }
    
    /**
