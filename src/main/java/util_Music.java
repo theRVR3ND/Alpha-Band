@@ -23,7 +23,11 @@ public class util_Music{
    
    private static final byte[] KEYS = new byte[] {0, 1, 2, 3, 4, 5, 6};
    
-   public static final byte[] INSTRUMENTS = new byte[] {-127, -100, 99, -89, -97, -14};  //add Byte.MAX_VALUE to get actual
+   public static final short[] INSTRUMENTS = new short[] {0, 27, 38, 38, 30, 113};
+   
+   public static void main(String[] args){
+      playSong(generateSong((byte)0, (short)0));
+   }
    
    //Run
    public static byte[][] generateSong(byte difficulty, short seed){
@@ -39,20 +43,34 @@ public class util_Music{
       //Generate song data array
       byte[][] gen = new byte[INSTRUMENTS.length][songLength + 1];   //extra column for song info
       
+      gen = new byte[][] {
+         {0, 0, 0, 0, 1, 3, 1, 5, 1, 6, 0},
+         {0,  1, 0, 8, 8, 1, 3, 2, 3, 8, 0},
+         {0,  5, 7, 8, 0, 7, 7, 7, 4, 0, 0},
+         /*
+         {0,  1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+         {0,  1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+         {0,  1, 1, 1, 0, 0, 0, 0, 0, 0, 0}
+         */
+      };
+      
       //Store song info in array
-      gen[0][0] = bpm;
+      gen[0][0] = (byte)((bpm + Byte.MIN_VALUE) / 2);
       gen[1][0] = scale;
       gen[2][0] = key;
       
-      //Make a beat
-      
-      
-      //Generate piano part
-      //for(short i = 0; i < gen.length; i++){
-         
-      //}
+      for(byte r = 0; r < gen.length; r++)
+         for(byte c = 0; c < gen[0].length; c++){
+            if(gen[r][c] == 0)
+               gen[r][c] = Byte.MIN_VALUE;
+         }
       
       return gen;
+   }
+   
+   public static void playSong(byte[][] song){
+      MusicPlayer mp = new MusicPlayer(song);
+      mp.run();
    }
    
    private static class MusicPlayer extends Thread{
@@ -86,25 +104,39 @@ public class util_Music{
       @Override
       public void run(){
          //Figure out song metrics
-         final byte bpm = song[0][0];
+         final byte bpm = (byte)(song[0][0] * 2);
          final byte scale = song[1][0];
          final byte key = song[2][0];
          
-         //Play song
-         short curr = 1;
-         while(curr < song.length){
-            for(byte i = 0; i < song[0].length; i++){
-               if(song[curr][i] != Byte.MIN_VALUE){
-                  channels[curr].noteOff(60 + song[curr][i]);
-               }else{
-                  channels[curr].noteOn(60 + song[curr][i], 100);
+         //Song things
+         short beat = 1;
+         
+         //Progress through each beat
+         while(beat < song[0].length){
+            //Play each instrument's note
+            for(byte i = 0; i < song.length; i++){
+               if(song[i][beat] == Byte.MIN_VALUE){
+                  channels[i].noteOff(60 + song[i][beat]);
+               }else if(beat == 0 || song[i][beat - 1] != song[i][beat]){
+                  //Find the note length
+                  byte noteLength = 0;
+                  for(short j = beat; j < song[0].length; j++){
+                     if(song[i][j] == song[i][j])
+                        noteLength++;
+                  }
+                  
+                  //Play the note
+                  channels[i].noteOn(60 + song[i][beat], 100 * noteLength);
                }
             }
+            
+            //Wait until beat time passes
             try{
                sleep((long)(60000.0 / bpm));
             }catch(InterruptedException e){}
+            
+            beat++;
          }
-         
       }
    }
 }
