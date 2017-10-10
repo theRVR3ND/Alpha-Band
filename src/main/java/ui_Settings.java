@@ -11,24 +11,36 @@
 import java.awt.*;
 import java.awt.event.*;
 
-public class ui_Settings extends ui_Menu{
+public class ui_Settings extends ui_Menu implements MouseWheelListener{
    
    /**
     * Array of slider objects for modifying settings.
     */
    private ui_Slider[] sliders;
    
+   private ui_Table themeList;
+   
    /**
     * Constructor. Read previouse settings from text file.
     */
    public ui_Settings(){
       buttons = new ui_Button[] {
-         new ui_Button(util_Utilities.loadImage("menu/ButtonBACK.png"),  0.5f, 0.85f)
+         new ui_Button("BACK",  0.5f, 0.85f)
       };
       
       sliders = new ui_Slider[] {
-         new ui_Slider(0.4f, 0.3f, 0.2f, 0.02f, "Volume:", (short)0, (short)100), //Sound slider
+         new ui_Slider(0.4f, 0.4f, 0.2f, 0.02f, "Volume:", (short)0, (short)100), //Sound slider
       };
+      
+      themeList = new ui_Table(
+         0.4f, 0.1f, 0.2f, 0.2f,
+         new String[] {"Themes"},
+         new float[] {0.41f}
+      );
+      for(String s : ui_Colors.themeNames){
+         themeList.getContents().add(new String[] {s});
+      }
+      themeList.setHoverRow((byte)0);
       
       //Load settings from file
       String[] settings = util_Utilities.readFromFile("menu/Settings.cfg");
@@ -53,6 +65,9 @@ public class ui_Settings extends ui_Menu{
          sliders[i].draw(g2);
       }
       
+      //Draw theme list
+      themeList.draw(g2);
+      
       repaint();
    }
    
@@ -76,6 +91,15 @@ public class ui_Settings extends ui_Menu{
          util_Utilities.writeToFile(settings, "menu/Settings.cfg");
       
       }else{
+         //Check if color theme has been changed
+         byte currHover = themeList.getHoverRow();
+         themeList.checkHover((short)e.getX(), (short)e.getY());
+         if(themeList.getHoverRow() < 0){
+            themeList.setHoverRow(currHover);
+         }else{
+            ui_Colors.currTheme = themeList.getHoverRow();
+         }
+         
          return;
       }
       
@@ -119,5 +143,13 @@ public class ui_Settings extends ui_Menu{
    public void mouseDragged(MouseEvent e){
       for(ui_Slider s : sliders)
          s.checkDrag((short)e.getX());
+   }
+   
+   public void mouseWheelMoved(MouseWheelEvent e){
+      themeList.checkScroll(
+         (short)e.getX(),
+         (short)e.getY(),
+         (byte)e.getWheelRotation()
+      );
    }
 }

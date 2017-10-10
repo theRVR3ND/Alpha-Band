@@ -1,5 +1,5 @@
 !1157;s
-A
+J
 SAU0PATH+=%<JGRASP_PATHS>%;\012PATH=+%;%<JGRASP_C_PATHS>\012CYGWIN=nodosfilewarning\012-Run\012ADD_EXE_PATH==Y\012
 SCU0PATH+=%<JGRASP_PATHS>%;\012PATH=+%;%<JGRASP_C_PATHS>\012CYGWIN=nodosfilewarning\012-Run\012ADD_EXE_PATH==Y\012
 S+U0PATH+=%<JGRASP_PATHS>%;\012PATH=+%;%<JGRASP_C_PATHS>\012CYGWIN=nodosfilewarning\012-Run\012ADD_EXE_PATH==Y\012
@@ -11,11 +11,12 @@ s#i0
 s#k0
 s#j0
 s#l0
-!225;g
+!243;g
 %\011g_Connection.java
 %\011g_Echo.java
 %\011util_Utilities.java
 %\011bg_World.java
+%\011bg_Note.java
 %\011util_Music.java
 %\011bg_Constants.java
 %\011bg_Vector.java
@@ -23,11 +24,12 @@ s#l0
 %\011bg_Player.java
 %\011bg_Entity.java
 %\011g_World.java
-!225;f
+!243;f
 %\011g_Connection.java
 %\011g_Echo.java
 %\011util_Utilities.java
 %\011bg_World.java
+%\011bg_Note.java
 %\011util_Music.java
 %\011bg_Constants.java
 %\011bg_Vector.java

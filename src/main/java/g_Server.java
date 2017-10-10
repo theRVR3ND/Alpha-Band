@@ -32,11 +32,6 @@ public class g_Server implements Runnable, bg_Constants{
    private static String name;
    
    /**
-    * Server's game type (team, free-for-all, etc.)
-    */
-   private static byte gamemode;
-   
-   /**
     * Server-side game world. This is the official game state.
     */
    private static g_World world;
@@ -57,10 +52,9 @@ public class g_Server implements Runnable, bg_Constants{
          
             //Initialize others
             this.name = name;
-            this.gamemode = gamemode;
             
             clients = new ArrayList<g_Connection>();
-            world = new g_World();
+            world = new g_World(gamemode);
             
             server = this;
          }catch(IOException e){
@@ -114,10 +108,6 @@ public class g_Server implements Runnable, bg_Constants{
     */
    public String getName(){
       return name;
-   }
-   
-   public byte getGamemode(){
-      return gamemode;
    }
    
    /**

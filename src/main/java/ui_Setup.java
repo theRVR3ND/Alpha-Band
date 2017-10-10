@@ -19,10 +19,10 @@ public class ui_Setup extends ui_Menu{
     */
    public ui_Setup(){
       buttons = new ui_Button[] {
-         new ui_Button(util_Utilities.loadImage("menu/ButtonPLAYER.png"),   0.5f, 0.4f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonCONTROLS.png"), 0.5f, 0.55f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonSETTINGS.png"), 0.5f, 0.7f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonBACK.png"),     0.5f, 0.85f)
+         new ui_Button("PLAYER",   0.5f, 0.4f),
+         new ui_Button("CONTROLS", 0.5f, 0.55f),
+         new ui_Button("SETTINGS", 0.5f, 0.7f),
+         new ui_Button("BACK",     0.5f, 0.85f)
       };
    }
    

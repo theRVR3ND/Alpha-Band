@@ -14,9 +14,9 @@ import java.awt.*;
 public class ui_Button{
    
    /**
-    * Button's graphical representation.
+    * Button's text contents.
     */
-   private final BufferedImage img;
+   private final String text;
    
    /**
     * Scalable coordinate of button's top-left corner.
@@ -33,6 +33,9 @@ public class ui_Button{
     */
    private boolean expanded;
    
+   private final short WIDTH = 244,
+                      HEIGHT = 94;
+   
    /**
     * Constructor. Sets image and coordinates of button.
     * 
@@ -40,8 +43,8 @@ public class ui_Button{
     * @param x                         Button's scalable x-coordiate.
     * @param y                         Button's scalable y-coordiate.
     */
-   public ui_Button(BufferedImage img, float x, float y){
-      this.img = img;
+   public ui_Button(String text, float x, float y){
+      this.text = text;
       this.x = x;
       this.y = y;
       down = false;
@@ -54,20 +57,32 @@ public class ui_Button{
     * @param g2                        Graphics2D object to draw on to.
     */
    public void draw(Graphics2D g2){
+      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      
+      //Draw text in center of box
+      short textWidth = (short)(g2.getFontMetrics().stringWidth(text)),
+            textHeight = (short)(g2.getFontMetrics().getHeight());
+      g2.drawString(
+         text,
+         getX() + getWidth() / 2 - textWidth / 2,
+         getY() + getHeight() / 2 + textHeight / 4
+      );
+      
       //Draw as different size based on mouse hover state
       if(!expanded){
          //Smaller (shrink by 5%) if up
-         g2.drawImage(img,
-                      getX() + (short)(getWidth() * 0.025),
-                      getY() + (short)(getHeight() * 0.025),
-                      (short)(getWidth() * 0.95),
-                      (short)(getHeight() * 0.95),
-                      null);
-      
+         g2.drawRect(
+            getX() + (short)(getWidth() * 0.025),
+            getY() + (short)(getHeight() * 0.025),
+            (short)(getWidth() * 0.95),
+            (short)(getHeight() * 0.95)
+         );
+         
       //Normal sized if down
       }else{
-         g2.drawImage(img, getX(), getY(), getWidth(), getHeight(), null);
+         g2.drawRect(getX(), getY(), getWidth(), getHeight());
       }
+      
    }
    
    /**
@@ -76,7 +91,7 @@ public class ui_Button{
     * @return                          Pixel-wise x-coordinate of button's top left corner.
     */
    public short getX(){
-      return (short)(x * cg_Client.SCREEN_WIDTH - getWidth() * 0.5);
+      return (short)(x * cg_Client.SCREEN_WIDTH - WIDTH * 0.5);
    }
    
    /**
@@ -85,7 +100,7 @@ public class ui_Button{
     * @return                          Pixel-wise y-coordinate of button's top left corner.
     */
    public short getY(){
-      return (short)(y * cg_Client.SCREEN_HEIGHT - getHeight() * 0.5);
+      return (short)(y * cg_Client.SCREEN_HEIGHT - HEIGHT * 0.5);
    }
    
    /**
@@ -94,7 +109,7 @@ public class ui_Button{
     * @return                          Pixel-wise width of button.
     */
    public short getWidth(){
-      return (short)(getHeight() * (1.0 * img.getWidth() / img.getHeight()));
+      return (short)(getHeight() * (1.0 * WIDTH / HEIGHT));
    }
    
    /**
@@ -103,7 +118,7 @@ public class ui_Button{
     * @return                          Pixel-wise height of button.
     */
    public short getHeight(){
-      return (short)(img.getHeight() * cg_Client.SCREEN_HEIGHT / 1080.0);
+      return (short)(HEIGHT * cg_Client.SCREEN_HEIGHT / 1080.0);
    }
    
    /**

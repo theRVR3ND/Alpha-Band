@@ -49,7 +49,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       this.name = name;
       this.color = color;
       this.controller = controller;
-      instrument = (byte)(util_Music.INSTRUMENTS[0] + Byte.MAX_VALUE);
+      this.instrument = Byte.MIN_VALUE;
       
       score = 0;
    }
@@ -145,6 +145,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       list.add(name);
       list.add(color);
       list.add(controller);
+      list.add(instrument);
       
       list.add(score);
       
@@ -160,6 +161,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       name = (String)(data.remove(0));
       color = (Color)(data.remove(0));
       controller = (Byte)(data.remove(0));
+      instrument = (Byte)(data.remove(0));
       
       score = (Short)(data.remove(0));
    }

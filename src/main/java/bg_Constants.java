@@ -24,13 +24,13 @@ public interface bg_Constants{
    /**
     * Standard format request from client for connection.
     */
-   public static final String REQUEST_MESSAGE = "SAM_HYDE?";
+   public static final String REQUEST_MESSAGE = "RESPECT_WOMEN";
    
    /**
     * Maximum number of clients allowed in a server.
     * Limiting is needed to not crash or something.
     */
-   public static final byte MAX_PLAYERS = 4;
+   public static final byte MAX_PLAYERS = 6;
    
    /**
     * Stream tag. Identifies type of communication
@@ -39,8 +39,12 @@ public interface bg_Constants{
    public static final byte INITIALIZE = 0,
                                 ACTION = 1,
                                MESSAGE = 2,
-                                UPDATE = 3;
+                                UPDATE = 3,
+                                  VOTE = 4;
    
+   /**
+    * Longest player name allowed.
+    */
    public static final byte MAX_PLAYER_NAME_LENGTH = 21;
    
    /**
@@ -69,4 +73,6 @@ public interface bg_Constants{
    /**
     * Game mode.
     */
+   public static final byte COMPETITION = 0,
+                                 COLLAB = 1;
 }

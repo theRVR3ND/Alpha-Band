@@ -27,14 +27,25 @@ public class g_World extends bg_World{
    private HashMap<Byte, HashMap<Short, byte[]>> snapshots;
    
    /**
+    * Current song vote. Null if no vote active.
+    */
+   private byte[] vote;
+   
+   /**
     * Constructor.
     */
-   public g_World(){
-      super();
+   public g_World(byte gamemode){
+      super(gamemode);
+      
+      this.vote = null;
+      this.currSong = Byte.MIN_VALUE;
       
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
+      
+      //Spawn fake player to store world data
+      spawnPlayer("", Color.WHITE, (byte)-1);
    }
    
    /**
@@ -53,6 +64,27 @@ public class g_World extends bg_World{
       }
    }
    
+   public void startSong(){
+      bg_Player infoEnt = getPlayer((byte)-1);
+      
+      //Song progress data is transferred through infoEnt's name
+      String name = (char)(currSong) + "";
+      
+      //Randomly generated song to be played
+      if(currSong == -1){
+         //Send seed info through infoEnt's data
+         byte[] bytes = shortToBytes((short)(Math.random() * Short.MAX_VALUE));
+         name += (char)(bytes[0]) + "" + (char)(bytes[1]);
+      
+      //Preset song selected
+      }else{
+         name += (char)(currSong);
+      }
+      
+      name += (char)(currBeat);
+      infoEnt.setName(name);
+   }
+   
    /**
     * Create new player in world.
     * 
@@ -62,22 +94,25 @@ public class g_World extends bg_World{
     */
    public void spawnPlayer(String name, Color color, byte controller){
       //Get all player names
-      HashSet<String> allNames = new HashSet<String>();
-      for(Short key : entities.keySet())
-         if(entities.get(key) instanceof bg_Player)
-            allNames.add(((bg_Player)(entities.get(key))).getName());
-      
-      //Make sure name is unique (no other players can have same exact name)
-      String actualName = name;
-      byte i = 1;
-      while(allNames.contains(actualName)){
-         actualName = name + "(" + i + ")";
-         i++;
+      if(controller >= 0){
+         HashSet<String> allNames = new HashSet<String>();
+         for(Short key : entities.keySet())
+            if(entities.get(key) instanceof bg_Player)
+               allNames.add(((bg_Player)(entities.get(key))).getName());
+         
+         //Make sure name is unique (no other players can have same exact name)
+         String actualName = name;
+         byte i = 1;
+         while(allNames.contains(actualName)){
+            actualName = name + "(" + i + ")";
+            i++;
+         }
+         name = actualName;
       }
       
       //Create player
       Short key = bg_Entity.getEntityCount();
-      bg_Player player = new bg_Player(actualName, color, controller);
+      bg_Player player = new bg_Player(name, color, controller);
       
       entities.put(key, player);
       
@@ -93,20 +128,22 @@ public class g_World extends bg_World{
     */
    public LinkedList<byte[]> getRelevantData(final byte clientID){
       bg_Player player = getPlayer(clientID);
+      
       LinkedList<byte[]> ret = new LinkedList<byte[]>();
       
-      //Compile world's data
+      //Find difference between visible and client's snapshot
       for(Short key : entities.keySet()){
-         //Bytes to compress data into
+         //Entity's data
          byte[] comp = dataToBytes(entities.get(key).getData(new LinkedList<Object>()));
          
+         //Has entity already been tracked in client's snapshot
+         boolean inSnapshot = snapshots.get(clientID).containsKey(key);
+         
          //Update client's snapshot
-         snapshots.get(clientID).put(
-            key, comp
-         );
+         snapshots.get(clientID).put(key, comp);
          
          //Check if we can save byte space
-         if(snapshots.get(clientID).containsKey(key)){
+         if(inSnapshot){
             comp = findDelta(snapshots.get(clientID).get(key), comp);
          }
          
@@ -125,10 +162,7 @@ public class g_World extends bg_World{
          add[0] = keyBytes[0];
          add[1] = keyBytes[1];
          
-         if(entities.get(key) instanceof bg_Player)
-            add[2] = PLAYER;
-         else if(entities.get(key) instanceof bg_Note)
-            add[2] = NOTE;
+         add[2] = PLAYER;
          
          for(byte i = 0; i < comp.length; i++)
             add[i + 3] = comp[i];

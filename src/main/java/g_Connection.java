@@ -199,6 +199,11 @@ public class g_Connection extends Thread implements bg_Constants{
                g_Server.server.getClients().get(i).relayMessage(message);
             
             break;
+         
+         //Player has cast vote on song choice
+         case(VOTE):
+            
+            break;
       }
    }
    

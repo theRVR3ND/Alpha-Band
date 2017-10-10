@@ -26,7 +26,7 @@ public class ui_Guide extends ui_Menu implements MouseWheelListener{
     */
    public ui_Guide(){
       buttons = new ui_Button[] {
-         new ui_Button(util_Utilities.loadImage("menu/ButtonBACK.png"), 0.5f, 0.85f)
+         new ui_Button("BACK", 0.5f, 0.85f)
       };
       
       //Initialize textbox

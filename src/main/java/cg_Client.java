@@ -32,16 +32,14 @@ public class cg_Client{
     * Client run method.
     */
    public static void main(String[] args){
-      //Pre-load things needed immediately
-      ui_Menu.preload();
-      
       //Initialize and launch frame
       frame = new JFrame("Alpha Band");
       
       //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-      frame.setUndecorated(true);
-      frame.setResizable(false);
+      frame.setUndecorated(false);
+      //frame.setResizable(false);
       frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+      frame.setResizable(true);
       frame.setIconImage(util_Utilities.loadImage("menu/icon.png"));
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       

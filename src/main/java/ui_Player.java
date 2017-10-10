@@ -29,7 +29,7 @@ public class ui_Player extends ui_Menu implements KeyListener, bg_Constants{
     */
    public ui_Player(){
       buttons = new ui_Button[] {
-         new ui_Button(util_Utilities.loadImage("menu/ButtonBACK.png"), 0.5f, 0.85f)
+         new ui_Button("BACK", 0.5f, 0.85f)
       };
       
       //Initialize things
@@ -72,7 +72,7 @@ public class ui_Player extends ui_Menu implements KeyListener, bg_Constants{
       nameTextbox.draw(g2);
       
       //Draw color wheel
-      g2.setColor(ui_Menu.TEXT);
+      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
       g.drawString(
          "Color:",
          nameTextbox.getX(),

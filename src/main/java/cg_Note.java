@@ -9,6 +9,7 @@
  */
 
 import java.awt.Graphics2D;
+import java.awt.Color;
 
 public class cg_Note extends bg_Note{
    
@@ -17,6 +18,6 @@ public class cg_Note extends bg_Note{
    }
    
    public void render(Graphics2D g2){
-      g2.setColor(cg_World.NOTE_COLOR);
+      g2.setColor(Color.PINK);
    }
 }

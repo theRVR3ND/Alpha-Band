@@ -67,7 +67,7 @@ public class ui_ColorWheel{
             360 / numSlice + 2
          );
       }
-      g2.setColor(ui_Menu.MAIN);
+      g2.setColor(ui_Colors.getColor(ui_Colors.BACKGROUND));
       g2.fillOval(
          getX() + getDiameter() / 4,
          getY() + getDiameter() / 4,
@@ -188,7 +188,8 @@ public class ui_ColorWheel{
             120            green
             240            blue
       */
-      theta = (short)((theta + 720 * Math.abs(theta / 360)) % 360);
+      while(theta < 0)
+         theta += 360;
       short[] rgb = new short[] {
          (short)(Math.abs(theta)),
          (short)(Math.abs(theta - 120)),
@@ -197,8 +198,9 @@ public class ui_ColorWheel{
       for(short i = 0; i < rgb.length; i++){
          if(rgb[i] > 180)
             rgb[i] = (short)(360 - rgb[i]);
-         rgb[i] = (short)(255 - rgb[i] / 180.0 * 255);
+         rgb[i] = (short)(255 - (rgb[i] / 180.0) * 255);
       }
+      
       return new Color(rgb[0], rgb[1], rgb[2]);
    }
 }

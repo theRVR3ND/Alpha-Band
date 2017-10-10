@@ -18,10 +18,10 @@ public class ui_Main extends ui_Menu{
     */
    public ui_Main(){
       buttons = new ui_Button[] {
-         new ui_Button(util_Utilities.loadImage("menu/ButtonSERVERS.png"), 0.5f, 0.4f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonSETUP.png"),   0.5f, 0.55f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonGUIDE.png"),   0.5f, 0.7f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonEXIT.png"),   0.5f, 0.85f)
+         new ui_Button("SERVERS", 0.5f, 0.4f),
+         new ui_Button("SETUP",   0.5f, 0.55f),
+         new ui_Button("GUIDE",   0.5f, 0.7f),
+         new ui_Button("EXIT",   0.5f, 0.85f)
       };
    }
    

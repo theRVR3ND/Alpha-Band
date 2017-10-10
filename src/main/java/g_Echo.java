@@ -46,7 +46,7 @@ public class g_Echo implements Runnable, bg_Constants{
          ret[i + 1] = (byte)(g_Server.server.getName().charAt(i));
       }
       
-      ret[ret.length - 2] = g_Server.server.getGamemode();
+      ret[ret.length - 2] = g_Server.server.getWorld().getGamemode();
       
       //Start accepting requesters
       while(true){

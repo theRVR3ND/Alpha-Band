@@ -60,11 +60,6 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
    public static ui_Controls controls;
    
    /**
-    * Theme color for client.
-    */
-   public static Color MAIN, HIGHLIGHT, TEXT, OUTLINE;
-   
-   /**
     * Default set font for graphics.
     */
    public static final Font defaultFont = new Font(
@@ -72,16 +67,6 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
       Font.PLAIN,
       util_Utilities.getFontSize()
    );
-   
-   /**
-    * Pre-loading of stuff for splash screen use.
-    */
-   public static void preload(){
-           MAIN = Color.WHITE;
-      HIGHLIGHT = new Color(128, 128, 128, 112);
-           TEXT = Color.BLACK;
-        OUTLINE = Color.DARK_GRAY;
-   }
    
    /**
     * Initializing to be completed while splash screen is showing.
@@ -122,19 +107,20 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
       //Draw background
-      g2.setColor(MAIN);
+      g2.setColor(ui_Colors.getColor(ui_Colors.BACKGROUND));
       g2.fillRect(0, 0, getWidth(), getHeight());
+      
+      //Write program info (so I don't waste another hour changing the wrong project)
+      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setFont(new Font("Century Gothic", Font.PLAIN, (int)(util_Utilities.getFontSize() * 0.75)));
+      g2.drawString("Alpha Band | By: Shae McMillan & Kelvin Peng, '18", 10, getHeight() - 10);
+      
+      //Set default(s)
+      g2.setFont(defaultFont);
       
       //Draw buttons
       for(ui_Button b : buttons)
          b.draw(g2);
-      
-      //Set default(s)
-      g2.setColor(TEXT);
-      g2.setFont(defaultFont);
-      
-      //Write program info (so I don't waste another hour changing the wrong project)
-      g2.drawString("Alpha Band | By: Shae McMillan & Kelvin Peng, '18", 10, getHeight() - 10);
    }
    
    /**

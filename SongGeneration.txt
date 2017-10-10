@@ -1,4 +1,7 @@
 1. Set BPM - determines how fast song will be
+	Min: 80		Max: 250
+	Difficulty:	0		1		2		3		4
+			100 - 130	130 - 160	160 - 190 	190 - 220	220 - 250
 
 2. Set length of song
 
@@ -8,12 +11,12 @@
 4. Choose Scale
 	- look in ScaleMutator Panel, check how scales are saved, probably in arrays
 
-5. Difficulty:
-	- Easy - only whole and half notes
-	- Medium - "" + quarter notes
-	- Hard - "" + sixteenth notes
- 	- Insane - "" + thirty-second notes
-	* all note lengths saved in array; location in array as a power of 2 = note length
+5. Difficulty:					Value:
+	- Beginner - only whole notes		0
+	- Easy - " + half notes			1
+	- Medium - " + quarter notes		2
+	- Hard - " + eighth notes		3
+ 	- Insane - " + sixteenth notes		4
 
 6. Number of instruments:
 	- 1 player: Piano
@@ -21,7 +24,7 @@
 	- 3 player: Previous + Drums
 	- 4 player: Previous + Bass
 	- 5 player: Previous + Electric Guitar (Distorted)
-	- 6 player: Previous + Cowbell (Secret mode easter egg xD)6
+	- 6 player: Previous + Agogo (Secret mode easter egg xD)6
 
 Additional 6th option:
 	Randomness:

@@ -87,7 +87,7 @@ public class ui_Table{
          return;
       
       //Draw table outline
-      g2.setColor(ui_Menu.OUTLINE);
+      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
       g2.drawRect(getX(), getY(), getWidth(), getHeight());
       
       //Draw scrollbar (all ye who enter, abandon all hope)
@@ -101,7 +101,7 @@ public class ui_Table{
          if(barY < getY())
             barY = getY();
          
-         g2.setColor(ui_Menu.HIGHLIGHT);
+         g2.setColor(ui_Colors.getColor(ui_Colors.HIGHLIGHT));
          g2.fillRect((short)((x + w) * cg_Client.SCREEN_WIDTH) + 1, barY,
                      (short)(0.01 * cg_Client.SCREEN_WIDTH), barHeight);
          
@@ -113,7 +113,7 @@ public class ui_Table{
       }
       
       //Draw table contents
-      g2.setColor(ui_Menu.TEXT);
+      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
       for(byte c = 0; c < labels.length; c++){
          //Draw column label
          if(labels[c] != null)

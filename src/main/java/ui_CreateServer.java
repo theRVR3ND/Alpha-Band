@@ -22,11 +22,6 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
    private ui_Textbox nameTextbox;
    
    /**
-    * List of all available songs.
-    */
-   private ui_Table songList;
-   
-   /**
     * List of all available map types or game modes.
     */
    private ui_Table gamemodeList;
@@ -36,8 +31,8 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
     */
    public ui_CreateServer(){
       buttons = new ui_Button[] {
-         new ui_Button(util_Utilities.loadImage("menu/ButtonLAUNCH.png"), 0.5f, 0.7f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonBACK.png"),   0.5f, 0.85f)
+         new ui_Button("LAUNCH", 0.5f, 0.7f),
+         new ui_Button("BACK",   0.5f, 0.85f)
       };
       
       //Initialize stuff
@@ -46,17 +41,9 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       );
       nameTextbox.setContents("Server");
       
-      //List available songs
-      songList = new ui_Table(
-         0.1f, 0.3f, 0.37f, 0.3f,
-         new String[] {"Song", "Duration"},
-         new float[] {0.11f, 0.4f}
-      );
-      ArrayList<String[]> allSongs = new ArrayList<String[]>();
-      
       //List available game modes
       gamemodeList = new ui_Table(
-         0.53f, 0.3f, 0.37f, 0.3f,
+         0.4f, 0.3f, 0.2f, 0.3f,
          new String[] {"Game Mode"},
          new float[] {0.54f}
       );
@@ -93,7 +80,6 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       
       //Draw table
       gamemodeList.draw(g2);
-      songList.draw(g2);
       
       repaint();
    }
@@ -128,7 +114,10 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
          (new Thread(server)).start();
          
          //Join said server. Use loopback IP address.
-         ui_Servers.joinServer("127.0.0.1");
+         ui_Menu.servers.joinServer(
+            "127.0.0.1",
+            (byte)(gamemodeList.getHoverRow() + gamemodeList.getScrollInd())
+         );
       
       }else if(buttons[1].isDown()){
          cg_Client.frame.setContentPane(ui_Menu.servers);
@@ -146,11 +135,6 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
             gamemodeList.setHoverRow(oldHoverRow);
             return;
          }
-         
-         oldHoverRow = songList.getHoverRow();
-         songList.checkHover((short)e.getX(), (short)e.getY());
-         if(songList.getHoverRow() < 0)
-            songList.setHoverRow(oldHoverRow);
          
          return;
       }
@@ -180,12 +164,6 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
    public void mouseWheelMoved(MouseWheelEvent e){
       //Tell table to scroll
       gamemodeList.checkScroll(
-         (short)e.getX(),
-         (short)e.getY(),
-         (byte)e.getWheelRotation()
-      );
-      
-      songList.checkScroll(
          (short)e.getX(),
          (short)e.getY(),
          (byte)e.getWheelRotation()

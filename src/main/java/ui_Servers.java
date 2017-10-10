@@ -36,16 +36,16 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
     */
    public ui_Servers(){
       buttons = new ui_Button[] {
-         new ui_Button(util_Utilities.loadImage("menu/ButtonJOIN.png"),   0.5f, 0.55f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonCREATE.png"), 0.5f, 0.7f),
-         new ui_Button(util_Utilities.loadImage("menu/ButtonBACK.png"),   0.5f, 0.85f)
+         new ui_Button("JOIN",   0.5f, 0.55f),
+         new ui_Button("CREATE", 0.5f, 0.7f),
+         new ui_Button("BACK",   0.5f, 0.85f)
       };
       
       //Initialize stuff
       list = new ui_Table(
          0.1f, 0.1f, 0.8f, 0.35f,
-         new String[] {"Server", "IP", "Players", "Ping"},
-         new float[] {0.11f, 0.3f, 0.5f, 0.7f}
+         new String[] {"Server", "IP", "Gamemode", "Players", "Ping"},
+         new float[] {0.11f, 0.25f, 0.45f, 0.75f, 0.85f}
       );
       
       refresher = new Refresher();
@@ -149,13 +149,21 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
     * 
     * @param IP                     IP of server to connect to.
     */
-   public static void joinServer(String IP){
+   public void joinServer(String IP){
+      joinServer(
+         IP,
+         Byte.parseByte(list.getContents().get(list.getHoverRow() + list.getScrollInd())[2])
+      );
+   }
+   
+   public void joinServer(String IP, byte gamemode){
       try{
          cg_Panel.connect(IP);
          cg_GamePanel gamePanel = cg_Panel.gamePanel;
          
-         cg_Client.frame.setContentPane(gamePanel);
+         gamePanel.startWorld(gamemode);
          
+         cg_Client.frame.setContentPane(gamePanel);
          gamePanel.requestFocus();
          cg_Client.frame.revalidate();
       
@@ -218,13 +226,21 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
                   byte numByte = (byte)in.read(buff);
                   final long receiveTime = System.currentTimeMillis();
                   
+                  //Do stuff
+                  String gamemode;
+                  if(buff[numByte - 1] == COMPETITION)
+                     gamemode = "Competition";
+                  else
+                     gamemode = "Collab";
+                  
                   //Format server info
                   String[] serverInfo = new String[4];
                   
                   serverInfo[0] = new String(buff, 1, buff[0]);            //Server name
                   serverInfo[1] = pingIP;                                  //Server IP
-                  serverInfo[2] = buff[numByte - 1] + "/" + MAX_PLAYERS;   //Server capacity
-                  serverInfo[3] = receiveTime - sendTime + "";             //Server ping
+                  serverInfo[2] = gamemode;                                //Server gamemode
+                  serverInfo[3] = buff[numByte - 1] + "/" + MAX_PLAYERS;   //Server capacity
+                  serverInfo[4] = receiveTime - sendTime + "";             //Server ping
                   
                   //Add server info to list
                   cont.put((byte)(i - Byte.MIN_VALUE), serverInfo);

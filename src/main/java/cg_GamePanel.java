@@ -33,7 +33,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
     */
    public cg_GamePanel(){
       //Initialize stuff
-      world = new cg_World();
+      world = null;
       currActions = new HashSet<Byte>();
       
       //Add listeners
@@ -63,7 +63,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       world.render(g2);
       
       //Draw chat messages
-      g2.setColor(ui_Menu.TEXT);
+      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
       super.drawMessages(g2);
       
       repaint();
@@ -74,6 +74,10 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
     */
    public cg_World getWorld(){
       return world;
+   }
+   
+   public void startWorld(byte gamemode){
+      world = new cg_World(gamemode);
    }
    
    /**

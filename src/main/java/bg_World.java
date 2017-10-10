@@ -28,13 +28,22 @@ public abstract class bg_World implements bg_Constants{
     */
    private final byte THINK_RATE = 30;
    
+   protected short currBeat;
+   
+   protected final byte gamemode;
+   
+   protected byte currSong;
+   
    /**
     * Constructor.
     */
-   public bg_World(){
+   public bg_World(byte gamemode){
       //Initialize stuff
       entities = new HashMap<Short, bg_Entity>();
       lastThinkTime = System.currentTimeMillis();
+      
+      this.currBeat = Byte.MIN_VALUE;
+      this.gamemode = gamemode;
       
       //Start think
       Thread thinker = new Thread(){
@@ -92,7 +101,7 @@ public abstract class bg_World implements bg_Constants{
     * Return number of players in world.
     */
    public byte getNumPlayers(){
-      byte ret = 0;
+      byte ret = -1;
       for(Short key : entities.keySet())
          if(entities.get(key) instanceof bg_Player)
             ret++;
@@ -104,6 +113,10 @@ public abstract class bg_World implements bg_Constants{
     */
    public HashMap<Short, bg_Entity> getEntities(){
       return entities;
+   }
+   
+   public byte getGamemode(){
+      return gamemode;
    }
    
    /**

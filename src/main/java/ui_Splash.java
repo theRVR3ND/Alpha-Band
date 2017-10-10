@@ -89,7 +89,7 @@ public class ui_Splash extends JPanel{
       }
       
       //Draw splash background
-      g2.setColor(Color.WHITE);
+      g2.setColor(ui_Colors.getColor(ui_Colors.BACKGROUND));
       g2.fillRect(0, 0, getWidth(), getHeight());
       
       //Draw splash screen

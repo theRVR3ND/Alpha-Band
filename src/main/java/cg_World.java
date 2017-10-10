@@ -21,15 +21,10 @@ public class cg_World extends bg_World{
    private HashMap<Short, byte[]> gamestate;
    
    /**
-    * Theme color. Value changed in settings.
-    */
-   public static Color BACKGROUND = Color.BLACK, NOTE_COLOR = Color.WHITE;
-   
-   /**
     * Constructor.
     */
-   public cg_World(){
-      super();
+   public cg_World(byte gamemode){
+      super(gamemode);
       
       //Initialize stuff
       gamestate = new HashMap<Short, byte[]>();
@@ -42,11 +37,14 @@ public class cg_World extends bg_World{
     */
    public void render(Graphics2D g2){
       //Graphics defaults
-      g2.setColor(Color.BLACK);
+      g2.setColor(ui_Colors.getColor(ui_Colors.BACKGROUND));
       g2.fillRect(0, 0, cg_Client.SCREEN_WIDTH, cg_Client.SCREEN_HEIGHT);
       
-      //Draw incomming notes
+      //Figure out who we control
       bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
+      
+      //Draw incomming notes
+      //g2.setColor(Color.BLACK);
       final byte instrument = player.getInstrument();
       
    }
