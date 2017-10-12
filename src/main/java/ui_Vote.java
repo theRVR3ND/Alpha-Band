@@ -14,13 +14,28 @@ import java.awt.event.*;
 
 public class ui_Vote extends ui_Menu implements KeyListener, bg_Constants{
    
+   private ui_Table voteList;
+   
    /**
     * Constructor. Read previous settings from text file.
     */
    public ui_Vote(){
       buttons = new ui_Button[] {
-         new ui_Button("BACK", 0.5f, 0.85f)
+         new ui_Button("SUBMIT", 0.5f, 0.85f)
       };
+      
+      voteList = new ui_Table(
+         0.4f, 0.1f, 0.2f, 0.2f,
+         new String[] {"Vote"},
+         new float[] {0.41f}
+      );
+      
+      //Add all song options to list
+      voteList.getContents().add(new String[] {"Generate a Song"});
+      voteList.getContents().add(new String[] {"Random Song"});
+      
+      String[] settings = util_Utilities.readFromFile("menu/songList.cfg");
+      
       
       //Add key listener for entering player name
       this.setFocusable(true);
@@ -80,16 +95,14 @@ public class ui_Vote extends ui_Menu implements KeyListener, bg_Constants{
     *
     * @param e                   MouseEvent to process.
     */
-   public void mousePressed(MouseEvent e){
-   }
+   public void mousePressed(MouseEvent e){}
    
    /**
     * Process mouse release. Releases any objects in panel being dragged.
     *
     * @param e                   MouseEvent to process.
     */
-   public void mouseReleased(MouseEvent e){
-   }
+   public void mouseReleased(MouseEvent e){}
    
    public void mouseMoved(MouseEvent e){
       super.mouseMoved(e);
@@ -100,6 +113,5 @@ public class ui_Vote extends ui_Menu implements KeyListener, bg_Constants{
     *
     * @param e                   MouseEvent to process.
     */
-   public void mouseDragged(MouseEvent e){
-   }
+   public void mouseDragged(MouseEvent e){}
 }

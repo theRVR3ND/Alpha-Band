@@ -91,7 +91,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
       if(buttons[0].isDown()){
          if(list.getHoverRow() >= 0){
             //Find server's IP
-            String IP = list.getContents().get(list.getScrollInd() + list.getHoverRow())[1];
+            String IP = list.getContents().get(list.getHoverRow())[1];
             joinServer(IP);
          }
       
@@ -152,7 +152,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
    public void joinServer(String IP){
       joinServer(
          IP,
-         Byte.parseByte(list.getContents().get(list.getHoverRow() + list.getScrollInd())[2])
+         Byte.parseByte(list.getContents().get(list.getHoverRow())[2])
       );
    }
    
@@ -260,7 +260,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
                //Update server list
                list.setContents(new ArrayList<String[]> (cont.values()));
                
-               if(list.getContents().size() < list.getScrollInd() + list.getHoverRow())
+               if(list.getContents().size() < list.getHoverRow())
                   list.setHoverRow((byte)(list.getContents().size() - list.getScrollInd()));
                
                //Searched all network

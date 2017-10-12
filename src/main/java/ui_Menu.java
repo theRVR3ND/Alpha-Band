@@ -107,13 +107,13 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
       //Draw background
-      g2.setColor(ui_Colors.getColor(ui_Colors.BACKGROUND));
+      g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
       g2.fillRect(0, 0, getWidth(), getHeight());
       
       //Write program info (so I don't waste another hour changing the wrong project)
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g2.setFont(new Font("Century Gothic", Font.PLAIN, (int)(util_Utilities.getFontSize() * 0.75)));
-      g2.drawString("Alpha Band | By: Shae McMillan & Kelvin Peng, '18", 10, getHeight() - 10);
+      g2.drawString("Alpha Band | By: Shae McMillan, Christina Nguyen, and Kelvin Peng, '18", 10, getHeight() - 10);
       
       //Set default(s)
       g2.setFont(defaultFont);

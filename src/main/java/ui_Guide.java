@@ -37,7 +37,7 @@ public class ui_Guide extends ui_Menu implements MouseWheelListener{
       );
       
       //Put guide file into textbox
-      String[] file = util_Utilities.readFromFile("menu/Guide.cfg");
+      String[] file = util_Utilities.readFromFile("menu/guide.cfg");
       textbox.setContents(file, this.getFontMetrics(guideFont));
       
       //Add mouse scroll listener

@@ -72,15 +72,15 @@ public class ui_Slider{
     */
    public void draw(Graphics2D g2){
       //Draw slider bar outline
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g2.drawRect(getX(), getY(), getWidth(), getHeight());
       
       //Draw slider value bar
-      g2.setColor(ui_Colors.getColor(ui_Colors.HIGHLIGHT));
-      g2.fillRect(getX(), getY(), (short)(getWidth() * (1.0 * val / (max - min))), getHeight());
+      g2.setColor(ui_Theme.getColor(ui_Theme.HIGHLIGHT));
+      g2.fillRect(getX() + 1, getY() + 1, (short)((getWidth() - 1) * (1.0 * val / (max - min))), getHeight() - 1);
       
       //Draw value
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g2.drawString(getValue() + "",
                     getX() + getWidth() + (short)(0.01 * cg_Client.SCREEN_WIDTH),
                     getY() + getHeight());

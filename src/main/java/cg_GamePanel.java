@@ -63,7 +63,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       world.render(g2);
       
       //Draw chat messages
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       super.drawMessages(g2);
       
       repaint();

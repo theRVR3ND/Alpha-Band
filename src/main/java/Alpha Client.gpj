@@ -11,9 +11,10 @@ s#i0
 s#k0
 s#j0
 s#l0
-!676;g
+!675;g
 %\011ui_Guide.java
 %\011bg_Note.java
+%\011ui_Theme.java
 %\011ui_Setup.java
 %\011ui_Splash.java
 %\011ui_Checkbox.java
@@ -39,15 +40,15 @@ s#l0
 %\011bg_Entity.java
 %\011cg_Panel.java
 %\011ui_Slider.java
-%\011ui_Colors.java
 %\011ui_Table.java
 %\011bg_Constants.java
 %\011bg_Vector.java
 %\011ui_CreateServer.java
 %\011ui_Vote.java
-!676;f
+!675;f
 %\011ui_Guide.java
 %\011bg_Note.java
+%\011ui_Theme.java
 %\011ui_Setup.java
 %\011ui_Splash.java
 %\011ui_Checkbox.java
@@ -73,7 +74,6 @@ s#l0
 %\011bg_Entity.java
 %\011cg_Panel.java
 %\011ui_Slider.java
-%\011ui_Colors.java
 %\011ui_Table.java
 %\011bg_Constants.java
 %\011bg_Vector.java

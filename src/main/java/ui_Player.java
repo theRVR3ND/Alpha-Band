@@ -39,7 +39,7 @@ public class ui_Player extends ui_Menu implements KeyListener, bg_Constants{
       );
       
       //Read previous settings from text file
-      String[] player = util_Utilities.readFromFile("menu/Player.cfg");
+      String[] player = util_Utilities.readFromFile("menu/player.cfg");
       if(player.length == 0){
          nameTextbox.setContents("enod");
       }else{
@@ -72,7 +72,7 @@ public class ui_Player extends ui_Menu implements KeyListener, bg_Constants{
       nameTextbox.draw(g2);
       
       //Draw color wheel
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g.drawString(
          "Color:",
          nameTextbox.getX(),
@@ -135,7 +135,7 @@ public class ui_Player extends ui_Menu implements KeyListener, bg_Constants{
          String[] info = new String[2];
          info[0] = nameTextbox.getContents();
          info[1] = picker.getRotation() + "";
-         util_Utilities.writeToFile(info, "menu/Player.cfg");
+         util_Utilities.writeToFile(info, "menu/player.cfg");
          
       }else{
          nameTextbox.checkClick((short)e.getX(), (short)e.getY());

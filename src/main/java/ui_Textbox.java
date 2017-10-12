@@ -64,11 +64,11 @@ public class ui_Textbox{
     */
    public void draw(Graphics2D g2){
       //Draw actual box
-      g2.setColor(ui_Colors.getColor(ui_Colors.HIGHLIGHT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.HIGHLIGHT));
       g2.fillRect(getX(), getY(), getWidth(), getHeight());
       
       //Draw contents
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       FontMetrics fontMetrics = g2.getFontMetrics();
       final byte spacing = (byte)(getHeight() - fontMetrics.getHeight());
       g2.drawString(
@@ -79,7 +79,7 @@ public class ui_Textbox{
       
       //Draw outline
       if(selected){
-         g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+         g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
          g2.drawRect(
             getX() - spacing / 2,
             getY() - spacing / 2,

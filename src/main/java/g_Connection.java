@@ -66,6 +66,10 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public void run(){
       try{
+         try{
+            sleep(100);
+         }catch(InterruptedException e){}
+         
          while(true){
             //Receive input stream from client
             if(in.available() > 0){

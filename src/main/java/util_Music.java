@@ -39,16 +39,15 @@ public class util_Music{
    
    public static final short[] INSTRUMENTS = new short[] {0, 27, 118, 38, 30, 113};
    
-   /**
    public static void main(String[] args){
-      playSong(generateSong((byte)1, (short)(Math.random() * Short.MAX_VALUE)));
+      playSong(generateSong((byte)2, (short)(Math.random() * Short.MAX_VALUE)));
       /**
       try{
       System.out.println(MidiSystem.getSynthesizer().getDefaultSoundbank().getInstruments().length + "");
       }catch(Exception e){}
-      /**
+      */
    }
-   */
+   
    
    //Run
    public static byte[][] generateSong(byte difficulty, short seed){
@@ -56,7 +55,7 @@ public class util_Music{
       Random rand = new Random(seed);
       
       //Generate song parameters
-      final byte bpm = (byte)(difficulty * 15 + 50 + (rand.nextDouble() * 15));   //multiply by 2 for actual
+      final byte bpm = (byte)(difficulty * 15 + 30 + (rand.nextDouble() * 15));   //multiply by 2 for actual
       final byte measureLength = (byte)(Math.pow(2, difficulty));//how many columns in gen make up one measure
       final short songLength = (short)((rand.nextDouble() * 3 + 3) * measureLength * 40);
       final byte scale = (byte)(rand.nextDouble() * NUM_SCALES);
@@ -72,7 +71,6 @@ public class util_Music{
       gen[3][0] = key;
       
       //Fill with default value
-      
       for(byte r = 0; r < gen.length; r++)
          for(short c = 1; c < gen[0].length; c++)
             gen[r][c] = Byte.MIN_VALUE;
@@ -83,10 +81,21 @@ public class util_Music{
       
       byte[] beat = new byte[measureLength * (byte)(rand.nextDouble() * difficulty + 4)];
       for(byte i = 0; i < beat.length; i++){
-         if(rand.nextBoolean())
-            beat[i] = 0;
-         else
-            beat[i] = Byte.MIN_VALUE;
+         if(i == 0){
+            if(rand.nextBoolean())
+               beat[i] = 0;
+            else
+               beat[i] = Byte.MIN_VALUE;
+            continue;
+         }
+         
+         if(rand.nextDouble() < (difficulty + 1) / 10.0){
+            if(beat[i - 1] == 0)
+               beat[i] = Byte.MIN_VALUE;
+            else
+               beat[i] = 0;
+         }else
+            beat[i] = beat[i - 1];
       }
       
       /*
@@ -120,6 +129,9 @@ public class util_Music{
       mp.run();
    }
    
+   /**
+    * Thread class to play music without interrupting other processes.
+    */
    private static class MusicPlayer extends Thread{
       
       private Synthesizer synth;
@@ -179,7 +191,7 @@ public class util_Music{
                   }
                   
                   //Play the note
-                  channels[i].noteOn(60 + song[i][beat], 100 * noteLength);
+                  channels[i].noteOn(60 + song[i][beat], 50);
                }
             }
             

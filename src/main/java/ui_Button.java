@@ -57,7 +57,7 @@ public class ui_Button{
     * @param g2                        Graphics2D object to draw on to.
     */
    public void draw(Graphics2D g2){
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       
       //Draw text in center of box
       short textWidth = (short)(g2.getFontMetrics().stringWidth(text)),

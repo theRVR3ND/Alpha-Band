@@ -45,7 +45,7 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       gamemodeList = new ui_Table(
          0.4f, 0.3f, 0.2f, 0.3f,
          new String[] {"Game Mode"},
-         new float[] {0.54f}
+         new float[] {0.41f}
       );
       ArrayList<String[]> modeList = new ArrayList<String[]>();
       modeList.add(new String[] {"Competition"});
@@ -108,15 +108,13 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       //Redirect to other menus
       if(buttons[0].isDown()){
          //Launch server
-         byte currMode = (byte)(gamemodeList.getScrollInd() + gamemodeList.getHoverRow());
-         
-         g_Server server = new g_Server(nameTextbox.getContents(), currMode);
+         g_Server server = new g_Server(nameTextbox.getContents(), gamemodeList.getHoverRow());
          (new Thread(server)).start();
          
          //Join said server. Use loopback IP address.
          ui_Menu.servers.joinServer(
             "127.0.0.1",
-            (byte)(gamemodeList.getHoverRow() + gamemodeList.getScrollInd())
+            gamemodeList.getHoverRow()
          );
       
       }else if(buttons[1].isDown()){

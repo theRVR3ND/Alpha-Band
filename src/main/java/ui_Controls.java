@@ -49,7 +49,7 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
       modInd = -1;
       
       //Read in existing key settings and generate table format
-      String[] lines = util_Utilities.readFromFile("menu/Binds.cfg");
+      String[] lines = util_Utilities.readFromFile("menu/binds.cfg");
       ArrayList<String[]> tableContents = new ArrayList<String[]>();
       for(String s : lines){
          //Actual bind list
@@ -135,7 +135,7 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
          String[] lines = new String[binds.size()];
          for(int i = 0; i < lines.length; i++)
             lines[i] = binds.get(i).toString();
-         util_Utilities.writeToFile(lines, "menu/Binds.cfg");
+         util_Utilities.writeToFile(lines, "menu/binds.cfg");
          modInd = -1;
       
       }else{
@@ -151,11 +151,8 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
          
          //Check if table row clicked
          }else if(table.getHoverRow() != -1){
-            //Client wants to modify binding
-            modInd = table.getHoverRow() + table.getScrollInd();
-            
             //Update table
-            table.getContents().get(modInd)[1] = "???";
+            table.getContents().get(table.getHoverRow())[1] = "???";
          }
          return;
       }

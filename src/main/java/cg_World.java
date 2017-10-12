@@ -36,12 +36,15 @@ public class cg_World extends bg_World{
     * @param g2               Graphics object to render into.
     */
    public void render(Graphics2D g2){
-      //Graphics defaults
-      g2.setColor(ui_Colors.getColor(ui_Colors.BACKGROUND));
+      //Fill background
+      g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
       g2.fillRect(0, 0, cg_Client.SCREEN_WIDTH, cg_Client.SCREEN_HEIGHT);
       
       //Figure out who we control
       bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
+      
+      if(player == null)
+         return;
       
       //Draw incomming notes
       //g2.setColor(Color.BLACK);

@@ -26,7 +26,7 @@ public class ui_Checkbox{
    }
    
    public void draw(Graphics2D g2){
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       
       //Draw box
       g2.drawRect(getX(), getY(), getSize(), getSize());

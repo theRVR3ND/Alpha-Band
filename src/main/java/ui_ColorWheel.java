@@ -67,7 +67,7 @@ public class ui_ColorWheel{
             360 / numSlice + 2
          );
       }
-      g2.setColor(ui_Colors.getColor(ui_Colors.BACKGROUND));
+      g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
       g2.fillOval(
          getX() + getDiameter() / 4,
          getY() + getDiameter() / 4,

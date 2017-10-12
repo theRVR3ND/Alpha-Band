@@ -87,8 +87,36 @@ public class ui_Table{
          return;
       
       //Draw table outline
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g2.drawRect(getX(), getY(), getWidth(), getHeight());
+      
+      //Draw table contents
+      for(byte c = 0; c < labels.length; c++){
+         //Draw column label
+         if(labels[c] != null)
+            g2.drawString(
+               labels[c],
+               (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
+               (short)((y - 0.01) * cg_Client.SCREEN_HEIGHT)
+            );
+         //Draw row contents
+         for(byte r = 0; r < h / rowGap && r + scrollInd < contents.size(); r++){
+            //Draw highlighted row if needed
+            if(r == hoverRow - scrollInd){
+               g2.setColor(ui_Theme.getColor(ui_Theme.HIGHLIGHT));
+               g2.fillRect(getX() + 1, (short)((y + (hoverRow - scrollInd) * rowGap) * cg_Client.SCREEN_HEIGHT + 1),
+                           getWidth() - 1, (short)(rowGap * cg_Client.SCREEN_HEIGHT));
+               g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
+            }
+            
+            //Draw text
+            if(contents.get(r + scrollInd)[c] != null){
+               g2.drawString(contents.get(r + scrollInd)[c],
+                             (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
+                             (short)((y + r * rowGap + 0.035) * cg_Client.SCREEN_HEIGHT));
+            }
+         }
+      }
       
       //Draw scrollbar (all ye who enter, abandon all hope)
       if(!contents.isEmpty()){
@@ -101,35 +129,9 @@ public class ui_Table{
          if(barY < getY())
             barY = getY();
          
-         g2.setColor(ui_Colors.getColor(ui_Colors.HIGHLIGHT));
+         g2.setColor(ui_Theme.getColor(ui_Theme.HIGHLIGHT));
          g2.fillRect((short)((x + w) * cg_Client.SCREEN_WIDTH) + 1, barY,
                      (short)(0.01 * cg_Client.SCREEN_WIDTH), barHeight);
-         
-         //Draw highlight box for hovered row
-         if(hoverRow >= 0){
-            g2.fillRect(getX() + 1, (short)((y + hoverRow * rowGap) * cg_Client.SCREEN_HEIGHT + 1),
-                        getWidth() - 1, (short)(rowGap * cg_Client.SCREEN_HEIGHT) - 2);
-         }
-      }
-      
-      //Draw table contents
-      g2.setColor(ui_Colors.getColor(ui_Colors.TEXT));
-      for(byte c = 0; c < labels.length; c++){
-         //Draw column label
-         if(labels[c] != null)
-            g2.drawString(
-               labels[c],
-               (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
-               (short)((y - 0.01) * cg_Client.SCREEN_HEIGHT)
-            );
-         //Draw row contents
-         for(byte r = 0; r < h / rowGap && r + scrollInd < contents.size(); r++){
-            if(contents.get(r + scrollInd)[c] != null){
-               g2.drawString(contents.get(r + scrollInd)[c],
-                             (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
-                             (short)((y + r * rowGap + 0.035) * cg_Client.SCREEN_HEIGHT));
-            }
-         }
       }
    }
    
@@ -251,7 +253,7 @@ public class ui_Table{
       if(cX > x * cg_Client.SCREEN_HEIGHT && cX < (x + w) * cg_Client.SCREEN_WIDTH){
          byte currHover = (byte)Math.floor((cY - y * cg_Client.SCREEN_HEIGHT) / (rowGap * cg_Client.SCREEN_HEIGHT));
          if(currHover >= 0 && currHover < (h / rowGap) && Math.min(h / rowGap, contents.size()) > currHover)
-            hoverRow = currHover;
+            hoverRow = (byte)(currHover + scrollInd);
       }
    }
    
@@ -267,6 +269,7 @@ public class ui_Table{
       if(sX > getX() && sX < getX() + getWidth() && sY > getY() && sY < getY() + getHeight()){
          //Check if can scroll
          scrollInd += amount;
+         
          if(scrollInd < 0)
             scrollInd = 0;
          else if(scrollInd > contents.size() - (h / rowGap))

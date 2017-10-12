@@ -29,7 +29,7 @@ public class ui_Settings extends ui_Menu implements MouseWheelListener{
       };
       
       sliders = new ui_Slider[] {
-         new ui_Slider(0.4f, 0.4f, 0.2f, 0.02f, "Volume:", (short)0, (short)100), //Sound slider
+         new ui_Slider(0.4f, 0.45f, 0.2f, 0.02f, "Volume:", (short)0, (short)100), //Sound slider
       };
       
       themeList = new ui_Table(
@@ -37,16 +37,27 @@ public class ui_Settings extends ui_Menu implements MouseWheelListener{
          new String[] {"Themes"},
          new float[] {0.41f}
       );
-      for(String s : ui_Colors.themeNames){
+      
+      //Add all themes to theme list
+      for(String s : ui_Theme.NAMES){
          themeList.getContents().add(new String[] {s});
       }
       themeList.setHoverRow((byte)0);
       
       //Load settings from file
-      String[] settings = util_Utilities.readFromFile("menu/Settings.cfg");
-      for(byte i = 0; i < settings.length; i++){
-         sliders[i].setValue(Short.parseShort(settings[i]));
+      String[] settings = util_Utilities.readFromFile("menu/settings.cfg");
+      ui_Theme.currTheme = Byte.parseByte(settings[0]);
+      
+      if(ui_Theme.currTheme < 0 || ui_Theme.currTheme >= ui_Theme.NUM_THEMES)
+         ui_Theme.currTheme = ui_Theme.CLASSIC;
+      
+      themeList.setHoverRow(ui_Theme.currTheme);
+      for(byte i = 1; i < settings.length; i++){
+         sliders[i - 1].setValue(Short.parseShort(settings[i]));
       }
+      
+      //Add mouse wheel listener
+      addMouseWheelListener(this);
    }
    
    /**
@@ -84,11 +95,12 @@ public class ui_Settings extends ui_Menu implements MouseWheelListener{
       if(buttons[0].isDown()){
          cg_Client.frame.setContentPane(ui_Menu.setup);
          //Write settings to file
-         String[] settings = new String[sliders.length];
+         String[] settings = new String[sliders.length + 1];
+         settings[0] = themeList.getHoverRow() + "";
          for(byte i = 0; i < sliders.length; i++){
-            settings[i] = sliders[i].getValue() + "";
+            settings[i + 1] = sliders[i].getValue() + "";
          }
-         util_Utilities.writeToFile(settings, "menu/Settings.cfg");
+         util_Utilities.writeToFile(settings, "menu/settings.cfg");
       
       }else{
          //Check if color theme has been changed
@@ -97,7 +109,7 @@ public class ui_Settings extends ui_Menu implements MouseWheelListener{
          if(themeList.getHoverRow() < 0){
             themeList.setHoverRow(currHover);
          }else{
-            ui_Colors.currTheme = themeList.getHoverRow();
+            ui_Theme.currTheme = (byte)(themeList.getHoverRow());
          }
          
          return;
