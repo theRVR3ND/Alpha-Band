@@ -60,6 +60,11 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
    public static ui_Controls controls;
    
    /**
+    * Song voting menu.
+    */
+   public static ui_Vote vote;
+   
+   /**
     * Default set font for graphics.
     */
    public static final Font defaultFont = new Font(
@@ -74,14 +79,15 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
    public static void load(){
       Thread load = new Thread() {
          public void run(){
+                settings = new ui_Settings();
                     main = new ui_Main();
                  servers = new ui_Servers();
             createServer = new ui_CreateServer();
                    guide = new ui_Guide();
                    setup = new ui_Setup();
-                settings = new ui_Settings();
                   player = new ui_Player();
                 controls = new ui_Controls();
+                    vote = new ui_Vote();
          }
       };
       load.start();

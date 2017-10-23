@@ -53,6 +53,9 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       if(connection == null)
          return;
       
+      //Check if we need to show vote screen
+      //if()
+      
       //Process current actions
       sendActions();
       

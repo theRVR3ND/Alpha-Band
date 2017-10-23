@@ -37,7 +37,7 @@ public class util_Music{
    
    //private static final byte[] KEYS = new byte[] {0, 1, 2, 3, 4, 5, 6};
    
-   public static final short[] INSTRUMENTS = new short[] {0, 27, 118, 38, 30, 113};
+   public static final short[] INSTRUMENTS = new short[] {0, 27, 34, 38, 30, 113};
    
    public static void main(String[] args){
       playSong(generateSong((byte)2, (short)(Math.random() * Short.MAX_VALUE)));
@@ -155,7 +155,10 @@ public class util_Music{
             instruments = synth.getDefaultSoundbank().getInstruments();
             
             for(byte i = 0; i < INSTRUMENTS.length; i++){
-               channels[i].programChange(instruments[INSTRUMENTS[i]].getPatch().getProgram());
+               if(i == DRUMS)
+                  channels[9].programChange(instruments[INSTRUMENTS[i]].getPatch().getProgram());
+               else
+                  channels[i].programChange(instruments[INSTRUMENTS[i]].getPatch().getProgram());
             }
             
          }catch(MidiUnavailableException e){
@@ -174,10 +177,13 @@ public class util_Music{
          //Progress through each beat
          for(short beat = 1; beat < song[0].length; beat++){
             //Play each instrument's note
-            for(byte i = 0; i < song.length; i++){
+            for(byte i = 0; i < INSTRUMENTS.length; i++){
                //End previously played note
                if((song[i][beat - 1] != Byte.MIN_VALUE && song[i][beat] != song[i][beat - 1]) || song[i][beat] == Byte.MIN_VALUE){
-                  channels[i].noteOff(song[i][beat - 1]);
+                  if(i == DRUMS)
+                     channels[9].noteOff(30 + song[i][beat - 1]);
+                  else
+                     channels[i].noteOff(60 + song[i][beat - 1]);
                
                //Play new note
                }else if(beat == 1 || song[i][beat - 1] != song[i][beat]){
@@ -191,7 +197,14 @@ public class util_Music{
                   }
                   
                   //Play the note
+<<<<<<< HEAD
+                  if(i == DRUMS)
+                     channels[9].noteOn(30 + song[i][beat], 50);
+                  else
+                     channels[i].noteOn(60 + song[i][beat], 50);
+=======
                   channels[i].noteOn(60 + song[i][beat], 50);
+>>>>>>> 1bb0dee9d52a07453c069fd9a15b4e14c45e6638
                }
             }
             

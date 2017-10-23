@@ -31,6 +31,11 @@ public class g_Connection extends Thread implements bg_Constants{
    private OutputStream out;
    
    /**
+    * Whether the current vote has been sent to client.
+    */
+   private boolean sentBallot;
+   
+   /**
     * ID for making this unique.
     */
    private final byte clientID;
@@ -53,6 +58,9 @@ public class g_Connection extends Thread implements bg_Constants{
       }catch(IOException e){
          e.printStackTrace();
       }
+      
+      //Initialize stuff
+      sentBallot = false;
       
       //Keep track of this client's ID
       clientID = clientCount++;
@@ -81,7 +89,27 @@ public class g_Connection extends Thread implements bg_Constants{
             }
             
             //Send client relevant world update info
-            if(g_Server.server.getWorld().getPlayer(clientID) != null){
+            if(g_Server.server.getWorld().getCurrVote() != null && !sentBallot){
+               byte[] toSend = new byte[Byte.MAX_VALUE];
+               byte[][] currVote = g_Server.server.getWorld().getCurrVote();
+               byte ind = 1;
+               
+               //Add all songs on ballot into toSend
+               for(byte r = 0; r < currVote.length; r++){
+                  byte[] songInfo = g_Server.server.getWorld().getSongList().get(currVote[r][0]);
+                  for(byte i = 0; i < songInfo.length; i++){
+                     toSend[ind++] = songInfo[i];
+                  }
+               }
+               
+               //Add stream tag
+               toSend[0] = VOTE;
+               
+               //Send it!
+               writeOut(toSend);
+               sentBallot = true;
+            
+            }else if(g_Server.server.getWorld().getPlayer(clientID) != null){
                LinkedList<byte[]> data = g_Server.server.getWorld().getRelevantData(clientID);
                for(byte i = 0; i < data.size(); i++){
                   //Add UPDATE stream tag

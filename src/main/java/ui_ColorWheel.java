@@ -56,7 +56,7 @@ public class ui_ColorWheel{
     */
    public void draw(Graphics2D g2){
       //Draw color wheel
-      final byte numSlice = 90;
+      final byte numSlice = 120;
       for(short theta = 0; theta < 360; theta += (360 / numSlice)){
          g2.setColor(generateColor(theta));
          g2.fillArc(

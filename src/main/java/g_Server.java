@@ -14,7 +14,7 @@ import java.util.*;
 import java.net.*;
 import java.io.*;
 
-public class g_Server implements Runnable, bg_Constants{
+public class g_Server extends Thread implements bg_Constants{
    
    /**
     * Connection with clients.
@@ -49,23 +49,22 @@ public class g_Server implements Runnable, bg_Constants{
          //Launch server
          try{
             socket = new ServerSocket(PORT * 2);
-         
-            //Initialize others
-            this.name = name;
-            
-            clients = new ArrayList<g_Connection>();
-            world = new g_World(gamemode);
-            
-            server = this;
          }catch(IOException e){
             System.out.println(
                "Fail! Server could not be launched. Horrible. " +
-               "The Chinese are making this all up. " +
-               "Sad!"
+               "The Chinese are making this all up. Sad!"
             );
             e.printStackTrace();
             System.exit(1);
          }
+         
+         //Initialize stuff
+         this.name = name;
+         
+         clients = new ArrayList<g_Connection>();
+         world = new g_World(gamemode);
+         
+         server = this;
          
          //Launch client request handler
          (new Thread(new g_Echo())).start();
@@ -106,7 +105,7 @@ public class g_Server implements Runnable, bg_Constants{
    /**
     * Return server's given name.
     */
-   public String getName(){
+   public String getServerName(){
       return name;
    }
    

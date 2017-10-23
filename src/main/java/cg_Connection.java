@@ -203,6 +203,15 @@ public class cg_Connection extends Thread implements bg_Constants{
             cg_Panel.gamePanel.getWorld().setData(send);
             
             break;
+         
+         //Start vote
+         case(VOTE):
+            
+            ui_Menu.vote.startVote(info);
+            cg_Client.frame.setContentPane(ui_Menu.vote);
+            cg_Client.frame.revalidate();
+            
+            break;
       }
    }
 }

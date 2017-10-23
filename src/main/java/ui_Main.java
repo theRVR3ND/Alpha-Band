@@ -9,9 +9,15 @@
  */
 
 import java.awt.*;
+import java.awt.image.*;
 import java.awt.event.*;
 
 public class ui_Main extends ui_Menu{
+   
+   /**
+    * Game icon.
+    */
+   private final BufferedImage icon = util_Utilities.loadImage("menu/icon.png");
    
    /**
     * Constructor. Initialize all buttons in menu.
@@ -32,6 +38,18 @@ public class ui_Main extends ui_Menu{
     */
    public void paintComponent(Graphics g){
       super.paintComponent(g);
+      
+      //Draw logo
+      Graphics2D g2 = util_Utilities.improveQuality(g);
+      g2.drawImage(
+         icon,
+         (int)(0.45 * cg_Client.SCREEN_WIDTH),
+         (int)(0.1 * cg_Client.SCREEN_HEIGHT),
+         (int)(0.1 * cg_Client.SCREEN_WIDTH),
+         (int)(0.1 * cg_Client.SCREEN_WIDTH),
+         null
+      );
+      
       repaint();
    }
    

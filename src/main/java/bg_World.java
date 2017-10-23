@@ -32,7 +32,7 @@ public abstract class bg_World implements bg_Constants{
    
    protected final byte gamemode;
    
-   protected byte currSong;
+   protected byte[][] currSong;
    
    /**
     * Constructor.

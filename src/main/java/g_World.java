@@ -10,6 +10,7 @@
 
 import java.util.*;
 import java.awt.*;
+import java.io.*;
 
 public class g_World extends bg_World{
    
@@ -27,9 +28,19 @@ public class g_World extends bg_World{
    private HashMap<Byte, HashMap<Short, byte[]>> snapshots;
    
    /**
-    * Current song vote. Null if no vote active.
+    * Current song vote. Row 1 = index of song, row 2 = # vote.
     */
-   private byte[] vote;
+   private byte[][] currVote;
+   
+   /**
+    * Countdown for vote.
+    */
+   private short voteTimeout;
+   
+   /**
+    * Info of all songs that can be played.
+    */
+   private static ArrayList<byte[]> songList;
    
    /**
     * Constructor.
@@ -37,15 +48,52 @@ public class g_World extends bg_World{
    public g_World(byte gamemode){
       super(gamemode);
       
-      this.vote = null;
-      this.currSong = Byte.MIN_VALUE;
-      
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
       
       //Spawn fake player to store world data
       spawnPlayer("", Color.WHITE, (byte)-1);
+         
+      //Load all songs on desktop
+      try{
+         File[] folder = (new File(util_Utilities.getDirectory() + "/resources/songs")).listFiles();
+         songList = new ArrayList<>(folder.length);
+         
+         //Read in each song's info
+         for(File f : folder){
+            //Input lines
+            Scanner input = new Scanner(f);
+            
+            //Check if file is in correct format
+            String songName = f.getName();
+            songName = songName.substring(0, songName.indexOf("."));
+            
+            if(songName.equals("example"))
+               continue;
+            
+            byte[] info = new byte[songName.length() + 4];
+            
+            //Put in other song info
+            for(byte i = 0; i < 3; i++)
+               info[i] = input.nextByte();
+            
+            //Put in song name
+            info[3] = (byte)(songName.length());
+            for(byte i = 0; i < songName.length(); i++){
+               info[i + 4] = (byte)(songName.charAt(i));
+            }
+            
+            songList.add(info);
+         }
+      }catch(IOException e){
+         System.out.println("Error while loading songs.");
+         e.printStackTrace();
+         System.exit(1);
+      }
+      
+      //Start voting
+      startVote();
    }
    
    /**
@@ -62,26 +110,78 @@ public class g_World extends bg_World{
             dataToBytes(entities.get(key).getData(new LinkedList<Object>()))
          );
       }
+      
+      //Update current vote
+      voteTimeout--;
+      if(voteTimeout == 0){
+         //Figure out which song won. Start winning song.
+         byte max = Byte.MIN_VALUE;
+         byte ind = 0;
+         for(byte i = 0; i < currVote.length; i++){
+            if(max < currVote[i][1]){
+               max = currVote[i][1];
+               ind = i;
+            }
+         }
+         
+         //If randomly generating/picking song
+         if(ind == 3)
+            ind = (byte)(Math.random() * 3);
+         else if(ind == 4)
+            ind = -1;
+         
+         startSong(ind);
+      }
    }
    
-   public void startSong(){
+   public byte[][] getCurrVote(){
+      return currVote;
+   }
+   
+   public ArrayList<byte[]> getSongList(){
+      return songList;
+   }
+   
+   public void startVote(){
+      currVote = new byte[5][2];
+      voteTimeout = (short)(300);
+      
+      //Choose three songs to vote on
+      for(byte i = 0; i < Math.min(3, songList.size()); i++){
+         //Random difficulty
+         final byte diff = (byte)(Math.pow(Math.random() - 0.5, 2) * 10 * (Math.random() - 0.5) + 2);
+         
+         //Find random song with correct difficulty
+         byte ind = (byte)(Math.random() * songList.size());
+         //while(songList.get(ind)[0] != diff){
+         //   ind = (byte)((ind + 1) % songList.size());
+         //}
+         
+         //Track song we're voting on
+         currVote[i][0] = ind;
+      }
+   }
+   
+   /**
+    * Trigger song playing in game.
+    */
+   public void startSong(byte ind){
       bg_Player infoEnt = getPlayer((byte)-1);
       
       //Song progress data is transferred through infoEnt's name
-      String name = (char)(currSong) + "";
+      String name = (char)(currVote[ind][0]) + "";
       
       //Randomly generated song to be played
-      if(currSong == -1){
+      if(ind == -1){
          //Send seed info through infoEnt's data
          byte[] bytes = shortToBytes((short)(Math.random() * Short.MAX_VALUE));
          name += (char)(bytes[0]) + "" + (char)(bytes[1]);
       
       //Preset song selected
       }else{
-         name += (char)(currSong);
+         name += (char)(ind);
       }
       
-      name += (char)(currBeat);
       infoEnt.setName(name);
    }
    

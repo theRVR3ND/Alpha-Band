@@ -43,6 +43,11 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
    protected static ArrayList<String> messages;
    
    /**
+    * Index in messages that scroll is at.
+    */
+   protected static short messageScroll;
+   
+   /**
     * Counter for message fade.
     */
    protected static byte messageTimeout;
@@ -80,6 +85,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       
       //Initialize stuff
       messages = new ArrayList<String>();
+      messageScroll = 0;
       messageTimeout = Byte.MAX_VALUE;
       chatMessage = null;
       lastUpdateTime = 0;
@@ -167,25 +173,31 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       //Modifying chat message
       if(chatMessage != null){
          
-         //Delete/cancel message
+         //Delete message
          if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
-            //Cancelled chat
-            if(chatMessage.length() == 0)
-               chatMessage = null;
-            else
-               chatMessage = chatMessage.substring(0, chatMessage.length() - 1);
+            chatMessage = chatMessage.substring(0, chatMessage.length() - 1);
          
          //Send message
          }else if(e.getKeyCode() == KeyEvent.VK_ENTER){
             if(!chatMessage.equals(""))
                connection.writeOut(chatMessage);
             chatMessage = null;
+            messageScroll = 0;
          
          //Add to message
          }else if(Character.isDefined(e.getKeyChar())){
             if(chatMessage.length() < Byte.MAX_VALUE){//Limit message length
                chatMessage += e.getKeyChar();
             }
+         
+         //Scroll through messages
+         }else if(e.getKeyCode() == KeyEvent.VK_UP){
+            if(messageScroll < messages.size() - 5)
+               messageScroll++;
+         
+         }else if(e.getKeyCode() == KeyEvent.VK_DOWN){
+            if(messageScroll > 0)
+               messageScroll--;
          }
       
       //Starting chat message
@@ -234,7 +246,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
          g2.getColor().getRed(),
          g2.getColor().getGreen(),
          g2.getColor().getBlue(),
-         alpha + 128
+         alpha - Byte.MIN_VALUE
       ));
       
       //Show received messages
@@ -242,7 +254,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       for(byte i = 0; i < 5; i++){
          try{
             g2.drawString(
-               messages.get(messages.size() - i - 1),
+               messages.get(messages.size() - i - 1 - messageScroll),
                (short)(0.01 * getWidth()),
                (short)(getHeight() - (fontMetrics.getHeight() * (1.5 + i)))
             );
