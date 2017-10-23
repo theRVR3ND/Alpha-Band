@@ -63,7 +63,7 @@ public class ui_Theme{
       {new Color(216, 197, 101), Color.DARK_GRAY,  new Color(100, 100, 100, 130), Color.WHITE},
       {new Color(50, 114, 22),   Color.WHITE,      new Color(100, 100, 100, 130), Color.WHITE},
       {new Color(43, 50, 91),    Color.WHITE,      new Color(200, 200, 200, 130), Color.WHITE},
-      {new Color(87, 0, 127),    Color.WHITE,      new Color(200, 200, 200, 130), Color.WHITE},
+      {new Color(87, 0, 127),    Color.PINK,       new Color(200, 200, 200, 130), Color.WHITE},
       {Color.WHITE,              Color.DARK_GRAY,  new Color(128, 128, 128, 112), Color.BLACK},
       {Color.DARK_GRAY,          Color.LIGHT_GRAY, new Color(200, 200, 200, 112), Color.WHITE}
    };

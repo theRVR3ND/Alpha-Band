@@ -150,10 +150,12 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
     * @param IP                     IP of server to connect to.
     */
    public void joinServer(String IP){
-      joinServer(
-         IP,
-         Byte.parseByte(list.getContents().get(list.getHoverRow())[2])
-      );
+      byte gamemode = 0;
+      if(list.getContents().get(list.getHoverRow()).equals("Competition"))
+         gamemode = COMPETITION;
+      else
+         gamemode = COLLAB;
+      joinServer(IP, gamemode);
    }
    
    public void joinServer(String IP, byte gamemode){
@@ -182,7 +184,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
        */
       public void run(){
          //Maximum time to wait for connection (in milliseconds)
-         byte timeout = 100;
+         short timeout = 300;
          
          //Find subnet (LAN) IP
          String networkIP = "";
@@ -234,7 +236,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
                      gamemode = "Collab";
                   
                   //Format server info
-                  String[] serverInfo = new String[4];
+                  String[] serverInfo = new String[5];
                   
                   serverInfo[0] = new String(buff, 1, buff[0]);            //Server name
                   serverInfo[1] = pingIP;                                  //Server IP

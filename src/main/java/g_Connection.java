@@ -235,6 +235,7 @@ public class g_Connection extends Thread implements bg_Constants{
          //Player has cast vote on song choice
          case(VOTE):
             
+            g_Server.server.getWorld().tallyVote(info[1]);
             break;
       }
    }

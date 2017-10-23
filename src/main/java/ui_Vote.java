@@ -23,7 +23,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
     */
    public ui_Vote(){
       buttons = new ui_Button[] {
-         new ui_Button("SUBMIT", 0.5f, 0.85f)
+         new ui_Button("SUBMIT", 0.5f, 0.75f)
       };
       
       voteList = new ui_Table(
@@ -110,8 +110,20 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       
       //Submit vote
       if(buttons[0].isDown()){
-         //Do shit here
+         //Send vote back to server
+         if(voteList.getHoverRow() >= 0){
+            cg_Panel.getConnection().writeOut(
+               new byte[] {
+                  VOTE,
+                  voteList.getHoverRow()
+               }
+            );
+            
+            //Return to game panel
+            cg_Client.frame.setContentPane(cg_Panel.gamePanel);
+         }
       }else{
+         voteList.checkHover((short)e.getX(), (short)e.getY());
          return;
       }
       
