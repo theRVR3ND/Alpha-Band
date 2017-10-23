@@ -42,7 +42,6 @@ public class ui_Theme{
     * Theme names. Parallel to THEMES.
     */
    public static final String[] NAMES = new String[] {
-<<<<<<< HEAD
       "Classic",
       "Red",
       "Orange",
@@ -52,9 +51,6 @@ public class ui_Theme{
       "Purple",
       "White",
       "Dark"
-=======
-      "Classic", "Red", "Orange", "Yellow", "Green", "Blue", "Purple", "White", "Dark"
->>>>>>> 1bb0dee9d52a07453c069fd9a15b4e14c45e6638
    };
    
    /**

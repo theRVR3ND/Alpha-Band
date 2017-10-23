@@ -197,14 +197,10 @@ public class util_Music{
                   }
                   
                   //Play the note
-<<<<<<< HEAD
                   if(i == DRUMS)
                      channels[9].noteOn(30 + song[i][beat], 50);
                   else
                      channels[i].noteOn(60 + song[i][beat], 50);
-=======
-                  channels[i].noteOn(60 + song[i][beat], 50);
->>>>>>> 1bb0dee9d52a07453c069fd9a15b4e14c45e6638
                }
             }
             

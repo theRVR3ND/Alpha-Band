@@ -18,8 +18,6 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
    
    private byte[] currVotes;
    
-   private ui_Table voteList;
-   
    /**
     * Constructor. Read previous settings from text file.
     */
@@ -29,16 +27,9 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       };
       
       voteList = new ui_Table(
-<<<<<<< HEAD
          0.3f, 0.1f, 0.4f, 0.4f,
          new String[] {"Song", "Difficulty", "Length"},
          new float[] {0.31f, 0.5f, 0.6f}
-      );
-      
-=======
-         0.4f, 0.1f, 0.2f, 0.2f,
-         new String[] {"Vote"},
-         new float[] {0.41f}
       );
       
       //Add all song options to list
@@ -47,8 +38,6 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       
       String[] settings = util_Utilities.readFromFile("menu/songList.cfg");
       
-      
->>>>>>> 1bb0dee9d52a07453c069fd9a15b4e14c45e6638
       //Add key listener for entering player name
       this.setFocusable(true);
       this.addKeyListener(this);
@@ -157,7 +146,6 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
     * @param e                   MouseEvent to process.
     */
    public void mouseDragged(MouseEvent e){}
-<<<<<<< HEAD
    
    public void mouseWheelMoved(MouseWheelEvent e){
       voteList.checkScroll(
@@ -166,6 +154,4 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
          (byte)e.getWheelRotation()
       );
    }
-=======
->>>>>>> 1bb0dee9d52a07453c069fd9a15b4e14c45e6638
 }

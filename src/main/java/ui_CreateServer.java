@@ -109,11 +109,7 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       if(buttons[0].isDown()){
          //Launch server
          g_Server server = new g_Server(nameTextbox.getContents(), gamemodeList.getHoverRow());
-<<<<<<< HEAD
          server.start();
-=======
-         (new Thread(server)).start();
->>>>>>> 1bb0dee9d52a07453c069fd9a15b4e14c45e6638
          
          //Join said server. Use loopback IP address.
          ui_Menu.servers.joinServer(
