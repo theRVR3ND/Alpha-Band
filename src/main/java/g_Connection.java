@@ -96,6 +96,8 @@ public class g_Connection extends Thread implements bg_Constants{
                
                //Add all songs on ballot into toSend
                for(byte r = 0; r < currVote.length; r++){
+                  if(currVote[r][0] == -1)
+                     continue;
                   byte[] songInfo = g_Server.server.getWorld().getSongList().get(currVote[r][0]);
                   for(byte i = 0; i < songInfo.length; i++){
                      toSend[ind++] = songInfo[i];

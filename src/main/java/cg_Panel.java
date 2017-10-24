@@ -198,6 +198,11 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
          }else if(e.getKeyCode() == KeyEvent.VK_DOWN){
             if(messageScroll > 0)
                messageScroll--;
+         
+         //Escape to pause menu
+         }else if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+            cg_Client.frame.setContentPane(ui_Menu.pause);
+            cg_Client.frame.revalidate();
          }
       
       //Starting chat message

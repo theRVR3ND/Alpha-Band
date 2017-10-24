@@ -148,18 +148,30 @@ public class g_World extends bg_World{
       voteTimeout = (short)(300);
       
       //Choose three songs to vote on
-      for(byte i = 0; i < Math.min(3, songList.size()); i++){
+      for(byte r = 0; r < 3; r++){
+         if(songList.size() < r + 1){
+            for(byte i = r; i < 3; i++)
+               currVote[i][0] = -1;
+            break;
+         }
+         
          //Random difficulty
          final byte diff = (byte)(Math.pow(Math.random() - 0.5, 2) * 10 * (Math.random() - 0.5) + 2);
          
          //Find random song with correct difficulty
          byte ind = (byte)(Math.random() * songList.size());
-         //while(songList.get(ind)[0] != diff){
-         //   ind = (byte)((ind + 1) % songList.size());
-         //}
+         test:
+            for(byte tolerance = 0; tolerance < 3; tolerance++){
+               for(byte i = 0; i < songList.size(); i++){
+                  if(Math.abs(songList.get(ind)[0] - diff) < tolerance){
+                     ind = (byte)((ind + 1) % songList.size());
+                     break test;
+                  }
+               }
+            }
          
          //Track song we're voting on
-         currVote[i][0] = ind;
+         currVote[r][0] = ind;
       }
    }
    

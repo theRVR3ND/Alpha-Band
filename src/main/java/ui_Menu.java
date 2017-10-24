@@ -64,6 +64,8 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
     */
    public static ui_Vote vote;
    
+   public static ui_Pause pause;
+   
    /**
     * Default set font for graphics.
     */
@@ -88,6 +90,7 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
                   player = new ui_Player();
                 controls = new ui_Controls();
                     vote = new ui_Vote();
+                   pause = new ui_Pause();
          }
       };
       load.start();

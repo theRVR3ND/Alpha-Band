@@ -27,7 +27,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       };
       
       voteList = new ui_Table(
-         0.3f, 0.1f, 0.4f, 0.4f,
+         0.3f, 0.1f, 0.4f, 0.3f,
          new String[] {"Song", "Difficulty", "Length"},
          new float[] {0.31f, 0.5f, 0.6f}
       );
