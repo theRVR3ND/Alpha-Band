@@ -10,6 +10,7 @@
 
 import java.util.*;
 import java.awt.*;
+import java.awt.image.*;
 import java.awt.event.*;
 
 //                                                    Dost thou even implement, bro?
@@ -27,6 +28,8 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
     * Set of all currently-triggered actions.
     */
    private HashSet<Byte> currActions;
+   
+   private final BufferedImage background = util_Utilities.loadImage("game/springBackground.png");
    
    /**
     * Constructor.
@@ -53,14 +56,20 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       if(connection == null)
          return;
       
-      //Check if we need to show vote screen
-      //if()
-      
       //Process current actions
       sendActions();
       
       //Improve rendering quality
       Graphics2D g2 = util_Utilities.improveQuality(g);
+      
+      //Draw background
+      g2.drawImage(
+         background,
+         0, 0,
+         cg_Client.SCREEN_WIDTH,
+         cg_Client.SCREEN_HEIGHT,
+         null
+      );
       
       //World rendering handled in cg_Renderer
       world.render(g2);

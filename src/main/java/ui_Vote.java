@@ -55,7 +55,8 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       //Improve rendering quality
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
-      voteList.draw(g2);
+      if(voteList.getContents().size() > 0)
+         voteList.draw(g2);
       
       repaint();
    }
@@ -68,8 +69,11 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       byte i = 1;
       for(byte j = 0; j < 3; j++){
          //Check if there is info to extract
-         if(info[i + 1] == 0 && info[i + 2] == 0)
+         if(info[i + 1] == 0 && info[i + 2] == 0){
+            for(byte k = j; k < 3; k++)
+               voteList.getContents().add(new String[] {" ", " ", " "});
             break;
+         }
          
          //Extract song info
          String difficulty = info[i] + "";
@@ -85,8 +89,8 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       }
       
       //Add all song options to list
-      voteList.getContents().add(new String[] {"Generate a Song", "", ""});
-      voteList.getContents().add(new String[] {"Random Song", "", ""});
+      voteList.getContents().add(new String[] {"Generate a Song", "N", "N"});
+      voteList.getContents().add(new String[] {"Random Song", "N", "N"});
    }
    
    /**

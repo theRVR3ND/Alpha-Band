@@ -114,7 +114,7 @@ public class g_World extends bg_World{
       //Update current vote
       if(voteTimeout > 0){
          voteTimeout--;
-      }else if(voteTimeout == 0){
+      }else if(voteTimeout == 0 && currVote != null){
          //Figure out which song won. Start winning song.
          byte max = Byte.MIN_VALUE;
          byte ind = 0;
@@ -203,8 +203,6 @@ public class g_World extends bg_World{
     */
    public void tallyVote(byte vote){
       currVote[vote][1]++;
-      for(byte r = 0; r < currVote.length; r++)
-         System.out.println(currVote[r][1] + "");
    }
    
    /**

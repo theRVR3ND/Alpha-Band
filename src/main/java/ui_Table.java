@@ -110,12 +110,12 @@ public class ui_Table{
             }
             
             //Draw text
-            if(contents.get(r + scrollInd)[c] != null){
+            if(c < contents.get(r + scrollInd).length && contents.get(r + scrollInd)[c] != null){
                g2.drawString(contents.get(r + scrollInd)[c],
                              (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
                              (short)((y + r * rowGap + 0.035) * cg_Client.SCREEN_HEIGHT));
             }
-         }
+      }
       }
       
       //Draw scrollbar (all ye who enter, abandon all hope)

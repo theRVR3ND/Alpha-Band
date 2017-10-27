@@ -10,6 +10,7 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.*;
 import java.awt.event.*;
 
 public abstract class ui_Menu extends JPanel implements MouseListener, MouseMotionListener{
@@ -18,6 +19,8 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
     * Array of all buttons in screen. Initialized in child class.
     */
    protected ui_Button[] buttons;
+   
+   private final BufferedImage background = util_Utilities.loadImage("menu/background.png");
    
    /**
     * Main menu page.
@@ -64,6 +67,9 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
     */
    public static ui_Vote vote;
    
+   /**
+    * Game pause menu.
+    */
    public static ui_Pause pause;
    
    /**
@@ -116,8 +122,13 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
       //Draw background
-      g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
-      g2.fillRect(0, 0, getWidth(), getHeight());
+      g2.drawImage(
+         background,
+         0, 0,
+         cg_Client.SCREEN_WIDTH,
+         cg_Client.SCREEN_HEIGHT,
+         null
+      );
       
       //Write program info (so I don't waste another hour changing the wrong project)
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));

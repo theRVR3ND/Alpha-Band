@@ -27,7 +27,7 @@ public class ui_Main extends ui_Menu{
          new ui_Button("SERVERS", 0.5f, 0.4f),
          new ui_Button("SETUP",   0.5f, 0.55f),
          new ui_Button("GUIDE",   0.5f, 0.7f),
-         new ui_Button("EXIT",   0.5f, 0.85f)
+         new ui_Button("EXIT",    0.5f, 0.85f)
       };
    }
    
