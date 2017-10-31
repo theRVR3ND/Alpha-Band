@@ -108,7 +108,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       lastUpdateTime += deltaTime;
       if(deltaTime < 1000.0 / MAX_FPS){
          try{
-            Thread.sleep(1000 / MAX_FPS - deltaTime);
+            Thread.sleep((int)(1000.0 / MAX_FPS - deltaTime));
          }catch(InterruptedException e){}
       }
       

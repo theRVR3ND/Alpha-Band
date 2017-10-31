@@ -165,4 +165,8 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       
       score = (Short)(data.remove(0));
    }
+   
+   public String toString(){
+      return name + " " + color + " " + controller + " " + instrument;
+   }
 }

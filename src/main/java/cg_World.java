@@ -39,13 +39,22 @@ public class cg_World extends bg_World{
       //Figure out who we control
       bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
       
-      if(player == null)
+      if(player == null){
+         g2.drawString("B", 100, 100);
          return;
+      }
       
       //Draw incomming notes
       //g2.setColor(Color.BLACK);
       final byte instrument = player.getInstrument();
       
+      g2.setColor(Color.BLACK);
+      g2.setFont(new Font(
+         "Century Gothic",
+         Font.PLAIN,
+         util_Utilities.getFontSize()
+      ));
+      g2.drawString(entities.size() + "", 100, 100);
    }
    
    /**
@@ -68,6 +77,7 @@ public class cg_World extends bg_World{
             spawn = new bg_Note();
          
          entities.put(ID, spawn);
+         System.out.println(entType + " " + spawn.toString());
       }
       
       //Clip off ID and entity type info

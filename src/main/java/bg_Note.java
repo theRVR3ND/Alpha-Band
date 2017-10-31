@@ -23,21 +23,21 @@ public class bg_Note extends bg_Entity{
    private byte duration;
    
    /**
-    * Key note value.
+    * Key note note.
     */
-   private char value;
+   private byte note;
    
    /**
     * Constructor. Establish note parameters.
     */
-   public bg_Note(byte duration, char value){
+   public bg_Note(byte duration, byte note){
       frameCount = Byte.MAX_VALUE;
       this.duration = duration;
-      this.value = value;
+      this.note = note;
    }
    
    public bg_Note(){
-      this((byte)0, (char)0);
+      this((byte)0, (byte)0);
    }
    
    public void think(short deltaTime){
@@ -52,14 +52,14 @@ public class bg_Note extends bg_Entity{
       return duration;
    }
    
-   public char getValue(){
-      return value;
+   public byte getValue(){
+      return note;
    }
    
    public LinkedList<Object> getData(LinkedList<Object> list){
       list.add(frameCount);
       list.add(duration);
-      list.add((byte)value);
+      list.add((byte)note);
       
       return list;
    }
@@ -67,6 +67,6 @@ public class bg_Note extends bg_Entity{
    public void setData(LinkedList<Object> data){
       frameCount = (Byte)(data.remove(0));
       duration = (Byte)(data.remove(0));
-      value = (Character)(data.remove(0));
+      note = (Byte)(data.remove(0));
    }
 }

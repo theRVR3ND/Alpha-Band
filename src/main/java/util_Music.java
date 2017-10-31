@@ -181,7 +181,7 @@ public class util_Music{
                //End previously played note
                if((song[i][beat - 1] != Byte.MIN_VALUE && song[i][beat] != song[i][beat - 1]) || song[i][beat] == Byte.MIN_VALUE){
                   if(i == DRUMS)
-                     channels[9].noteOff(30 + song[i][beat - 1]);
+                     channels[9].noteOff(25 + song[i][beat - 1]);
                   else
                      channels[i].noteOff(60 + song[i][beat - 1]);
                
@@ -198,7 +198,7 @@ public class util_Music{
                   
                   //Play the note
                   if(i == DRUMS)
-                     channels[9].noteOn(30 + song[i][beat], 50);
+                     channels[9].noteOn(25 + song[i][beat], 50);
                   else
                      channels[i].noteOn(60 + song[i][beat], 50);
                }
