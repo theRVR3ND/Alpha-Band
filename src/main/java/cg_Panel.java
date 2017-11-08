@@ -207,6 +207,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       
       //Starting chat message
       }else{
+         System.out.println(((short)(e.getKeyCode()) == CHAT) + "");
          if(bindTable.containsKey((short)(e.getKeyCode())) &&
             bindTable.get((short)(e.getKeyCode())) == CHAT){
             chatMessage = "";

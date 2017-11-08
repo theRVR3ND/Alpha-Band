@@ -45,7 +45,7 @@ public interface bg_Constants{
    /**
     * Longest player name allowed.
     */
-   public static final byte MAX_PLAYER_NAME_LENGTH = 21;
+   public static final byte MAX_PLAYER_NAME_LENGTH = 24;
    
    /**
     * Action trigger value.

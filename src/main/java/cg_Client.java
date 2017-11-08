@@ -36,8 +36,8 @@ public class cg_Client{
       frame = new JFrame("Alpha Band");
       
       frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-      frame.setUndecorated(true);
-      frame.setResizable(false);
+      //frame.setUndecorated(true);
+      //frame.setResizable(false);
       frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
       frame.setIconImage(util_Utilities.loadImage("menu/icon.png"));
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

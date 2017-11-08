@@ -251,7 +251,7 @@ public class g_World extends bg_World{
       
       LinkedList<byte[]> ret = new LinkedList<byte[]>();
       
-      //Find difference between visible and client's snapshot
+      //Find difference between current world and client's snapshot
       for(Short key : entities.keySet()){
          //Entity's data
          byte[] comp = dataToBytes(entities.get(key).getData(new LinkedList<Object>()));
@@ -259,12 +259,16 @@ public class g_World extends bg_World{
          //Has entity already been tracked in client's snapshot
          boolean inSnapshot = snapshots.get(clientID).containsKey(key);
          
-         //Update client's snapshot
-         snapshots.get(clientID).put(key, comp);
-         
          //Check if we can save byte space
          if(inSnapshot){
+            byte[] temp = comp;
             comp = findDelta(snapshots.get(clientID).get(key), comp);
+            
+            //Update snapshot
+            snapshots.get(clientID).put(key, temp);
+         }else{
+            //Start new snapshot
+            snapshots.get(clientID).put(key, comp);
          }
          
          comp = compress(comp);

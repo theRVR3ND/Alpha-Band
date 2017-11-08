@@ -35,7 +35,7 @@ public class ui_Player extends ui_Menu implements KeyListener, bg_Constants{
       //Initialize things
       picker = new ui_ColorWheel(0.39f, 0.3f, 0.22f);
       nameTextbox = new ui_Textbox(
-         0.35f, 0.08f, 0.3f, 0.03f, (byte)21
+         0.35f, 0.08f, 0.3f, 0.03f, (byte)(MAX_PLAYER_NAME_LENGTH - 3)
       );
       
       //Read previous settings from text file

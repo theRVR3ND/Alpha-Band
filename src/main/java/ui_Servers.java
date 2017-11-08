@@ -166,7 +166,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
          gamePanel.startWorld(gamemode);
          
          cg_Client.frame.setContentPane(ui_Menu.vote);
-         gamePanel.requestFocus();
+         ui_Menu.vote.requestFocus();
          cg_Client.frame.revalidate();
       
       //Could not connect

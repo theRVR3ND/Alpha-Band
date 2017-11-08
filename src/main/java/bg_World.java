@@ -145,6 +145,7 @@ public abstract class bg_World implements bg_Constants{
             String s = (String)o;
             temp = new byte[MAX_PLAYER_NAME_LENGTH];
             
+            //System.out.println(s+"<");
             byte[] stringBytes = s.getBytes();
             for(byte i = 0; i < stringBytes.length; i++)
                temp[i + 1] = stringBytes[i];
@@ -283,6 +284,12 @@ public abstract class bg_World implements bg_Constants{
       for(byte i = 0; i < ret.length; i++)
          ret[i] = buff[i];
       
+      /*
+      for(byte i : ret)
+         System.out.print(i + " ");
+      System.out.println();
+      */
+      System.out.println("com " + ret.length);
       return ret;
    }
    
@@ -299,6 +306,12 @@ public abstract class bg_World implements bg_Constants{
                  exp: {3, 2, 4, 5, 1, 2}  <-- MUST be EVEN length
             expanded: {3, 3, 4, 4, 4, 4, 4, 1, 1}
       */
+      /*
+      for(byte i : exp)
+         System.out.print(i + " ");
+      System.out.println();
+      */
+      System.out.println("rec " + exp.length);
       for(byte i = 0; i < exp.length; i += 2){
          byte val = exp[i];
          for(byte k = 0; k < exp[i + 1]; k++){

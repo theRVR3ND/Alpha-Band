@@ -74,6 +74,10 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public void run(){
       try{
+         try{
+            Thread.sleep(500);
+         }catch(InterruptedException e){}
+         
          while(true){
             long lastUpdateTime = System.currentTimeMillis();
             
@@ -126,10 +130,13 @@ public class g_Connection extends Thread implements bg_Constants{
             }
             
             try{
+               /*
                int deltaTime = (int)((System.currentTimeMillis() - lastUpdateTime) % Integer.MAX_VALUE);
-               if(deltaTime < 1000.0 / 30){
-                  Thread.sleep((int)(1000.0 / 30 - deltaTime));
+               if(deltaTime < 1000.0 / 10){
+                  Thread.sleep((int)(1000.0 / 10 - deltaTime));
                }
+               */
+               Thread.sleep(1000);
             }catch(InterruptedException e){}
          }
       }catch(IOException e){
