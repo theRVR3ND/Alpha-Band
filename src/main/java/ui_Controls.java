@@ -99,6 +99,7 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
     * @param e                      KeyEvent to process.
     */
    public void keyPressed(KeyEvent e){
+      System.out.println("ASDF");
       //Check if currently changing a control bind
       if(modInd != -1){
          //New key pressed, change bind
@@ -141,7 +142,8 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
       }else{
          //Check if changing a control bind
          if(modInd != -1){
-            if(! alreadyBound(e.getButton())){//Do not allow conflicting binds
+            //Do not allow conflicting binds
+            if(! alreadyBound(e.getButton())){
                binds.get(modInd).setCode((short)e.getButton());
             }
             
@@ -153,6 +155,7 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
          }else if(table.getHoverRow() != -1){
             //Update table
             table.getContents().get(table.getHoverRow())[1] = "???";
+            table.checkHover((short)e.getX(), (short)e.getY());
          }
          return;
       }

@@ -57,7 +57,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       
       if(voteList.getContents().size() > 0)
          voteList.draw(g2);
-      
+       
       repaint();
    }
    

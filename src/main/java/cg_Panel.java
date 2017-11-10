@@ -93,6 +93,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       //Add listeners
       this.setFocusable(true);
       this.addKeyListener(this);
+      this.requestFocus();
    }
    
    /**
@@ -170,6 +171,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
     */
    @Override
    public void keyPressed(KeyEvent e){
+      System.out.println("SHAFFEE IS A PP");
       //Modifying chat message
       if(chatMessage != null){
          
@@ -207,12 +209,12 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       
       //Starting chat message
       }else{
-         System.out.println(((short)(e.getKeyCode()) == CHAT) + "");
          if(bindTable.containsKey((short)(e.getKeyCode())) &&
             bindTable.get((short)(e.getKeyCode())) == CHAT){
             chatMessage = "";
          }
       }
+      System.out.println(((short)(e.getKeyCode()) == CHAT) + "");
    }
    
    /**
@@ -254,6 +256,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
          g2.getColor().getBlue(),
          alpha - Byte.MIN_VALUE
       ));
+      g2.setColor(Color.BLACK);
       
       //Show received messages
       FontMetrics fontMetrics = getFontMetrics(g2.getFont());
