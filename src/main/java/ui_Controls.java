@@ -83,6 +83,8 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
       //Draw out current binds
       table.draw(g2);
       
+      g2.drawString(modInd + "", 100, 100);
+      
       repaint();
    }
    
@@ -99,7 +101,6 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
     * @param e                      KeyEvent to process.
     */
    public void keyPressed(KeyEvent e){
-      System.out.println("ASDF");
       //Check if currently changing a control bind
       if(modInd != -1){
          //New key pressed, change bind
@@ -156,6 +157,7 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
             //Update table
             table.getContents().get(table.getHoverRow())[1] = "???";
             table.checkHover((short)e.getX(), (short)e.getY());
+            modInd = table.getHoverRow();
          }
          return;
       }

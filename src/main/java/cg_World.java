@@ -77,7 +77,6 @@ public class cg_World extends bg_World{
             spawn = new bg_Note();
          
          entities.put(ID, spawn);
-         //System.out.println(entType + " " + spawn.toString());
       }
       
       //Clip off ID and entity type info

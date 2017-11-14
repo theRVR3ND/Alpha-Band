@@ -200,7 +200,6 @@ public class cg_Connection extends Thread implements bg_Constants{
                send[i] = info[i + 1];
             
             //Send data to world
-            System.out.println((cg_Panel.gamePanel.getWorld() == null) + "");
             cg_Panel.gamePanel.getWorld().setData(send);
             
             break;

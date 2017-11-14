@@ -63,13 +63,15 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
       //Draw background
-      g2.drawImage(
+      /*
+      g.drawImage(
          background,
          0, 0,
          cg_Client.SCREEN_WIDTH,
          cg_Client.SCREEN_HEIGHT,
          null
       );
+      */
       
       //World rendering handled in cg_Renderer
       world.render(g2);
@@ -157,8 +159,8 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
     */
    private void sendActions(){
       //Don't try to send if disconnected
-      //if(connection == null)
-      //   return;
+      if(connection == null)
+         return;
       
       //Don't send empty space
       if(currActions.size() == 0)

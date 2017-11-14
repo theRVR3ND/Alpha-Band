@@ -125,6 +125,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
             
             //Return to game panel
             cg_Client.frame.setContentPane(cg_Panel.gamePanel);
+            cg_Panel.gamePanel.requestFocus();
          }
       }else{
          voteList.checkHover((short)e.getX(), (short)e.getY());
