@@ -170,6 +170,14 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
     */
    @Override
    public void keyPressed(KeyEvent e){
+      //Escape to menu
+      if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+         cg_Client.frame.setContentPane(ui_Menu.pause);
+         ui_Menu.pause.requestFocus();
+         cg_Client.frame.revalidate();
+         return;
+      }
+      
       //Modifying chat message
       if(chatMessage != null){
          //Delete message

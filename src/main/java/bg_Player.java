@@ -167,6 +167,6 @@ public class bg_Player extends bg_Entity implements bg_Constants{
    }
    
    public String toString(){
-      return name + " " + color + " " + controller + " " + instrument;
+      return "bg_Player/" + name + "/" + color + "/" + controller + "/" + instrument;
    }
 }
