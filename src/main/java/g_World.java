@@ -236,7 +236,7 @@ public class g_World extends bg_World{
       
       entities.put(key, player);
       
-      System.out.println("spawning: " + player);
+      //System.out.println("spawning: " + player);
       
       //Start taking snapshots of world for client
       snapshots.put(controller, new HashMap<Short, byte[]>());
@@ -282,14 +282,15 @@ public class g_World extends bg_World{
             //Update snapshot
             snapshots.get(clientID).put(key, comp);
             comp = delta;
-         }else
+         }else{
             snapshots.get(clientID).put(key, comp);
-            
+            System.out.println("qwang " + entities.get(key));
+         }
          
          comp = compress(comp);
          
          //Check if sending data is neccessary
-         if(comp.length == 2 && comp[0] == 0){
+         if(comp.length == 2/* && comp[0] == 0*/){
             continue;
          }
          
