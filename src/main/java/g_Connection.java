@@ -74,10 +74,7 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public void run(){
       try{
-         try{
-            Thread.sleep(500);
-         }catch(InterruptedException e){}
-         
+         boolean firstLoop = true;
          while(true){
             long lastUpdateTime = System.currentTimeMillis();
             
@@ -88,6 +85,13 @@ public class g_Connection extends Thread implements bg_Constants{
                if(numByte > 0){
                   processInStream(info, numByte);
                }
+            }
+            
+            if(firstLoop){
+               try{
+                  Thread.sleep(400);
+               }catch(InterruptedException e){}
+               firstLoop = false;
             }
             
             //Send client relevant world update info
@@ -113,6 +117,7 @@ public class g_Connection extends Thread implements bg_Constants{
                writeOut(toSend);
                sentBallot = true;
             
+            //Send world updates
             }else if(g_Server.server.getWorld().getPlayer(clientID) != null){
                LinkedList<byte[]> data = g_Server.server.getWorld().getRelevantData(clientID);
                for(byte i = 0; i < data.size(); i++){
@@ -126,6 +131,9 @@ public class g_Connection extends Thread implements bg_Constants{
                   }
                   
                   writeOut(outLine);
+                  try{
+                     Thread.sleep(50);
+                  }catch(InterruptedException e){}
                }
             }
             

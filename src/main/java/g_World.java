@@ -284,13 +284,13 @@ public class g_World extends bg_World{
             comp = delta;
          }else{
             snapshots.get(clientID).put(key, comp);
-            System.out.println("qwang " + entities.get(key));
+            System.out.println("new guy: " + entities.get(key));
          }
          
          comp = compress(comp);
          
          //Check if sending data is neccessary
-         if(comp.length == 2/* && comp[0] == 0*/){
+         if(comp.length == 2 && comp[0] == 0){
             continue;
          }
          

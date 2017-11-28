@@ -66,7 +66,7 @@ public class cg_World extends bg_World{
       //Retreive entity's ID from bytes
       short ID = bytesToShort(delta, (byte)0);
       boolean crud = false;
-      System.out.println(ID + "");
+      //System.out.println(ID + "");
       //Check if we need to add a new player or note
       if(entities.get(ID) == null){
          bg_Entity spawn = null;
@@ -78,7 +78,7 @@ public class cg_World extends bg_World{
             spawn = new bg_Note();
          
          entities.put(ID, spawn);
-         System.out.println("taking it in the bum:");
+         System.out.print("taking it in the bum:");
          crud = true;
       }
       
