@@ -39,7 +39,6 @@ public class cg_World extends bg_World{
       //Figure out who we control
       bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
       
-      g2.drawString("B " + entities.size(), 100, 100);
       if(player == null){
          return;
       }
@@ -54,7 +53,25 @@ public class cg_World extends bg_World{
          Font.PLAIN,
          util_Utilities.getFontSize()
       ));
-      //g2.drawString(entities.size() + "", 100, 100);
+      
+      //Draw all entities
+      int shiftInd = 0;
+      for(Short key : entities.keySet()){
+         //Draw player stuff
+         if(entities.get(key) instanceof bg_Player){
+            bg_Player otherPlayer = (bg_Player)(entities.get(key));
+            g2.drawString(
+               otherPlayer.getName() + ": " + otherPlayer.getScore(),
+               shiftInd * 20 + 10,
+               50
+            );
+            shiftInd++;
+         
+         //Draw cascading note
+         }else if(entities.get(key) instanceof bg_Note){
+            g2.fillRect(100, 100, 100, 100);
+         }
+      }
    }
    
    /**
@@ -65,8 +82,7 @@ public class cg_World extends bg_World{
    public void setData(byte[] delta){
       //Retreive entity's ID from bytes
       short ID = bytesToShort(delta, (byte)0);
-      boolean crud = false;
-      //System.out.println(ID + "");
+      
       //Check if we need to add a new player or note
       if(entities.get(ID) == null){
          bg_Entity spawn = null;
@@ -78,8 +94,6 @@ public class cg_World extends bg_World{
             spawn = new bg_Note();
          
          entities.put(ID, spawn);
-         System.out.print("taking it in the bum:");
-         crud = true;
       }
       
       //Clip off ID and entity type info
@@ -106,9 +120,6 @@ public class cg_World extends bg_World{
       entities.get(ID).setData(bytesToData(
          data, entObj
       ));
-      
-      if(crud)
-         System.out.println(entities.get(ID) + "plz" + ID);
       
       gamestate.put(ID, data);
    }

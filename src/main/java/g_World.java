@@ -37,6 +37,9 @@ public class g_World extends bg_World{
     */
    private short voteTimeout;
    
+   //Timer for waiting to start game
+   //protected short startTimer;
+   
    /**
     * Info of all songs that can be played.
     */
@@ -145,7 +148,7 @@ public class g_World extends bg_World{
    
    public void startVote(){
       currVote = new byte[5][2];
-      voteTimeout = (short)(300);
+      voteTimeout = (short)(10800); //3 minute timeout
       
       //Choose three songs to vote on
       for(byte r = 0; r < 3; r++){
@@ -214,7 +217,6 @@ public class g_World extends bg_World{
     */
    public void spawnPlayer(String name, Color color, byte controller){
       //Get all player names
-      //if(controller >= 0){
       HashSet<String> allNames = new HashSet<String>();
       for(Short key : entities.keySet())
          if(entities.get(key) instanceof bg_Player)
@@ -228,7 +230,6 @@ public class g_World extends bg_World{
          i++;
       }
       name = actualName;
-      //}
       
       //Create player
       Short key = bg_Entity.getEntityCount();
@@ -236,10 +237,10 @@ public class g_World extends bg_World{
       
       entities.put(key, player);
       
-      //System.out.println("spawning: " + player);
-      
       //Start taking snapshots of world for client
       snapshots.put(controller, new HashMap<Short, byte[]>());
+      
+      //entities.put(bg_Entity.getEntityCount(), new bg_Note((byte)10, (byte)10));
    }
    
    /**
@@ -258,23 +259,6 @@ public class g_World extends bg_World{
          //Entity's data
          byte[] comp = dataToBytes(entities.get(key).getData(new LinkedList<Object>()));
          
-         //Has entity already been tracked in client's snapshot
-         //boolean inSnapshot = snapshots.get(clientID).containsKey(key);
-         
-         //Check if we can save byte space
-         /*
-         if(inSnapshot){
-            byte[] temp = comp;
-            comp = findDelta(snapshots.get(clientID).get(key), comp);
-            
-            //Update snapshot
-            snapshots.get(clientID).put(key, temp);
-         }else{
-            //Start new snapshot
-            snapshots.get(clientID).put(key, comp);
-         }
-         */
-         
          //Check if we just need delta
          if(snapshots.get(clientID).containsKey(key)){
             byte[] delta = findDelta(snapshots.get(clientID).get(key), comp);
@@ -284,7 +268,6 @@ public class g_World extends bg_World{
             comp = delta;
          }else{
             snapshots.get(clientID).put(key, comp);
-            System.out.println("new guy: " + entities.get(key));
          }
          
          comp = compress(comp);
@@ -302,7 +285,11 @@ public class g_World extends bg_World{
          add[0] = keyBytes[0];
          add[1] = keyBytes[1];
          
-         add[2] = PLAYER;
+         //Send entity's type
+         if(entities.get(key) instanceof bg_Player)
+            add[2] = PLAYER;
+         else if(entities.get(key) instanceof bg_Note)
+            add[2] = NOTE;
          
          for(byte i = 0; i < comp.length; i++)
             add[i + 3] = comp[i];

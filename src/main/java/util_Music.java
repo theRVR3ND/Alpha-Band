@@ -98,12 +98,6 @@ public class util_Music{
             beat[i] = beat[i - 1];
       }
       
-      /*
-      for(byte i = 0; i < beat.length; i++)
-         System.out.print(beat[i] + " ");
-      System.out.println("\n" + (Math.pow(2, difficulty)) + "\nbpm: " + bpm + "\nsongLength: " + songLength);
-      */
-      
       //Repeat beat into song forever-ish
       for(short i = 1; i < gen[0].length; i++){
          gen[DRUMS][i] = beat[(i - 1) % beat.length];
@@ -113,14 +107,14 @@ public class util_Music{
             break;
          }
       }
-      
+      /*
       for(int r = 0; r < gen.length; r++){
          for(int c = 0; c < gen[0].length; c++){
             System.out.print(gen[r][c] + "\t");
          }
          System.out.println();
       }
-      
+      */
       return gen;
    }
    
@@ -155,9 +149,9 @@ public class util_Music{
             instruments = synth.getDefaultSoundbank().getInstruments();
             
             for(byte i = 0; i < INSTRUMENTS.length; i++){
-               if(i == DRUMS)
-                  channels[9].programChange(instruments[INSTRUMENTS[i]].getPatch().getProgram());
-               else
+               //if(i == DRUMS)
+                  //channels[9].programChange(instruments[34].getPatch().getProgram());
+               //else
                   channels[i].programChange(instruments[INSTRUMENTS[i]].getPatch().getProgram());
             }
             
@@ -181,7 +175,7 @@ public class util_Music{
                //End previously played note
                if((song[i][beat - 1] != Byte.MIN_VALUE && song[i][beat] != song[i][beat - 1]) || song[i][beat] == Byte.MIN_VALUE){
                   if(i == DRUMS)
-                     channels[9].noteOff(25 + song[i][beat - 1]);
+                     channels[9].noteOff(35);
                   else
                      channels[i].noteOff(60 + song[i][beat - 1]);
                
@@ -198,7 +192,7 @@ public class util_Music{
                   
                   //Play the note
                   if(i == DRUMS)
-                     channels[9].noteOn(25 + song[i][beat], 50);
+                     channels[9].noteOn(35, 100);
                   else
                      channels[i].noteOn(60 + song[i][beat], 50);
                }
