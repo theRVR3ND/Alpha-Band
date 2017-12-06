@@ -132,20 +132,20 @@ public class g_Connection extends Thread implements bg_Constants{
                   
                   writeOut(outLine);
                   try{
-                     Thread.sleep(50);
+                     Thread.sleep(100);
                   }catch(InterruptedException e){}
                }
             }
             
-            try{
+            //try{
                /*
                int deltaTime = (int)((System.currentTimeMillis() - lastUpdateTime) % Integer.MAX_VALUE);
                if(deltaTime < 1000.0 / 10){
                   Thread.sleep((int)(1000.0 / 10 - deltaTime));
                }
                */
-               Thread.sleep(1000);
-            }catch(InterruptedException e){}
+            //   Thread.sleep(1000);
+            //}catch(InterruptedException e){}
          }
       }catch(IOException e){
          e.printStackTrace();

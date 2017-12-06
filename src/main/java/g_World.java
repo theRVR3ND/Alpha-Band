@@ -209,7 +209,7 @@ public class g_World extends bg_World{
    }
    
    /**
-    * Create new player in world.
+    * Create new player in world. Called once for each client join.
     * 
     * @param name             In-game name of new player.
     * @param color            In-game theme color of new player.
@@ -240,7 +240,10 @@ public class g_World extends bg_World{
       //Start taking snapshots of world for client
       snapshots.put(controller, new HashMap<Short, byte[]>());
       
-      //entities.put(bg_Entity.getEntityCount(), new bg_Note((byte)10, (byte)10));
+      //TEST ONLY
+      if(controller != -1){
+         entities.put(bg_Entity.getEntityCount(), new bg_Note((byte)10, (byte)10));
+      }
    }
    
    /**
@@ -255,7 +258,10 @@ public class g_World extends bg_World{
       LinkedList<byte[]> ret = new LinkedList<byte[]>();
       
       //Find difference between current world and client's snapshot
-      for(Short key : entities.keySet()){
+      Iterator iter = entities.keySet().iterator();
+      while(iter.hasNext()){
+         Short key = (Short)iter.next();
+         
          //Entity's data
          byte[] comp = dataToBytes(entities.get(key).getData(new LinkedList<Object>()));
          

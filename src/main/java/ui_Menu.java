@@ -121,6 +121,10 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
       //Improve rendering quality
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
+      //Draw background theme color
+      g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
+      g2.fillRect(0, 0, cg_Client.SCREEN_WIDTH, cg_Client.SCREEN_HEIGHT);
+      
       //Draw background
       g2.drawImage(
          background,

@@ -76,10 +76,16 @@ public class util_Music{
             gen[r][c] = Byte.MIN_VALUE;
       
       
-      //Create a diversified beat
+      //Create a simple 4/4 beat - drum set
       final byte avgInterval = (byte)(rand.nextDouble() * measureLength / 2 + 2);
       
-      byte[] beat = new byte[measureLength * (byte)(rand.nextDouble() * difficulty + 4)];
+      byte[] beat = new byte[16];
+      for(byte i = 0; i < beat.length; i += 2){
+         beat[i] = 35;
+         beat[i + 1] = Byte.MIN_VALUE;
+      }
+      
+      /*************************************************************************************
       for(byte i = 0; i < beat.length; i++){
          if(i == 0){
             if(rand.nextBoolean())
@@ -97,6 +103,7 @@ public class util_Music{
          }else
             beat[i] = beat[i - 1];
       }
+      **************************************************************************************/
       
       //Repeat beat into song forever-ish
       for(short i = 1; i < gen[0].length; i++){
@@ -152,7 +159,7 @@ public class util_Music{
                //if(i == DRUMS)
                   //channels[9].programChange(instruments[34].getPatch().getProgram());
                //else
-                  channels[i].programChange(instruments[INSTRUMENTS[i]].getPatch().getProgram());
+               channels[i].programChange(instruments[INSTRUMENTS[i]].getPatch().getProgram());
             }
             
          }catch(MidiUnavailableException e){
@@ -175,7 +182,7 @@ public class util_Music{
                //End previously played note
                if((song[i][beat - 1] != Byte.MIN_VALUE && song[i][beat] != song[i][beat - 1]) || song[i][beat] == Byte.MIN_VALUE){
                   if(i == DRUMS)
-                     channels[9].noteOff(35);
+                     channels[9].noteOff(song[i][beat]);
                   else
                      channels[i].noteOff(60 + song[i][beat - 1]);
                
@@ -192,7 +199,7 @@ public class util_Music{
                   
                   //Play the note
                   if(i == DRUMS)
-                     channels[9].noteOn(35, 100);
+                     channels[9].noteOn(song[i][beat], 100);
                   else
                      channels[i].noteOn(60 + song[i][beat], 50);
                }

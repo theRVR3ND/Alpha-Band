@@ -47,29 +47,62 @@ public class cg_World extends bg_World{
       //g2.setColor(Color.BLACK);
       final byte instrument = player.getInstrument();
       
+      //Graphics tings
       g2.setColor(Color.BLACK);
+      FontMetrics fm;
+      
+      //Scoreboard header
+      g2.setFont(new Font(
+         "Century Gothic",
+         Font.BOLD,
+         util_Utilities.getFontSize()
+      ));
+      fm = g2.getFontMetrics();
+      
+      String toDraw = "SCOREBOARD:";
+      g2.drawString(
+         toDraw,
+         cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
+         50
+      );
+      
+      //Default writing font
       g2.setFont(new Font(
          "Century Gothic",
          Font.PLAIN,
          util_Utilities.getFontSize()
       ));
+      fm = g2.getFontMetrics();
       
       //Draw all entities
-      int shiftInd = 0;
+      int shiftInd = 1;
       for(Short key : entities.keySet()){
-         //Draw player stuff
+         //Draw player scores and stuff
          if(entities.get(key) instanceof bg_Player){
             bg_Player otherPlayer = (bg_Player)(entities.get(key));
+            
+            //Ignore data player entity
+            if(otherPlayer.getController() == -1)
+               continue;
+            
+            //Draw player score on right side of screen
+            toDraw = otherPlayer.getName() + ": " + otherPlayer.getScore();
             g2.drawString(
-               otherPlayer.getName() + ": " + otherPlayer.getScore(),
-               shiftInd * 20 + 10,
-               50
+               toDraw,
+               cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
+               50 + shiftInd * 30
             );
             shiftInd++;
          
          //Draw cascading note
          }else if(entities.get(key) instanceof bg_Note){
             g2.fillRect(100, 100, 100, 100);
+            /*
+            bg_Note note = (bg_Note)entities.get(key);
+            g2.fillRect(
+                note.getNote(),
+            );
+            */
          }
       }
    }
