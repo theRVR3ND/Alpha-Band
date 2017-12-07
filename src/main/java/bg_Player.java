@@ -99,6 +99,10 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       return controller;
    }
    
+   public short getScore(){
+      return score;
+   }
+   
    public byte getInstrument(){
       return instrument;
    }
@@ -121,8 +125,12 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       this.color = color;
    }
    
-   public short getScore(){
-      return score;
+   public void setScore(byte score){
+      this.score = score;
+   }
+   
+   public void setInstrument(byte instrument){
+      this.instrument = instrument;
    }
    
    /**
@@ -165,9 +173,4 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       
       score = (Short)(data.remove(0));
    }
-   /*
-   public String toString(){
-      return "bg_Player/" + name + "/" + color + "/" + controller + "/" + instrument;
-   }
-   */
 }

@@ -37,18 +37,24 @@ public class cg_World extends bg_World{
     */
    public void render(Graphics2D g2){
       //Figure out who we control
-      bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
+      bg_Player clientPlayer = super.getPlayer(cg_Panel.getConnection().getClientID());
       
-      if(player == null){
+      /*
+      if(clientPlayer == null){
          return;
       }
+      */
       
       //Draw incomming notes
       //g2.setColor(Color.BLACK);
-      final byte instrument = player.getInstrument();
+      //final byte instrument = clientPlayer.getInstrument();
+      
+      //Background
+      g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
+      g2.fillRect(0, 0, cg_Client.SCREEN_WIDTH, cg_Client.SCREEN_HEIGHT);
       
       //Graphics tings
-      g2.setColor(Color.BLACK);
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       FontMetrics fm;
       
       //Scoreboard header
@@ -59,7 +65,7 @@ public class cg_World extends bg_World{
       ));
       fm = g2.getFontMetrics();
       
-      String toDraw = "SCOREBOARD:";
+      String toDraw = "BANDMATES/SCORE";
       g2.drawString(
          toDraw,
          cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
@@ -74,7 +80,11 @@ public class cg_World extends bg_World{
       ));
       fm = g2.getFontMetrics();
       
-      //Draw all entities
+      //Draw player info
+      toDraw = util_Music.instruments[clientPlayer.getInstrument()];
+      g2.drawString(toDraw, 40, 50);
+      
+      //Draw all entities' info
       int shiftInd = 1;
       for(Short key : entities.keySet()){
          //Draw player scores and stuff
@@ -92,17 +102,22 @@ public class cg_World extends bg_World{
                cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
                50 + shiftInd * 30
             );
+            
+            //Underline client's player score
+            if(clientPlayer.getController() == otherPlayer.getController()){
+               g2.drawLine(
+                  cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
+                  54 + shiftInd * 30,
+                  cg_Client.SCREEN_WIDTH - 40,
+                  54 + shiftInd * 30
+               );
+            }
+            
             shiftInd++;
          
-         //Draw cascading note
+         //Draw note
          }else if(entities.get(key) instanceof bg_Note){
-            g2.fillRect(100, 100, 100, 100);
-            /*
-            bg_Note note = (bg_Note)entities.get(key);
-            g2.fillRect(
-                note.getNote(),
-            );
-            */
+            //Draw note. Somehow.
          }
       }
    }

@@ -14,6 +14,9 @@ import java.awt.event.*;
 
 public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener, bg_Constants{
    
+   //Time in milliseconds of vote timeout
+   private long voteTimeout;
+   
    private ui_Table voteList;
    
    private byte[] currVotes;
@@ -31,6 +34,8 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
          new String[] {"Song", "Difficulty", "Length"},
          new float[] {0.31f, 0.5f, 0.6f}
       );
+      
+      voteTimeout = -1;
       
       //Add all song options to list
       voteList.getContents().add(new String[] {"Generate a Song"});
@@ -55,9 +60,25 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       //Improve rendering quality
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
+      //Show list of vote options
       if(voteList.getContents().size() > 0)
          voteList.draw(g2);
-       
+      
+      //Show vote timeout
+      short seconds = (short)((voteTimeout - System.currentTimeMillis()) / 1000.0);
+      String toDraw;
+      if(seconds % 60 < 10)
+         toDraw = "0" + (seconds % 60);
+      else
+         toDraw = "" + (seconds % 60);
+      
+      g2.setColor(Color.WHITE);
+      g2.drawString(
+         "Game starts in: " + (seconds / 60) + ":" + toDraw,
+         voteList.getX(),
+         voteList.getY() + voteList.getHeight() + util_Utilities.getFontSize() + 10
+      );
+      
       repaint();
    }
    
@@ -66,7 +87,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       voteList.getContents().clear();
       
       //Extract vote info
-      byte i = 1;
+      byte i = 2;
       for(byte j = 0; j < 3; j++){
          //Check if there is info to extract
          if(info[i + 1] == 0 && info[i + 2] == 0){
@@ -87,6 +108,9 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
          //Add to vote list
          voteList.getContents().add(new String[] {songName, difficulty, songLength});
       }
+      
+      //Get vote timout
+      voteTimeout = (long)(System.currentTimeMillis() + (info[1] + Byte.MAX_VALUE) * 1667);
       
       //Add all song options to list
       voteList.getContents().add(new String[] {"Generate a Song", "N", "N"});

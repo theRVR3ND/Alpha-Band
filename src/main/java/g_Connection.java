@@ -74,7 +74,6 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public void run(){
       try{
-         boolean firstLoop = true;
          while(true){
             long lastUpdateTime = System.currentTimeMillis();
             
@@ -87,18 +86,15 @@ public class g_Connection extends Thread implements bg_Constants{
                }
             }
             
-            if(firstLoop){
-               try{
-                  Thread.sleep(400);
-               }catch(InterruptedException e){}
-               firstLoop = false;
-            }
-            
-            //Send client relevant world update info
+            //Send client vote info
             if(g_Server.server.getWorld().getCurrVote() != null && !sentBallot){
                byte[] toSend = new byte[Byte.MAX_VALUE];
                byte[][] currVote = g_Server.server.getWorld().getCurrVote();
-               byte ind = 1;
+               byte ind = 2;
+               
+               //Add tags and stuff
+               toSend[0] = VOTE;
+               toSend[1] = (byte)(g_Server.server.getWorld().getVoteTimeout() / 50.0 - Byte.MAX_VALUE);
                
                //Add all songs on ballot into toSend
                for(byte r = 0; r < currVote.length; r++){
@@ -110,14 +106,11 @@ public class g_Connection extends Thread implements bg_Constants{
                   }
                }
                
-               //Add stream tag
-               toSend[0] = VOTE;
-               
                //Send it!
                writeOut(toSend);
                sentBallot = true;
             
-            //Send world updates
+            //Send game world updates
             }else if(g_Server.server.getWorld().getPlayer(clientID) != null){
                LinkedList<byte[]> data = g_Server.server.getWorld().getRelevantData(clientID);
                for(byte i = 0; i < data.size(); i++){
@@ -136,16 +129,6 @@ public class g_Connection extends Thread implements bg_Constants{
                   }catch(InterruptedException e){}
                }
             }
-            
-            //try{
-               /*
-               int deltaTime = (int)((System.currentTimeMillis() - lastUpdateTime) % Integer.MAX_VALUE);
-               if(deltaTime < 1000.0 / 10){
-                  Thread.sleep((int)(1000.0 / 10 - deltaTime));
-               }
-               */
-            //   Thread.sleep(1000);
-            //}catch(InterruptedException e){}
          }
       }catch(IOException e){
          e.printStackTrace();

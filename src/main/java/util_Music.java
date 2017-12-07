@@ -21,12 +21,21 @@ public class util_Music{
                           HARMONIC = 3,            //Harmoic minor
                         NUM_SCALES = 4;
    
-   private static final byte PIANO = 0,
-                      CLEAN_GUITAR = 1,
-                             DRUMS = 2,
-                              BASS = 3,
-                       DIST_GUITAR = 4,
-                             AGOGO = 5;
+   public static final byte PIANO = 0,
+                     CLEAN_GUITAR = 1,
+                            DRUMS = 2,
+                             BASS = 3,
+                      DIST_GUITAR = 4,
+                            AGOGO = 5;
+   
+   public static final String[] instruments = new String[] {
+      "Piano",
+      "Guitar",
+      "Drums",
+      "Bass",
+      "Distorted Guitar",
+      "Agogo",
+   };
    
    private static final byte[][] INTERVALS = new byte[][]{
       {0, 2, 4, 5, 7, 9,  11, 12},
@@ -37,7 +46,7 @@ public class util_Music{
    
    //private static final byte[] KEYS = new byte[] {0, 1, 2, 3, 4, 5, 6};
    
-   public static final short[] INSTRUMENTS = new short[] {0, 27, 34, 38, 30, 113};
+   public static final short[] INSTRUMENTS = new short[] {0, 27, 33, 38, 30, 113};
    
    public static void main(String[] args){
       playSong(generateSong((byte)2, (short)(Math.random() * Short.MAX_VALUE)));
@@ -80,10 +89,31 @@ public class util_Music{
       final byte avgInterval = (byte)(rand.nextDouble() * measureLength / 2 + 2);
       
       byte[] beat = new byte[16];
-      for(byte i = 0; i < beat.length; i += 2){
+      for(byte i = 0; i < beat.length; i += 4){
          beat[i] = 35;
-         beat[i + 1] = Byte.MIN_VALUE;
+         beat[i+1] = Byte.MIN_VALUE;
+         beat[i+2] = 36;
+         beat[i+3] = Byte.MIN_VALUE;
       }
+      
+      //Bass     
+      byte[] bassline = new byte[16];
+      for(byte i = 0; i < bassline.length; i+=4){
+         bassline[i] = -24;
+         bassline[i+1] = Byte.MIN_VALUE;
+         bassline[i+2] = -20;
+         bassline[i+3] = Byte.MIN_VALUE;
+      }
+      
+      //Piano
+      byte[] pianomel = new byte[16];
+      for(byte i = 0; i < pianomel.length; i+=4){
+         pianomel[i] = 0;
+         pianomel[i+1] = Byte.MIN_VALUE;
+         pianomel[i+2] = 1;
+         pianomel[i+3] = Byte.MIN_VALUE;
+      }
+   
       
       /*************************************************************************************
       for(byte i = 0; i < beat.length; i++){
@@ -108,6 +138,10 @@ public class util_Music{
       //Repeat beat into song forever-ish
       for(short i = 1; i < gen[0].length; i++){
          gen[DRUMS][i] = beat[(i - 1) % beat.length];
+         gen[BASS][i] = bassline[(i - 1) % bassline.length];
+         gen[PIANO][i] = pianomel[(i - 1) % pianomel.length];
+      
+      
          
          //Check if entire beat can still fit in rest of song length
          if((i - 1) % beat.length == beat.length - 1 && i + beat.length >= gen[0].length){

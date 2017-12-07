@@ -33,9 +33,9 @@ public class g_World extends bg_World{
    private byte[][] currVote;
    
    /**
-    * Countdown for vote.
+    * Time, in milliseconds, at which vote will time out.
     */
-   private short voteTimeout;
+   private long voteTimeout;
    
    //Timer for waiting to start game
    //protected short startTimer;
@@ -115,6 +115,7 @@ public class g_World extends bg_World{
       }
       
       //Update current vote
+      /*
       if(voteTimeout > 0){
          voteTimeout--;
       }else if(voteTimeout == 0 && currVote != null){
@@ -136,6 +137,7 @@ public class g_World extends bg_World{
          
          startSong(ind);
       }
+      */
    }
    
    public byte[][] getCurrVote(){
@@ -148,7 +150,7 @@ public class g_World extends bg_World{
    
    public void startVote(){
       currVote = new byte[5][2];
-      voteTimeout = (short)(10800); //3 minute timeout
+      voteTimeout = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
       
       //Choose three songs to vote on
       for(byte r = 0; r < 3; r++){
@@ -184,6 +186,16 @@ public class g_World extends bg_World{
    public void startSong(byte ind){
       bg_Player infoEnt = getPlayer((byte)-1);
       
+      //Assign instruments to players
+      byte currInstrument = 0;
+      for(Short key : entities.keySet()){
+         if(entities.get(key) instanceof bg_Player){
+            bg_Player player = (bg_Player)(entities.get(key));
+            player.setInstrument(currInstrument++);
+         }
+      }
+      
+      /*
       //Song progress data is transferred through infoEnt's name
       String name = (char)(currVote[ind][0]) + "";
       
@@ -199,6 +211,7 @@ public class g_World extends bg_World{
       }
       
       infoEnt.setName(name);
+      */
    }
    
    /**
@@ -244,6 +257,10 @@ public class g_World extends bg_World{
       if(controller != -1){
          entities.put(bg_Entity.getEntityCount(), new bg_Note((byte)10, (byte)10));
       }
+   }
+   
+   public long getVoteTimeout(){
+      return voteTimeout;
    }
    
    /**
