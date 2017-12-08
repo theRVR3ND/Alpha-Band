@@ -31,6 +31,8 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    
    private final BufferedImage background = util_Utilities.loadImage("game/springBackground.png");
    
+   private final HashMap<Integer, Byte> noteMap;
+   
    /**
     * Constructor.
     */
@@ -38,6 +40,17 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       //Initialize stuff
       world = null;
       currActions = new HashSet<Byte>();
+      
+      //Map note values to keys
+      noteMap = new HashMap<Integer, Byte>();
+      noteMap.put(KeyEvent.VK_A, (byte)-4);
+      noteMap.put(KeyEvent.VK_S, (byte)-3);
+      noteMap.put(KeyEvent.VK_D, (byte)-2);
+      noteMap.put(KeyEvent.VK_F, (byte)-1);
+      noteMap.put(KeyEvent.VK_G, (byte)0);
+      noteMap.put(KeyEvent.VK_H, (byte)0);
+      noteMap.put(KeyEvent.VK_J, (byte)0);
+      noteMap.put(KeyEvent.VK_I, (byte)0);
       
       //Add listeners
       this.addMouseListener(this);

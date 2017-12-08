@@ -94,7 +94,7 @@ public class g_Connection extends Thread implements bg_Constants{
                
                //Add tags and stuff
                toSend[0] = VOTE;
-               toSend[1] = (byte)(g_Server.server.getWorld().getVoteTimeout() / 50.0 - Byte.MAX_VALUE);
+               toSend[1] = (byte)((g_Server.server.getWorld().getVoteTimeout() - System.currentTimeMillis()) / 1500.0 - Byte.MAX_VALUE);
                
                //Add all songs on ballot into toSend
                for(byte r = 0; r < currVote.length; r++){

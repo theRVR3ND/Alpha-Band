@@ -110,11 +110,11 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       }
       
       //Get vote timout
-      voteTimeout = (long)(System.currentTimeMillis() + (info[1] + Byte.MAX_VALUE) * 1667);
+      voteTimeout = (long)(System.currentTimeMillis() + (info[1] + Byte.MAX_VALUE) * 1500);
       
       //Add all song options to list
-      voteList.getContents().add(new String[] {"Generate a Song", "N", "N"});
-      voteList.getContents().add(new String[] {"Random Song", "N", "N"});
+      voteList.getContents().add(new String[] {"Generate a Song", "", ""});
+      voteList.getContents().add(new String[] {"Choose Random Song", "", ""});
    }
    
    /**

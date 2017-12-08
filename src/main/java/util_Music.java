@@ -91,9 +91,9 @@ public class util_Music{
       byte[] beat = new byte[16];
       for(byte i = 0; i < beat.length; i += 4){
          beat[i] = 35;
-         beat[i+1] = Byte.MIN_VALUE;
-         beat[i+2] = 36;
-         beat[i+3] = Byte.MIN_VALUE;
+         beat[i+1] = 36;
+         beat[i+2] = 35;
+         beat[i+3] = 36;
       }
       
       //Bass     
@@ -108,10 +108,10 @@ public class util_Music{
       //Piano
       byte[] pianomel = new byte[16];
       for(byte i = 0; i < pianomel.length; i+=4){
-         pianomel[i] = 0;
-         pianomel[i+1] = Byte.MIN_VALUE;
-         pianomel[i+2] = 1;
-         pianomel[i+3] = Byte.MIN_VALUE;
+         pianomel[i] = Byte.MIN_VALUE;
+         pianomel[i+1] = -24;
+         pianomel[i+2] = Byte.MIN_VALUE;
+         pianomel[i+3] = -20;
       }
    
       
@@ -214,14 +214,17 @@ public class util_Music{
             //Play each instrument's note
             for(byte i = 0; i < INSTRUMENTS.length; i++){
                //End previously played note
-               if((song[i][beat - 1] != Byte.MIN_VALUE && song[i][beat] != song[i][beat - 1]) || song[i][beat] == Byte.MIN_VALUE){
+               //if((song[i][beat - 1] != Byte.MIN_VALUE && song[i][beat] != song[i][beat - 1]) || song[i][beat] == Byte.MIN_VALUE){
+               if(song[i][beat] != song[i][beat - 1] || song[i][beat] == Byte.MIN_VALUE){
                   if(i == DRUMS)
                      channels[9].noteOff(song[i][beat]);
                   else
                      channels[i].noteOff(60 + song[i][beat - 1]);
                
+               }
+               
                //Play new note
-               }else if(beat == 1 || song[i][beat - 1] != song[i][beat]){
+               if(song[i][beat - 1] != song[i][beat]){
                   //Find the note length
                   byte noteLength = 0;
                   for(short j = beat; j < song[0].length; j++){
