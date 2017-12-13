@@ -261,7 +261,6 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
          g2.getColor().getBlue(),
          alpha - Byte.MIN_VALUE
       ));
-      g2.setColor(Color.BLACK);
       
       //Show received messages
       FontMetrics fontMetrics = getFontMetrics(g2.getFont());
@@ -279,6 +278,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
       
       //Show current chat message
       if(chatMessage != null){
+         g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
          g2.drawString(
             "<CHAT>: " + chatMessage,
             (short)(0.01 * getWidth()),

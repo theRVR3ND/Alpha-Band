@@ -90,6 +90,7 @@ public class ui_Table{
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g2.drawRect(getX(), getY(), getWidth(), getHeight());
       
+      /*
       //Draw table contents
       for(byte c = 0; c < labels.length; c++){
          //Draw column label
@@ -99,6 +100,7 @@ public class ui_Table{
                (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
                (short)((y - 0.01) * cg_Client.SCREEN_HEIGHT)
             );
+         
          //Draw row contents
          for(byte r = 0; r < h / rowGap && r + scrollInd < contents.size(); r++){
             //Draw highlighted row if needed
@@ -115,7 +117,64 @@ public class ui_Table{
                              (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
                              (short)((y + r * rowGap + 0.035) * cg_Client.SCREEN_HEIGHT));
             }
+         }
       }
+      */
+      for(byte r = -1; r < h / rowGap && r + scrollInd < contents.size(); r++){
+         //Highlight row
+         if(r == hoverRow - scrollInd && r != -1){
+            g2.setColor(ui_Theme.getColor(ui_Theme.HIGHLIGHT));
+            g2.fillRect(
+               getX() + 1,
+               (short)(getY() + r * rowGap * cg_Client.SCREEN_HEIGHT + 1),
+               getWidth() - 1,
+               (short)(rowGap * cg_Client.SCREEN_HEIGHT)
+            );
+            g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
+         }
+         
+         //Draw column labels and text
+         for(byte c = 0; c < labels.length; c++){
+            if(r == -1){
+               //Draw column label
+               if(labels[c] != null){
+                  g2.drawString(
+                     labels[c],
+                     (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
+                     (short)((y - 0.01) * cg_Client.SCREEN_HEIGHT)
+                  );
+               }
+               continue;
+            }
+            
+            //Draw text
+            if(c < contents.get(r + scrollInd).length && contents.get(r + scrollInd)[c] != null){
+               g2.drawString(contents.get(r + scrollInd)[c],
+                             (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
+                             (short)((y + r * rowGap + 0.035) * cg_Client.SCREEN_HEIGHT));
+            }
+            
+            /*
+            //Highlighted row if needed
+            if(r == hoverRow - scrollInd){
+               g2.setColor(ui_Theme.getColor(ui_Theme.HIGHLIGHT));
+               g2.fillRect(
+                  getX() + 1,
+                  (short)((y + (hoverRow - scrollInd) * rowGap) * cg_Client.SCREEN_HEIGHT + 1),
+                  getWidth() - 1,
+                  (short)(rowGap * cg_Client.SCREEN_HEIGHT)
+               );
+               g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
+            }
+            
+            //Draw text
+            if(c < contents.get(r + scrollInd).length && contents.get(r + scrollInd)[c] != null){
+               g2.drawString(contents.get(r + scrollInd)[c],
+                             (short)(colCor[c] * cg_Client.SCREEN_WIDTH),
+                             (short)((y + r * rowGap + 0.035) * cg_Client.SCREEN_HEIGHT));
+            }
+            */
+         }
       }
       
       //Draw scrollbar (all ye who enter, abandon all hope)

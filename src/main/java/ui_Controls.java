@@ -83,8 +83,6 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
       //Draw out current binds
       table.draw(g2);
       
-      g2.drawString(modInd + "", 100, 100);
-      
       repaint();
    }
    
