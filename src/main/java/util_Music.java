@@ -50,7 +50,7 @@ public class util_Music{
    
    public static void main(String[] args){
       //playSong(generateSong((byte)2, (short)(Math.random() * Short.MAX_VALUE)));
-      playSong(DRUMS, generatePart((byte)2, (short)(Math.random() * Short.MAX_VALUE), DRUMS));
+      playSong(BASS, generatePart((byte)2, (short)(Math.random() * Short.MAX_VALUE), BASS));
    }
    
    //Generate specified instrument's part
@@ -87,7 +87,7 @@ public class util_Music{
       }else if(instrument == DRUMS){
          //Beat stats
         // byte bassInterval = (byte)(Math.pow(2, 2 * (5 - difficulty))),
-         //    snareInterval = (byte)(bassInterval / 2.0),
+        //    snareInterval = (byte)(bassInterval / 2.0),
         //    cymbalInterval = 
              
          //Generate single measure of beat
@@ -111,7 +111,23 @@ public class util_Music{
       
       //Bass guitar
       }else if(instrument == BASS){
-      
+       ArrayList<ArrayList<Byte>> bmeasure = new ArrayList<>();
+         for(byte i = 0; i < measureLength; i++){
+            ArrayList<Byte> bchord = new ArrayList<>();
+            if(i % 2 == 0){
+               bchord.add((byte)0);
+               if(i == 2)
+                 bchord.add((byte)1);
+            }else{
+               bchord.add((byte)2);
+            }
+            bmeasure.add(bchord);
+         }
+         
+         for(int i = 0; i < totalBeats; i++){
+            song.add(bmeasure.get(i % measureLength));
+         }
+
       }else if(instrument == DIST_GUITAR){
       
       }else if(instrument == AGOGO){

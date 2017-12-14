@@ -14,6 +14,16 @@ import java.io.*;
 
 public class g_World extends bg_World{
    
+   private final byte serverDifficulty;
+   
+   private byte[][] currVote; //Current song vote. Row 1 = index of song, row 2 = # votes.
+   
+   private long voteTimeout; //Time, in milliseconds, at which vote will time out.
+   
+   private HashSet<NoteSpawner> noteSpawners;
+   
+   private static ArrayList<byte[]> songList;
+   
    /**
     * Master gamestate. Holds all current entity states.
     * Data is NOT compressed.
@@ -28,36 +38,21 @@ public class g_World extends bg_World{
    private HashMap<Byte, HashMap<Short, byte[]>> snapshots;
    
    /**
-    * Current song vote. Row 1 = index of song, row 2 = # vote.
-    */
-   private byte[][] currVote;
-   
-   /**
-    * Time, in milliseconds, at which vote will time out.
-    */
-   private long voteTimeout;
-   
-   //Timer for waiting to start game
-   //protected short startTimer;
-   
-   /**
-    * Info of all songs that can be played.
-    */
-   private static ArrayList<byte[]> songList;
-   
-   /**
     * Constructor.
     */
-   public g_World(byte gamemode){
+   public g_World(byte gamemode, byte serverDifficulty){
       super(gamemode);
       
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
       
+      this.serverDifficulty = serverDifficulty;
+      noteSpawners = new HashSet<NoteSpawner>();
+      
       //Spawn fake player to store world data
-      spawnPlayer("", Color.WHITE, (byte)-1);
-         
+      spawnPlayer("", Color.WHITE, (byte)(-1));
+      
       //Load all songs on desktop
       try{
          File[] folder = (new File(util_Utilities.getDirectory() + "/resources/songs")).listFiles();
@@ -113,31 +108,6 @@ public class g_World extends bg_World{
             dataToBytes(entities.get(key).getData(new LinkedList<Object>()))
          );
       }
-      
-      //Update current vote
-      /*
-      if(voteTimeout > 0){
-         voteTimeout--;
-      }else if(voteTimeout == 0 && currVote != null){
-         //Figure out which song won. Start winning song.
-         byte max = Byte.MIN_VALUE;
-         byte ind = 0;
-         for(byte i = 0; i < currVote.length; i++){
-            if(max < currVote[i][1]){
-               max = currVote[i][1];
-               ind = i;
-            }
-         }
-         
-         //If randomly generating/picking song
-         if(ind == 3)
-            ind = (byte)(Math.random() * 3);
-         else if(ind == 4)
-            ind = -1;
-         
-         startSong(ind);
-      }
-      */
    }
    
    public byte[][] getCurrVote(){
@@ -195,23 +165,27 @@ public class g_World extends bg_World{
          }
       }
       
-      /*
-      //Song progress data is transferred through infoEnt's name
-      String name = (char)(currVote[ind][0]) + "";
-      
-      //Randomly generated song to be played
-      if(ind == -1){
-         //Send seed info through infoEnt's data
-         byte[] bytes = shortToBytes((short)(Math.random() * Short.MAX_VALUE));
-         name += (char)(bytes[0]) + "" + (char)(bytes[1]);
-      
-      //Preset song selected
-      }else{
-         name += (char)(ind);
+      //Figure out winner of vote
+      byte highestVotes = 0;
+      ArrayList<Byte> maxVotes = new ArrayList<>();
+      for(byte i = 0; i < currVote.length; i++){
+         if(currVote[i][1] == highestVotes){
+            maxVotes.add(i);
+         }else if(currVote[i][1] > highestVotes){
+            maxVotes.clear();
+            maxVotes.add(i);
+            highestVotes = currVote[i][1];
+         }
       }
       
-      infoEnt.setName(name);
-      */
+      //Choose song out of all tied maximums
+      byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));
+      
+      //Song statistacs
+      
+      for(byte i = 0; i < currInstrument; i++){
+         //noteSpawners.add(new NoteSpawner(util_Music.generatePart()));
+      }
    }
    
    /**
@@ -321,5 +295,52 @@ public class g_World extends bg_World{
       }
       
       return ret;
+   }
+   
+   //Spawn notes in correct timing
+   private class NoteSpawner extends Thread{
+      
+      private final ArrayList<ArrayList<Byte>> song;
+      
+      public NoteSpawner(ArrayList<ArrayList<Byte>> song){
+         //Initialize stuff
+         this.song = song;
+      }
+      
+      @Override
+      public void run(){
+         //Figure out song metrics
+         final short bpm = (short)(song.get(0).get(0) * 4);
+         final byte scale = song.get(0).get(1),
+                      key = song.get(0).get(2);
+         
+         //Progress through each beat
+         for(int beat = 1; beat < song.size(); beat++){
+            //Spawn all notes for current beat
+            ArrayList<Byte> chord = song.get(beat);
+            
+            for(Byte note : chord){
+               byte duration = 0;
+               for(int i = beat; i < song.size(); i++){
+                  if(song.get(i).contains(chord))
+                     duration++;
+                  else
+                     break;
+               }
+               
+               Short entityKey = bg_Entity.getEntityCount();
+               bg_Note toSpawn = new bg_Note(note, duration);
+               
+               entities.put(entityKey, toSpawn);
+            }
+            
+            //Wait until beat time passes
+            try{
+               sleep((int)(60000.0 / bpm));
+            }catch(InterruptedException e){
+               e.printStackTrace();
+            }
+         }
+      }
    }
 }
