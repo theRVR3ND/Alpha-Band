@@ -79,13 +79,15 @@ public class cg_World extends bg_World{
          util_Utilities.getFontSize()
       ));
       fm = g2.getFontMetrics();
+      g2.drawString(entities.size() + "", 100, 100);
       
       //Draw player info
-      toDraw = util_Music.instruments[clientPlayer.getInstrument()];
+      toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
       g2.drawString(toDraw, 40, 50);
       
       //Draw all entities' info
       int shiftInd = 1;
+      byte spacing = (byte)(fm.getHeight() * 1.2);
       for(Short key : entities.keySet()){
          //Draw player scores and stuff
          if(entities.get(key) instanceof bg_Player){
@@ -100,16 +102,16 @@ public class cg_World extends bg_World{
             g2.drawString(
                toDraw,
                cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
-               50 + shiftInd * 30
+               50 + shiftInd * spacing
             );
             
             //Underline client's player score
             if(clientPlayer.getController() == otherPlayer.getController()){
                g2.drawLine(
                   cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
-                  54 + shiftInd * 30,
+                  54 + shiftInd * spacing,
                   cg_Client.SCREEN_WIDTH - 40,
-                  54 + shiftInd * 30
+                  54 + shiftInd * spacing
                );
             }
             
@@ -117,7 +119,18 @@ public class cg_World extends bg_World{
          
          //Draw note
          }else if(entities.get(key) instanceof bg_Note){
-            //Draw note. Somehow.
+            bg_Note note = (bg_Note)(entities.get(key));
+            
+            final short noteWidth = (short)(cg_Client.SCREEN_WIDTH / (Byte.MAX_VALUE + 1.0));
+            //final short noteY = (short)();
+            
+            g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
+            g2.fillRect(
+               noteWidth * note.getNote(),
+               100,
+               noteWidth,
+               100
+            );
          }
       }
    }

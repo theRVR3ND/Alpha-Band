@@ -55,7 +55,8 @@ public interface bg_Constants{
       First value must equal 0 and following
       values must increment up by one.
    */
-   public static final byte CHAT = 0;
+   public static final byte CHAT = 0,
+                            TEST = 1;
    
    /**
     * Visible (to client) dimensions. Any entity within
@@ -71,8 +72,10 @@ public interface bg_Constants{
                               NOTE = 1;
    
    /**
-    * Game mode.
+    * Game modes.
     */
-   public static final byte COMPETITION = 0,
-                                 COLLAB = 1;
+   public static final String[] gamemodes = new String[]{
+      "Competition",
+      "Collaborative"
+   };
 }

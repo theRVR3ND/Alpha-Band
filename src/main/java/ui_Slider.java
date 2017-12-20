@@ -13,6 +13,11 @@ import java.awt.*;
 public class ui_Slider{
    
    /**
+    * Text name/label of slider.
+    */
+   private final String name;
+   
+   /**
     * Scalable position of slider on screen.
     */
    private final float x, y;
@@ -23,19 +28,14 @@ public class ui_Slider{
    private final float w, h;
    
    /**
-    * Text name/label of slider.
-    */
-   private final String name;
-   
-   /**
-    * Slider's current value, between min and max.
-    */
-   private short val;
-   
-   /**
     * Range limit on slider value.
     */
-   private final short min, max;
+   private final byte min, max;
+   
+   /**
+    * Slider's current value, from 0 to 1.
+    */
+   private float val;
    
    /**
     * Current "is being dragged by mouse" state.
@@ -45,23 +45,23 @@ public class ui_Slider{
    /**
     * Constructor. Initialize variables based on arguments.
     * 
+    * @param name                Slider's name label.
     * @param x                   Slider's scalable x-coordinate.
     * @param y                   Slider's scalable y-coordinate.
     * @param w                   Slider's scalable width.
     * @param h                   Slider's scalable height.
-    * @param name                Slider's name label.
     * @param min                 Slider's minimum value.
     * @param max                 Slider's maximum value.
     */
-   public ui_Slider(float x, float y, float w, float h, String name, short min, short max){
+   public ui_Slider(String name, float x, float y, float w, float h, byte min, byte max){
+      this.name = name;
       this.x = x;
       this.y = y;
       this.w = w;
       this.h = h;
-      this.name = name;
       this.min = min;
       this.max = max;
-      this.val = (short)((max - min) / 2);
+      this.val = (float)((max - min) / 2.0);
       dragging = false;
    }
    
@@ -71,24 +71,39 @@ public class ui_Slider{
     * @param g2                  Graphics object to draw in to.
     */
    public void draw(Graphics2D g2){
-      //Draw slider bar outline
-      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
-      g2.drawRect(getX(), getY(), getWidth(), getHeight());
-      
       //Draw slider value bar
       g2.setColor(ui_Theme.getColor(ui_Theme.HIGHLIGHT));
-      g2.fillRect(getX() + 1, getY() + 1, (short)((getWidth() - 1) * (1.0 * val / (max - min))), getHeight() - 1);
+      g2.fillRect(
+         getX() + 1,
+         getY() + 1,
+         (int)(getWidth() * val),
+         getHeight() - 1
+      );
+      
+      //Draw slider bar outline
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
+      g2.drawRect(
+         getX(),
+         getY(),
+         getWidth(),
+         getHeight()
+      );
       
       //Draw value
-      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
-      g2.drawString(getValue() + "",
-                    getX() + getWidth() + (short)(0.01 * cg_Client.SCREEN_WIDTH),
-                    getY() + getHeight());
+      g2.drawString(
+         getValue() + "",
+         getX() + getWidth() + (int)(0.01 * cg_Client.SCREEN_WIDTH),
+         getY() + getHeight()
+      );
       
       //Draw name
       FontMetrics fontMetrics = g2.getFontMetrics();
       short nameWidth = (short)fontMetrics.stringWidth(name);
-      g2.drawString(name, getX() - (short)(nameWidth * 1.1), getY() + getHeight());
+      g2.drawString(
+         name,
+         getX() - (short)(nameWidth * 1.1),
+         getY() + getHeight()
+      );
    }
    
    /**
@@ -122,8 +137,8 @@ public class ui_Slider{
    /**
     * Return current slider value.
     */
-   public short getValue(){
-      return val;
+   public byte getValue(){
+      return (byte)(min + val * (max - min));
    }
    
    /**
@@ -131,8 +146,8 @@ public class ui_Slider{
     * 
     * @param val                 New value to set to.
     */
-   public void setValue(short val){
-      this.val = val;
+   public void setValue(byte val){
+      this.val = (float)(val / (max - min * 1.0));
    }
    
    /**
@@ -143,7 +158,7 @@ public class ui_Slider{
     * @param pY                  Mouse press y-coordinate.
     */
    public boolean checkPress(short pX, short pY){
-      if(Math.abs(pX - (getX() + (1.0 * val / (max - min)) * getWidth())) < 0.05 * cg_Client.SCREEN_WIDTH &&
+      if(Math.abs(pX - (getX() + val * getWidth())) < 0.1 * getWidth() &&
          Math.abs(pY - (getY() + 0.5 * getHeight())) < getHeight() / 2){
          dragging = true;
          return true;
@@ -158,11 +173,11 @@ public class ui_Slider{
     */
    public void checkDrag(short pX){
       if(dragging){
-         val = (short)((max - min) * (1.0 * (pX - getX()) / (getWidth())));
-         if(val < min)
-            val = min;
-         else if(val > max)
-            val = max;
+         val = (float)((1.0 * pX - getX()) / getWidth());
+         if(val < 0)
+            val = 0;
+         else if(val > 1)
+            val = 1;
       }
    }
    

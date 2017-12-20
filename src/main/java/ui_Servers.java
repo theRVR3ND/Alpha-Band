@@ -45,7 +45,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
       list = new ui_Table(
          0.1f, 0.1f, 0.8f, 0.35f,
          new String[] {"Server", "IP", "Gamemode", "Players", "Ping"},
-         new float[] {0.11f, 0.25f, 0.45f, 0.75f, 0.85f}
+         new float[] {0.11f, 0.3f, 0.45f, 0.70f, 0.85f}
       );
       
       refresher = new Refresher();
@@ -151,10 +151,12 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
     */
    public void joinServer(String IP){
       byte gamemode = 0;
-      if(list.getContents().get(list.getHoverRow()).equals("Competition"))
-         gamemode = COMPETITION;
-      else
-         gamemode = COLLAB;
+      for(String g : gamemodes){
+         if(!list.getContents().get(list.getHoverRow()).equals(g))
+            gamemode++;
+         else
+            break;
+      }
       joinServer(IP, gamemode);
    }
    
@@ -229,11 +231,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
                   final long receiveTime = System.currentTimeMillis();
                   
                   //Do stuff
-                  String gamemode;
-                  if(buff[numByte - 1] == COMPETITION)
-                     gamemode = "Competition";
-                  else
-                     gamemode = "Collab";
+                  String gamemode = gamemodes[buff[numByte - 1]];
                   
                   //Format server info
                   String[] serverInfo = new String[5];

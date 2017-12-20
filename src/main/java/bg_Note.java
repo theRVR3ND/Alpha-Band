@@ -15,6 +15,7 @@ public class bg_Note extends bg_Entity{
    /**
     * Current frame count of this note.
     */
+   //Byte.MIN_VALUE = top of screen, 0 = bottom of screen
    private byte frameCount;
    
    /**
@@ -27,21 +28,32 @@ public class bg_Note extends bg_Entity{
     */
    private byte note;
    
+   private byte instrument;
+   
+   //Beat in song at which note hits bottom
+   private short hitBeat;
+   
    /**
     * Constructor. Establish note parameters.
     */
-   public bg_Note(byte duration, byte note){
-      frameCount = Byte.MAX_VALUE;
+   public bg_Note(byte duration, byte note, byte instrument, short hitBeat){
+      super();
+      
       this.duration = duration;
       this.note = note;
+      this.instrument = instrument;
+      this.hitBeat = hitBeat;
+      
+      frameCount = Byte.MIN_VALUE;
    }
    
    public bg_Note(){
-      this((byte)0, (byte)0);
+      this((byte)0, (byte)0, (byte)0, (short)0);
    }
    
    public void think(short deltaTime){
-      frameCount--;
+      if(frameCount < Byte.MAX_VALUE)
+         frameCount++;
    }
    
    public byte getFrameCount(){
@@ -52,14 +64,32 @@ public class bg_Note extends bg_Entity{
       return duration;
    }
    
-   public byte getValue(){
+   public byte getNote(){
       return note;
+   }
+   
+   public byte getInstrument(){
+      return instrument;
+   }
+   
+   public boolean isDepreciated(){
+      return (frameCount - duration) > 0;
+   }
+   
+   public void setData(byte duration, byte note, byte instrument, short hitBeat){
+      this.duration = duration;
+      this.note = note;
+      this.instrument = instrument;
+      this.hitBeat = hitBeat;
+      
+      frameCount = Byte.MIN_VALUE;
    }
    
    public LinkedList<Object> getData(LinkedList<Object> list){
       list.add(frameCount);
       list.add(duration);
-      list.add((byte)note);
+      list.add(note);
+      list.add(hitBeat);
       
       return list;
    }
@@ -68,5 +98,6 @@ public class bg_Note extends bg_Entity{
       frameCount = (Byte)(data.remove(0));
       duration = (Byte)(data.remove(0));
       note = (Byte)(data.remove(0));
+      hitBeat = (Short)(data.remove(0));
    }
 }

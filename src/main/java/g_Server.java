@@ -62,7 +62,7 @@ public class g_Server extends Thread implements bg_Constants{
          this.name = name;
          
          clients = new ArrayList<g_Connection>();
-         world = new g_World(gamemode);
+         world = new g_World(gamemode, (byte)0);
          
          server = this;
          

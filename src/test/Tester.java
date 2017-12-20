@@ -28,6 +28,18 @@ public class Tester{
       }
       //**********************************************************/
       
+      //System.out.println(Integer.MAX_VALUE / (60000.0 * 60 * 24));
+      /**********************************************************
+      for(long i = Long.MIN_VALUE; i <= Long.MAX_VALUE; i++){
+         byte[] bytes = longToBytes(i);
+         final long con = bytesToLong(bytes, (byte)0);
+         if(con != i)
+            System.out.println(i + " " + con);
+         //else
+            //System.out.println("Sky Jesus");
+      }
+      //**********************************************************/
+      
       /**********************************************************
       for(float i = Float.MIN_VALUE; i <= Float.MAX_VALUE; i++){
          byte[] bytes = floatToBytes(i);
@@ -39,7 +51,7 @@ public class Tester{
       }
       //**********************************************************/
       
-      //**********************************************************
+      /**********************************************************
       for(int i = Integer.MIN_VALUE; i <= Integer.MAX_VALUE; i++){
          byte[] bytes = intToBytes(i);
          final int con = bytesToInt(bytes, (byte)0);
@@ -49,6 +61,23 @@ public class Tester{
             //System.out.println("Sky Jesus");
       }
       //**********************************************************/
+   }
+   
+   public static byte[] longToBytes(long val){
+      byte[] ret = new byte[8];
+      byte[] p1 = intToBytes((int)(val >> 32 & 0xFF));
+      byte[] p2 = intToBytes((int)(val & 0xFF));
+      for(byte i = 0; i < ret.length; i++){
+         if(i < 4)
+            ret[i] = p1[i];
+         else
+            ret[i] = p2[i - 4];
+      }
+      return ret;
+   }
+   
+   public static long bytesToLong(byte[] bytes, byte start){
+      return (bytesToInt(bytes, start) << 4) | (bytesToInt(bytes, (byte)(start + 4)));
    }
    
    public static byte[] findDelta(byte[] start, byte[] end){

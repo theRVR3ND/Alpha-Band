@@ -37,13 +37,15 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       
       //Initialize stuff
       nameTextbox = new ui_Textbox(
-         0.35f, 0.08f, 0.3f, 0.03f, (byte)18
+         0.35f, 0.08f,
+         0.3f, 0.03f,
+         (byte)18
       );
       nameTextbox.setContents("Server");
       
       //List available game modes
       gamemodeList = new ui_Table(
-         0.4f, 0.3f, 0.2f, 0.3f,
+         0.4f, 0.3f, 0.2f, 0.2f,
          new String[] {"Game Mode"},
          new float[] {0.41f}
       );

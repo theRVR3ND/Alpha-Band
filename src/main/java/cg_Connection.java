@@ -200,7 +200,8 @@ public class cg_Connection extends Thread implements bg_Constants{
                send[i] = info[i + 1];
             
             //Send data to world
-            cg_Panel.gamePanel.getWorld().setData(send);
+            if(cg_Panel.gamePanel.getWorld() != null)
+               cg_Panel.gamePanel.getWorld().setData(send);
             
             break;
          
@@ -208,8 +209,8 @@ public class cg_Connection extends Thread implements bg_Constants{
          case(VOTE):
             
             ui_Menu.vote.startVote(info);
-            cg_Client.frame.setContentPane(ui_Menu.vote);
-            cg_Client.frame.revalidate();
+            //cg_Client.frame.setContentPane(ui_Menu.vote);
+            //cg_Client.frame.revalidate();
             
             break;
       }

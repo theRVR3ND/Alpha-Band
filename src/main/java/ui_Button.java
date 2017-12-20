@@ -33,8 +33,8 @@ public class ui_Button{
     */
    private boolean expanded;
    
-   private final short WIDTH = 244,
-                      HEIGHT = 94;
+   private static final short WIDTH = 244,
+                             HEIGHT = 94;
    
    /**
     * Constructor. Sets image and coordinates of button.
@@ -108,7 +108,7 @@ public class ui_Button{
     * 
     * @return                          Pixel-wise width of button.
     */
-   public short getWidth(){
+   public static short getWidth(){
       return (short)(getHeight() * (1.0 * WIDTH / HEIGHT));
    }
    
@@ -117,7 +117,7 @@ public class ui_Button{
     * 
     * @return                          Pixel-wise height of button.
     */
-   public short getHeight(){
+   public static short getHeight(){
       return (short)(HEIGHT * cg_Client.SCREEN_HEIGHT / 1080.0);
    }
    

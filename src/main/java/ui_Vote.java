@@ -17,6 +17,8 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
    //Time in milliseconds of vote timeout
    private long voteTimeout;
    
+   private boolean sentVote;
+   
    private ui_Table voteList;
    
    private byte[] currVotes;
@@ -35,13 +37,8 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
          new float[] {0.31f, 0.5f, 0.6f}
       );
       
-      voteTimeout = -1;
-      
-      //Add all song options to list
-      voteList.getContents().add(new String[] {"Generate a Song"});
-      voteList.getContents().add(new String[] {"Random Song"});
-      
-      String[] settings = util_Utilities.readFromFile("menu/songList.cfg");
+      voteTimeout = Long.MAX_VALUE;
+      sentVote = false;
       
       //Add key listener for entering player name
       this.setFocusable(true);
@@ -56,6 +53,12 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
     */
    public void paintComponent(Graphics g){
       super.paintComponent(g);
+      
+      //Redirect to game screen if timed out
+      if(System.currentTimeMillis() > voteTimeout){
+         cg_Client.frame.setContentPane(cg_Panel.gamePanel);
+         cg_Panel.gamePanel.requestFocus();
+      }
       
       //Improve rendering quality
       Graphics2D g2 = util_Utilities.improveQuality(g);
@@ -72,7 +75,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       else
          toDraw = "" + (seconds % 60);
       
-      g2.setColor(Color.WHITE);
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g2.drawString(
          "Game starts in: " + (seconds / 60) + ":" + toDraw,
          voteList.getX(),
@@ -87,12 +90,10 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       voteList.getContents().clear();
       
       //Extract vote info
-      byte i = 2;
+      byte i = 3;
       for(byte j = 0; j < 3; j++){
          //Check if there is info to extract
          if(info[i + 1] == 0 && info[i + 2] == 0){
-            for(byte k = j; k < 3; k++)
-               voteList.getContents().add(new String[] {" ", " ", " "});
             break;
          }
          
@@ -110,11 +111,11 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       }
       
       //Get vote timout
-      voteTimeout = (long)(System.currentTimeMillis() + (info[1] + Byte.MAX_VALUE) * 1500);
+      voteTimeout = (long)(System.currentTimeMillis() + bg_World.bytesToShort(info, (byte)1) * 6);
       
       //Add all song options to list
-      voteList.getContents().add(new String[] {"Generate a Song", "", ""});
-      voteList.getContents().add(new String[] {"Choose Random Song", "", ""});
+      voteList.getContents().add(new String[] {"Generate a Song"});
+      voteList.getContents().add(new String[] {"Choose Random Song"});
    }
    
    /**
@@ -140,12 +141,15 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       if(buttons[0].isDown()){
          //Send vote back to server
          if(voteList.getHoverRow() >= 0){
-            cg_Panel.getConnection().writeOut(
-               new byte[] {
-                  VOTE,
-                  voteList.getHoverRow()
-               }
-            );
+            if(!sentVote){
+               cg_Panel.getConnection().writeOut(
+                  new byte[] {
+                     VOTE,
+                     voteList.getHoverRow()
+                  }
+               );
+               sentVote = true;
+            }
             
             //Return to game panel
             cg_Client.frame.setContentPane(cg_Panel.gamePanel);

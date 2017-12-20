@@ -39,11 +39,11 @@ public class g_Echo implements Runnable, bg_Constants{
    @Override
    public void run(){
       //Figure out what info to return
-      byte[] ret = new byte[g_Server.server.getName().length() + 3];
+      byte[] ret = new byte[g_Server.server.getServerName().length() + 3];
       
-      ret[0] = (byte)(g_Server.server.getName().length());
+      ret[0] = (byte)(g_Server.server.getServerName().length());
       for(byte i = 0; i < ret[0]; i++){
-         ret[i + 1] = (byte)(g_Server.server.getName().charAt(i));
+         ret[i + 1] = (byte)(g_Server.server.getServerName().charAt(i));
       }
       
       ret[ret.length - 2] = g_Server.server.getWorld().getGamemode();

@@ -29,7 +29,11 @@ public class ui_Settings extends ui_Menu implements MouseWheelListener{
       };
       
       sliders = new ui_Slider[] {
-         new ui_Slider(0.4f, 0.45f, 0.2f, 0.02f, "Volume:", (short)0, (short)100), //Sound slider
+         new ui_Slider( //Sound slider
+            "Volume:",
+            0.4f, 0.45f,
+            0.2f, 0.02f,
+            (byte)0, (byte)100),
       };
       
       themeList = new ui_Table(
@@ -53,7 +57,7 @@ public class ui_Settings extends ui_Menu implements MouseWheelListener{
       
       themeList.setHoverRow(ui_Theme.currTheme);
       for(byte i = 1; i < settings.length; i++){
-         sliders[i - 1].setValue(Short.parseShort(settings[i]));
+         sliders[i - 1].setValue(Byte.parseByte(settings[i]));
       }
       
       //Add mouse wheel listener

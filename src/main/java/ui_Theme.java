@@ -57,15 +57,15 @@ public class ui_Theme{
     * Theme colors. Row is for theme value, column is for theme component.
     */
    private static final Color[][] THEMES = new Color[][] {
-      {new Color(0, 148, 255),   Color.WHITE,      new Color(128, 128, 128, 150), Color.WHITE},
-      {Color.RED,                Color.YELLOW,     new Color(100, 100, 100, 200), Color.WHITE},
-      {new Color(255, 106, 0),   Color.WHITE,      new Color(100, 100, 100, 200), Color.WHITE},
-      {new Color(216, 197, 101), Color.DARK_GRAY,  new Color(100, 100, 100, 130), Color.WHITE},
-      {new Color(50, 114, 22),   Color.WHITE,      new Color(100, 100, 100, 130), Color.WHITE},
-      {new Color(43, 50, 91),    Color.WHITE,      new Color(200, 200, 200, 130), Color.WHITE},
-      {new Color(87, 0, 127),    Color.PINK,       new Color(150, 150, 150, 120), Color.WHITE},
-      {Color.WHITE,              Color.DARK_GRAY,  new Color(128, 128, 128, 112), Color.BLACK},
-      {Color.DARK_GRAY,          Color.LIGHT_GRAY, new Color(200, 200, 200, 112), Color.WHITE}
+      {new Color(0, 148, 255),   Color.WHITE,      new Color(128, 128, 128, 150), Color.WHITE}, //Classic
+      {Color.RED,                Color.YELLOW,     new Color(100, 100, 100, 200), Color.WHITE}, //Red
+      {new Color(255, 106, 0),   Color.WHITE,      new Color(100, 100, 100, 200), Color.WHITE}, //Orange
+      {new Color(216, 197, 101), Color.DARK_GRAY,  new Color(100, 100, 100, 130), Color.WHITE}, //Yellow
+      {new Color(50, 114, 22),   Color.WHITE,      new Color(100, 100, 100, 130), Color.WHITE}, //Green
+      {new Color(43, 50, 91),    Color.WHITE,      new Color(200, 200, 200, 130), Color.WHITE}, //Blue
+      {new Color(87, 0, 127),    Color.WHITE,      new Color(100, 100, 100, 150), Color.WHITE}, //Purple
+      {Color.WHITE,              Color.DARK_GRAY,  new Color(128, 128, 128, 112), Color.BLACK}, //White
+      {Color.DARK_GRAY,          Color.LIGHT_GRAY, new Color(200, 200, 200, 112), Color.WHITE}  //Dark
    };
    
    /**

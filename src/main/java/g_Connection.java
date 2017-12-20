@@ -90,11 +90,15 @@ public class g_Connection extends Thread implements bg_Constants{
             if(g_Server.server.getWorld().getCurrVote() != null && !sentBallot){
                byte[] toSend = new byte[Byte.MAX_VALUE];
                byte[][] currVote = g_Server.server.getWorld().getCurrVote();
-               byte ind = 2;
+               byte ind = 3;
                
                //Add tags and stuff
                toSend[0] = VOTE;
-               toSend[1] = (byte)((g_Server.server.getWorld().getVoteTimeout() - System.currentTimeMillis()) / 1500.0 - Byte.MAX_VALUE);
+               
+               //Include time to start game
+               byte[] bytes = bg_World.shortToBytes((short)((g_Server.server.getWorld().getVoteTimeout() - System.currentTimeMillis()) / 6.0));
+               toSend[1] = bytes[0];
+               toSend[2] = bytes[1];
                
                //Add all songs on ballot into toSend
                for(byte r = 0; r < currVote.length; r++){
@@ -124,6 +128,7 @@ public class g_Connection extends Thread implements bg_Constants{
                   }
                   
                   writeOut(outLine);
+                  
                   try{
                      Thread.sleep(100);
                   }catch(InterruptedException e){}

@@ -49,7 +49,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       this.name = name;
       this.color = color;
       this.controller = controller;
-      this.instrument = Byte.MIN_VALUE;
+      this.instrument = 0;
       
       score = 0;
    }
@@ -140,7 +140,8 @@ public class bg_Player extends bg_Entity implements bg_Constants{
     */
    public void processAction(final byte action){
       switch(action){
-      
+         case(TEST): score++;
+                     break;
       }
    }
    
@@ -170,7 +171,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       color = (Color)(data.remove(0));
       controller = (Byte)(data.remove(0));
       instrument = (Byte)(data.remove(0));
-      
+      //System.out.println(instrument + "fook");
       score = (Short)(data.remove(0));
    }
 }

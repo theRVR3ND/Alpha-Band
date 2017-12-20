@@ -29,8 +29,6 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
     */
    private HashSet<Byte> currActions;
    
-   private final BufferedImage background = util_Utilities.loadImage("game/springBackground.png");
-   
    private final HashMap<Integer, Byte> noteMap;
    
    /**

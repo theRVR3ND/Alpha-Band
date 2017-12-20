@@ -143,7 +143,7 @@ public abstract class bg_World implements bg_Constants{
          
          }else if(o instanceof String){
             String s = (String)o;
-            temp = new byte[MAX_PLAYER_NAME_LENGTH];
+            temp = new byte[MAX_PLAYER_NAME_LENGTH + 4];
             
             byte[] stringBytes = s.getBytes();
             for(byte i = 0; i < stringBytes.length; i++)
@@ -208,9 +208,8 @@ public abstract class bg_World implements bg_Constants{
          
          }else if(t instanceof String){
             //Get length of string (encoded in data)
-            byte length = data[i];
-            ret.add(new String(data, i + 1, length));
-            i += MAX_PLAYER_NAME_LENGTH;
+            ret.add(new String(data, i + 1, data[i]));
+            i += MAX_PLAYER_NAME_LENGTH + 4;
          
          }else if(t instanceof Color){
             ret.add(new Color(
@@ -350,6 +349,24 @@ public abstract class bg_World implements bg_Constants{
    }
    
    /**
+    * Convert long to byte array (8 bytes).
+    * 
+    * @param val              Long to convert.
+    */
+   public static byte[] longToBytes(long val){
+      return new byte[] {
+         (byte)(val >>> 56),
+         (byte)(val >>> 48),
+         (byte)(val >>> 40),
+         (byte)(val >>> 32),
+         (byte)(val >>> 24),
+         (byte)(val >>> 16),
+         (byte)(val >>> 8),
+         (byte)(val & 0xFF)
+      };
+   }
+   
+   /**
     * Convert byte array to short. Start using bytes at index start.
     * 
     * @param bytes            Byte array to convert from.
@@ -382,5 +399,22 @@ public abstract class bg_World implements bg_Constants{
                    (0xFF & bytes[start + 1]) << 16 |
                    (0xFF & bytes[start + 2]) << 8 |
                    (0xFF & bytes[start + 3]));
+   }
+   
+   /**
+    * Convert byte array to long. Start using bytes at index start.
+    * 
+    * @param bytes            Byte array to convert from.
+    * @param start            Index in bytes to convert from.
+    */
+   public static long bytesToLong(byte[] bytes, byte start){
+      return (long)((0xFF & bytes[start]) << 56 |
+                    (0xFF & bytes[start + 1]) << 48 |
+                    (0xFF & bytes[start + 2]) << 40 |
+                    (0xFF & bytes[start + 3]) << 32 |
+                    (0xFF & bytes[start + 4]) << 24 |
+                    (0xFF & bytes[start + 5]) << 16 |
+                    (0xFF & bytes[start + 6]) << 8 |
+                    (0xFF & bytes[start + 7]));
    }
 }
