@@ -40,7 +40,8 @@ public interface bg_Constants{
                                 ACTION = 1,
                                MESSAGE = 2,
                                 UPDATE = 3,
-                                  VOTE = 4;
+                                  VOTE = 4,
+                                 NOTES = 5;
    
    /**
     * Longest player name allowed.

@@ -74,8 +74,13 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public void run(){
       try{
+         //Give client some time to catch up
+         try{
+            Thread.sleep(10);
+         }catch(InterruptedException e){}
+         
          while(true){
-            long lastUpdateTime = System.currentTimeMillis();
+            //long lastUpdateTime = System.currentTimeMillis();
             
             //Receive input stream from client
             if(in.available() > 0){
@@ -90,15 +95,15 @@ public class g_Connection extends Thread implements bg_Constants{
             if(g_Server.server.getWorld().getCurrVote() != null && !sentBallot){
                byte[] toSend = new byte[Byte.MAX_VALUE];
                byte[][] currVote = g_Server.server.getWorld().getCurrVote();
-               byte ind = 3;
+               byte ind = 9;
                
                //Add tags and stuff
                toSend[0] = VOTE;
                
                //Include time to start game
-               byte[] bytes = bg_World.shortToBytes((short)((g_Server.server.getWorld().getVoteTimeout() - System.currentTimeMillis()) / 6.0));
-               toSend[1] = bytes[0];
-               toSend[2] = bytes[1];
+               byte[] bytes = bg_World.longToBytes(g_Server.server.getWorld().getSongStartTime());
+               for(byte i = 0; i < bytes.length; i++)
+                  toSend[i + 1] = bytes[i];
                
                //Add all songs on ballot into toSend
                for(byte r = 0; r < currVote.length; r++){
@@ -116,6 +121,7 @@ public class g_Connection extends Thread implements bg_Constants{
             
             //Send game world updates
             }else if(g_Server.server.getWorld().getPlayer(clientID) != null){
+               //Send entity data
                LinkedList<byte[]> data = g_Server.server.getWorld().getRelevantData(clientID);
                for(byte i = 0; i < data.size(); i++){
                   //Add UPDATE stream tag
@@ -130,13 +136,34 @@ public class g_Connection extends Thread implements bg_Constants{
                   writeOut(outLine);
                   
                   try{
-                     Thread.sleep(100);
+                     Thread.sleep(20);
                   }catch(InterruptedException e){}
                }
+               
+               //Send note data
+               //***************
+               final byte playerInstrument = g_Server.server.getWorld().getPlayer(clientID).getInstrument();
+               data = g_Server.server.getWorld().getNotes(playerInstrument);
+               
+               if(data.size() == 0)
+                  continue;
+               
+               byte[] toSend = new byte[data.size() * 5 + 1];
+               
+               toSend[0] = NOTES;
+               
+               byte i = 1;
+               for(byte[] d : data){
+                  for(byte b : d)
+                     toSend[i++] = b;
+               }
+               
+               writeOut(toSend);
+               //**/
             }
          }
-      }catch(IOException e){
-         e.printStackTrace();
+      }catch(Exception e){
+         //e.printStackTrace();
       
       }finally{
          //Disconnected
@@ -153,7 +180,9 @@ public class g_Connection extends Thread implements bg_Constants{
             }
             
             g_Server.server.getClients().remove(this);
-         }catch(IOException e){}
+         }catch(Exception e){
+            //Holy fook
+         }
       }
    }
    
@@ -191,62 +220,50 @@ public class g_Connection extends Thread implements bg_Constants{
     * @param numByte             Number of bytes stored in info.
     */
    private void processInStream(byte[] info, byte numByte){
-      //Check what type of info being sent, then process info.
-      switch(info[0]){
-         //Communicate player info
-         case(INITIALIZE):
-            Color playerColor = new Color(
-               info[1] - Byte.MIN_VALUE,
-               info[2] - Byte.MIN_VALUE,
-               info[3] - Byte.MIN_VALUE
+      //Communicate player info
+      if(info[0] == INITIALIZE){
+         Color playerColor = new Color(
+            info[1] - Byte.MIN_VALUE,
+            info[2] - Byte.MIN_VALUE,
+            info[3] - Byte.MIN_VALUE
+         );
+         String playerName = new String(info, 4, numByte - 4);
+         
+         //Create new player in world
+         g_Server.server.getWorld().spawnPlayer(playerName, playerColor, clientID);
+         
+         //Tell other clients of connection
+         for(byte i = 0; i < g_Server.server.getClients().size(); i++){
+            if(this == g_Server.server.getClients().get(i))
+               continue;
+            g_Server.server.getClients().get(i).relayMessage(
+               g_Server.server.getWorld().getPlayer(clientID).getName() + " has joined the game."
             );
-            String playerName = new String(info, 4, numByte - 4);
-            
-            //Create new player in world
-            g_Server.server.getWorld().spawnPlayer(playerName, playerColor, clientID);
-            
-            //Tell other clients of connection
-            for(byte i = 0; i < g_Server.server.getClients().size(); i++){
-               if(this == g_Server.server.getClients().get(i))
-                  continue;
-               g_Server.server.getClients().get(i).relayMessage(
-                  g_Server.server.getWorld().getPlayer(clientID).getName() + " has joined the game."
-               );
-            }
+         }
+   
+         //Send back client ID
+         writeOut(new byte[] {INITIALIZE, clientID});
       
-            //Send back client ID
-            writeOut(new byte[] {INITIALIZE, clientID});
-            
-            break;
+      //Record action press/release state
+      }else if(info[0] == ACTION){
+         //Send action to our player for processing
+         for(byte i = 1; i < numByte; i++){
+            g_Server.server.getWorld().getPlayer(clientID).processAction(info[i]);
+         }
+      
+      //Relay message to all other clients
+      }else if(info[0] == MESSAGE){
+         String message =
+            "[" + g_Server.server.getWorld().getPlayer(clientID).getName() + "]: " +
+            (new String(info, 1, info.length - 1)).trim();
          
-         //Record action press/release state
-         case(ACTION):
+         //Send message to all clients
+         for(byte i = 0; i < g_Server.server.getClients().size(); i++)
+            g_Server.server.getClients().get(i).relayMessage(message);
          
-            //Send action to our player for processing
-            for(byte i = 1; i < numByte; i++){
-               g_Server.server.getWorld().getPlayer(clientID).processAction(info[i]);
-            }
-            
-            break;
-         
-         //Relay message to all other clients
-         case(MESSAGE):
-            
-            String message =
-               "[" + g_Server.server.getWorld().getPlayer(clientID).getName() + "]: " +
-               (new String(info, 1, info.length - 1)).trim();
-            
-            //Send message to all clients
-            for(byte i = 0; i < g_Server.server.getClients().size(); i++)
-               g_Server.server.getClients().get(i).relayMessage(message);
-            
-            break;
-         
-         //Player has cast vote on song choice
-         case(VOTE):
-            
-            g_Server.server.getWorld().tallyVote(info[1]);
-            break;
+      //Player has cast vote on song choice
+      }else if(info[0] == VOTE){
+         g_Server.server.getWorld().tallyVote(info[1]);
       }
    }
    

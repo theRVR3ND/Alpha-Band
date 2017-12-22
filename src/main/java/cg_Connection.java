@@ -175,44 +175,45 @@ public class cg_Connection extends Thread implements bg_Constants{
     * Process incomming bytes from server.
     */
    private void processInStream(byte[] info, final byte numByte){
-      //Check stream tag
-      switch(info[0]){
-         //Receiving important info
-         case(INITIALIZE):
-            
-            clientID = info[1];
-            
-            break;
-            
-         //Incomming message
-         case(MESSAGE):
-            
-            cg_Panel.addMessage(new String(info, 1, numByte - 1));
-            
-            break;
+      //Receiving important info
+      if(info[0] == INITIALIZE){
+         clientID = info[1];
          
-         //Update world
-         case(UPDATE):
-            
-            //Clip out update tag
-            byte[] send = new byte[numByte - 1];
-            for(byte i = 0; i < send.length; i++)
-               send[i] = info[i + 1];
-            
-            //Send data to world
-            if(cg_Panel.gamePanel.getWorld() != null)
-               cg_Panel.gamePanel.getWorld().setData(send);
-            
-            break;
+      //Incomming message
+      }else if(info[0] == MESSAGE){
+         cg_Panel.addMessage(new String(info, 1, numByte - 1));
+      
+      //Update world
+      }else if(info[0] == UPDATE){
+         //Clip out update tag
+         byte[] send = new byte[numByte - 1];
+         for(byte i = 0; i < send.length; i++)
+            send[i] = info[i + 1];
          
-         //Start vote
-         case(VOTE):
-            
-            ui_Menu.vote.startVote(info);
-            //cg_Client.frame.setContentPane(ui_Menu.vote);
-            //cg_Client.frame.revalidate();
-            
-            break;
+         //Send data to world
+         if(cg_Panel.gamePanel.getWorld() != null)
+            cg_Panel.gamePanel.getWorld().setData(send);
+      
+      //Start vote
+      }else if(info[0] == VOTE){
+         ui_Menu.vote.startVote(info);
+         //cg_Client.frame.setContentPane(ui_Menu.vote);
+         //cg_Client.frame.revalidate();
+      
+      }else if(info[0] == NOTES){
+         //Clip out update tag
+         byte[] send = new byte[numByte - 1];
+         for(byte i = 0; i < send.length; i++)
+            send[i] = info[i + 1];
+         
+         cg_Panel.gamePanel.getWorld().processNotes(send);
+      
+      //Uh oh!
+      }else{
+         System.out.print("Unidentified data in cg_Connection: ");
+         for(byte i : info)
+            System.out.print(i + " ");
+         System.out.println();
       }
    }
 }

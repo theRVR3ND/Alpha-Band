@@ -1,0 +1,4 @@
+- Get client game start triggering working
+- Draw notes in correct position
+- Note entity reformatting/deletion?
+- 

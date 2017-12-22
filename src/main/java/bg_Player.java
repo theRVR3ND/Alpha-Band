@@ -139,9 +139,8 @@ public class bg_Player extends bg_Entity implements bg_Constants{
     * @param action        Code of action to execute.
     */
    public void processAction(final byte action){
-      switch(action){
-         case(TEST): score++;
-                     break;
+      if(action == TEST){
+         score++;
       }
    }
    
@@ -155,7 +154,6 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       list.add(color);
       list.add(controller);
       list.add(instrument);
-      
       list.add(score);
       
       return list;
@@ -171,7 +169,10 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       color = (Color)(data.remove(0));
       controller = (Byte)(data.remove(0));
       instrument = (Byte)(data.remove(0));
-      //System.out.println(instrument + "fook");
       score = (Short)(data.remove(0));
+   }
+   
+   public String toString(){
+      return name + " " + controller;
    }
 }

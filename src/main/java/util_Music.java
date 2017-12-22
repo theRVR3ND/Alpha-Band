@@ -26,7 +26,8 @@ public class util_Music{
                             DRUMS = 2,
                              BASS = 3,
                       DIST_GUITAR = 4,
-                            AGOGO = 5;
+                            AGOGO = 5,
+                  NUM_INSTRUMENTS = 6;
    
    public static final String[] instruments = new String[] {
       "Piano",
@@ -52,13 +53,20 @@ public class util_Music{
       playSong(toPlay, generatePart((byte)2, (short)(Math.random() * Short.MAX_VALUE), toPlay));
    }
    
+   public static byte generateBPM(byte difficulty, short seed){
+      //Make a random number genrator
+      Random rand = new Random(seed);
+      
+      return (byte)(difficulty * 10 + 20 + (rand.nextDouble() * 15));
+   }
+   
    //Generate specified instrument's part
-   public static ArrayList<ArrayList<Byte>> generatePart(byte difficulty, short seed, byte instrument){
+   public static ArrayList<ArrayList<Byte>> generatePart(final byte difficulty, final short seed, final byte instrument){
       //Make a random number genrator
       Random rand = new Random(seed);
       
       //Generate song parameters
-      final byte bpm = (byte)(difficulty * 10 + 20 + (rand.nextDouble() * 15));//multiply by 2 for actual
+      final byte bpm = generateBPM(difficulty, seed);
       final byte measureLength = (byte)(Math.pow(2, difficulty) + 4);//how many columns in gen make up one measure
       final short songLength = (short)((rand.nextDouble() * 3 + 3) * measureLength * 40);//in beats
       final byte scale = (byte)(rand.nextDouble() * NUM_SCALES);

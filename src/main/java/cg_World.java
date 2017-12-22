@@ -20,6 +20,8 @@ public class cg_World extends bg_World{
     */
    private HashMap<Short, byte[]> gamestate;
    
+   private HashSet<byte[]> notes;
+   
    /**
     * Constructor.
     */
@@ -28,6 +30,7 @@ public class cg_World extends bg_World{
       
       //Initialize stuff
       gamestate = new HashMap<Short, byte[]>();
+      notes = new HashSet<byte[]>();
    }
    
    /**
@@ -38,16 +41,6 @@ public class cg_World extends bg_World{
    public void render(Graphics2D g2){
       //Figure out who we control
       bg_Player clientPlayer = super.getPlayer(cg_Panel.getConnection().getClientID());
-      
-      /*
-      if(clientPlayer == null){
-         return;
-      }
-      */
-      
-      //Draw incomming notes
-      //g2.setColor(Color.BLACK);
-      //final byte instrument = clientPlayer.getInstrument();
       
       //Background
       g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
@@ -85,6 +78,12 @@ public class cg_World extends bg_World{
       toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
       g2.drawString(toDraw, 40, 50);
       
+      //g2.drawString("currBeat: " + super.getCurrBeat(), 200, 200);
+      //g2.drawString("countdown: " + (songStartTime - System.currentTimeMillis()), 200, 250);
+      
+      //Song info
+      bpm = (byte)(super.getPlayer((byte)-1).getColor().getRed());
+      
       //Draw all entities' info
       int shiftInd = 1;
       byte spacing = (byte)(fm.getHeight() * 1.2);
@@ -118,7 +117,7 @@ public class cg_World extends bg_World{
             shiftInd++;
          
          //Draw note
-         }else if(entities.get(key) instanceof bg_Note){
+         }/*else if(entities.get(key) instanceof bg_Note){
             bg_Note note = (bg_Note)(entities.get(key));
             
             final short noteWidth = (short)(cg_Client.SCREEN_WIDTH / (Byte.MAX_VALUE + 1.0));
@@ -131,7 +130,7 @@ public class cg_World extends bg_World{
                noteWidth,
                100
             );
-         }
+         }*/
       }
    }
    
@@ -183,5 +182,31 @@ public class cg_World extends bg_World{
       ));
       
       gamestate.put(ID, data);
+   }
+   
+   //Spawn new notes from noteData
+   public void processNotes(byte[] noteData){
+      for(byte i = 0; i < noteData.length; i += 5){
+         //Spawn new note
+         /*
+         short key = bg_Entity.getEntityCount();
+         entities.put(
+            key,
+            new bg_Note(
+               noteData[i],
+               noteData[i + 1],
+               noteData[i + 2],
+               bytesToShort(noteData, (byte)(i + 3))
+            )
+         );
+         */
+         notes.add(new byte[] {
+               noteData[i],
+               noteData[i + 1],
+               noteData[i + 2],
+               noteData[i + 3],
+               noteData[i + 4],
+         });
+      }
    }
 }

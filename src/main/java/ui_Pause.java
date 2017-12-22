@@ -52,8 +52,20 @@ public class ui_Pause extends ui_Menu{
          cg_Panel.gamePanel.requestFocus();
          cg_Client.frame.revalidate();
       
+      //Exit to menu
       }else if(buttons[1].isDown()){
-         //cg_Client.frame.setContentPane(ui_Menu.pause);
+         //Shut down server
+         if(g_Server.server != null){
+            g_Server.server.shutdown();
+            
+         //Disconnect
+         }else{
+            cg_Panel.getConnection().close();
+         }
+         
+         cg_Client.frame.setContentPane(ui_Menu.servers);
+         ui_Menu.servers.requestFocus();
+         cg_Client.frame.revalidate();
       
       }else{
          return;

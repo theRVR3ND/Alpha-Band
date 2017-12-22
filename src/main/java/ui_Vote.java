@@ -14,9 +14,6 @@ import java.awt.event.*;
 
 public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener, bg_Constants{
    
-   //Time in milliseconds of vote timeout
-   private long voteTimeout;
-   
    private boolean sentVote;
    
    private ui_Table voteList;
@@ -37,7 +34,6 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
          new float[] {0.31f, 0.5f, 0.6f}
       );
       
-      voteTimeout = Long.MAX_VALUE;
       sentVote = false;
       
       //Add key listener for entering player name
@@ -55,7 +51,9 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       super.paintComponent(g);
       
       //Redirect to game screen if timed out
-      if(System.currentTimeMillis() > voteTimeout){
+      if(System.currentTimeMillis() > cg_Panel.gamePanel.getWorld().getSongStartTime()){
+         //cg_Panel.gamePanel.getWorld().startGame(voteTimeout);
+         
          cg_Client.frame.setContentPane(cg_Panel.gamePanel);
          cg_Panel.gamePanel.requestFocus();
       }
@@ -68,7 +66,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
          voteList.draw(g2);
       
       //Show vote timeout
-      short seconds = (short)((voteTimeout - System.currentTimeMillis()) / 1000.0);
+      short seconds = (short)((cg_Panel.gamePanel.getWorld().getSongStartTime() - System.currentTimeMillis()) / 1000.0);
       String toDraw;
       if(seconds % 60 < 10)
          toDraw = "0" + (seconds % 60);
@@ -90,7 +88,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       voteList.getContents().clear();
       
       //Extract vote info
-      byte i = 3;
+      byte i = 9;
       for(byte j = 0; j < 3; j++){
          //Check if there is info to extract
          if(info[i + 1] == 0 && info[i + 2] == 0){
@@ -111,7 +109,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       }
       
       //Get vote timout
-      voteTimeout = (long)(System.currentTimeMillis() + bg_World.bytesToShort(info, (byte)1) * 6);
+      cg_Panel.gamePanel.getWorld().setSongStartTime(bg_World.bytesToLong(info, (byte)1));
       
       //Add all song options to list
       voteList.getContents().add(new String[] {"Generate a Song"});

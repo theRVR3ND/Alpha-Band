@@ -19,22 +19,22 @@ public class g_Server extends Thread implements bg_Constants{
    /**
     * Connection with clients.
     */
-   private static ServerSocket socket;
+   private ServerSocket socket;
    
    /**
     * List of all client's connections.
     */
-   private static ArrayList<g_Connection> clients;
+   private ArrayList<g_Connection> clients;
    
    /**
     * Name of this server.
     */
-   private static String name;
+   private String name;
    
    /**
     * Server-side game world. This is the official game state.
     */
-   private static g_World world;
+   private g_World world;
    
    /**
     * Stores single server in program.
@@ -45,30 +45,28 @@ public class g_Server extends Thread implements bg_Constants{
     * Creates new server if one does not already exist.
     */
    public g_Server(String name, byte gamemode){
-      if(server == null){
-         //Launch server
-         try{
-            socket = new ServerSocket(PORT * 2);
-         }catch(IOException e){
-            System.out.println(
-               "Fail! Server could not be launched. Horrible. " +
-               "The Chinese are making this all up. Sad!"
-            );
-            e.printStackTrace();
-            System.exit(1);
-         }
-         
-         //Initialize stuff
-         this.name = name;
-         
-         clients = new ArrayList<g_Connection>();
-         world = new g_World(gamemode, (byte)0);
-         
-         server = this;
-         
-         //Launch client request handler
-         (new Thread(new g_Echo())).start();
+      //Launch server
+      try{
+         socket = new ServerSocket(PORT * 2);
+      }catch(IOException e){
+         System.out.println(
+            "Fail! Server could not be launched. Horrible. " +
+            "The Chinese are making this all up. Sad!"
+         );
+         e.printStackTrace();
+         System.exit(1);
       }
+      
+      //Initialize stuff
+      this.name = name;
+      
+      clients = new ArrayList<g_Connection>();
+      world = new g_World(gamemode, (byte)0);
+      
+      server = this;
+      
+      //Launch client request handler
+      (new Thread(new g_Echo())).start();
    }
    
    /**
@@ -81,7 +79,7 @@ public class g_Server extends Thread implements bg_Constants{
          //Don't accept any clients if capacity reached
          while(world.getNumPlayers() >= MAX_PLAYERS){
             try{
-               Thread.sleep(50);
+               Thread.sleep(1000);
             }catch(InterruptedException e){}
          }
          
@@ -90,8 +88,20 @@ public class g_Server extends Thread implements bg_Constants{
             Socket client = socket.accept();
             clients.add(new g_Connection(client));
          }catch(IOException | NullPointerException e){
-            e.printStackTrace();
+            break;
          }
+      }
+   }
+   
+   public void shutdown(){
+      try{
+         socket.close();
+         clients.clear();
+         server = null;
+         world = null;
+      }catch(IOException e){
+         //Stay perfectly calm. Exceptions' vision is based on printlns.
+         e.printStackTrace();
       }
    }
    

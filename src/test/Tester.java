@@ -29,7 +29,7 @@ public class Tester{
       //**********************************************************/
       
       //System.out.println(Integer.MAX_VALUE / (60000.0 * 60 * 24));
-      /**********************************************************
+      //**********************************************************
       for(long i = Long.MIN_VALUE; i <= Long.MAX_VALUE; i++){
          byte[] bytes = longToBytes(i);
          final long con = bytesToLong(bytes, (byte)0);
@@ -65,20 +65,23 @@ public class Tester{
    
    public static byte[] longToBytes(long val){
       byte[] ret = new byte[8];
-      byte[] p1 = intToBytes((int)(val >> 32 & 0xFF));
-      byte[] p2 = intToBytes((int)(val & 0xFF));
-      for(byte i = 0; i < ret.length; i++){
-         if(i < 4)
-            ret[i] = p1[i];
-         else
-            ret[i] = p2[i - 4];
+      for(byte i = (byte)(ret.length - 1); i >= 0; i--){
+         ret[i] = (byte)val;
+         val >>>= 8;
       }
       return ret;
    }
    
-   public static long bytesToLong(byte[] bytes, byte start){
-      return (bytesToInt(bytes, start) << 4) | (bytesToInt(bytes, (byte)(start + 4)));
-   }
+   private static long bytesToLong(byte[] bytes, byte i){
+        return (((long) bytes[i + 7]) & 0xFF) +
+              ((((long) bytes[i + 6]) & 0xFF) << 8) +
+              ((((long) bytes[i + 5]) & 0xFF) << 16) +
+              ((((long) bytes[i + 4]) & 0xFF) << 24) +
+              ((((long) bytes[i + 3]) & 0xFF) << 32) +
+              ((((long) bytes[i + 2]) & 0xFF) << 40) +
+              ((((long) bytes[i + 1]) & 0xFF) << 48) +
+              ((((long) bytes[i]) & 0xFF) << 56);
+    }
    
    public static byte[] findDelta(byte[] start, byte[] end){
       byte[] res = new byte[end.length];

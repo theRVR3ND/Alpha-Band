@@ -23,16 +23,20 @@ public abstract class bg_World implements bg_Constants{
     */
    private long lastThinkTime;
    
+   protected long songStartTime;
+   
+   private short currBeat;
+   
+   protected short bpm;
+   
+   protected final byte gamemode;
+   
    /**
     * Maximum update rate of world.
     */
    private final byte THINK_RATE = 30;
    
-   protected short currBeat;
-   
-   protected final byte gamemode;
-   
-   protected byte[][] currSong;
+   //protected byte[][] currSong;
    
    /**
     * Constructor.
@@ -41,8 +45,8 @@ public abstract class bg_World implements bg_Constants{
       //Initialize stuff
       entities = new HashMap<Short, bg_Entity>();
       lastThinkTime = System.currentTimeMillis();
+      songStartTime = Long.MAX_VALUE;
       
-      this.currBeat = Byte.MIN_VALUE;
       this.gamemode = gamemode;
       
       //Start think
@@ -69,13 +73,18 @@ public abstract class bg_World implements bg_Constants{
       //Limit rate of update
       if(deltaTime < 1000.0 / THINK_RATE){
          try{
-            Thread.sleep((byte)(1000.0 / THINK_RATE - deltaTime));
+            Thread.sleep((int)(1000.0 / THINK_RATE - deltaTime));
          }catch(InterruptedException e){}
       }
       
       //Run think for all entities
       for(Short key : entities.keySet()){
          entities.get(key).think(deltaTime);
+      }
+      
+      //Update currBeat count
+      if(songStartTime < System.currentTimeMillis()){
+         currBeat = (short)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       }
    }
    
@@ -115,8 +124,20 @@ public abstract class bg_World implements bg_Constants{
       return entities;
    }
    
+   public long getSongStartTime(){
+      return songStartTime;
+   }
+   
+   public short getCurrBeat(){
+      return currBeat;
+   }
+   
    public byte getGamemode(){
       return gamemode;
+   }
+   
+   public void setSongStartTime(long songStartTime){
+      this.songStartTime = songStartTime;
    }
    
    /**
@@ -138,9 +159,15 @@ public abstract class bg_World implements bg_Constants{
          }else if(o instanceof Short){
             temp = shortToBytes((Short)o);
          
+         }else if(o instanceof Integer){
+            temp = intToBytes((Integer)o);
+         
          }else if(o instanceof Float){
             temp = floatToBytes((Float)o);
-         
+            
+         }else if (o instanceof Long){
+            temp = longToBytes((Long)o);
+            
          }else if(o instanceof String){
             String s = (String)o;
             temp = new byte[MAX_PLAYER_NAME_LENGTH + 4];
@@ -202,9 +229,17 @@ public abstract class bg_World implements bg_Constants{
             ret.add(bytesToShort(data, i));
             i += 2;
          
+         }else if(t instanceof Integer){
+            ret.add(bytesToLong(data, i));
+            i += 4;
+         
          }else if(t instanceof Float){
             ret.add(bytesToFloat(data, i));
             i += 4;
+         
+         }else if(t instanceof Long){
+            ret.add(bytesToLong(data, i));
+            i += 8;
          
          }else if(t instanceof String){
             //Get length of string (encoded in data)
@@ -354,16 +389,12 @@ public abstract class bg_World implements bg_Constants{
     * @param val              Long to convert.
     */
    public static byte[] longToBytes(long val){
-      return new byte[] {
-         (byte)(val >>> 56),
-         (byte)(val >>> 48),
-         (byte)(val >>> 40),
-         (byte)(val >>> 32),
-         (byte)(val >>> 24),
-         (byte)(val >>> 16),
-         (byte)(val >>> 8),
-         (byte)(val & 0xFF)
-      };
+      byte[] ret = new byte[8];
+      for(byte i = (byte)(ret.length - 1); i >= 0; i--){
+         ret[i] = (byte)val;
+         val >>>= 8;
+      }
+      return ret;
    }
    
    /**
@@ -407,14 +438,14 @@ public abstract class bg_World implements bg_Constants{
     * @param bytes            Byte array to convert from.
     * @param start            Index in bytes to convert from.
     */
-   public static long bytesToLong(byte[] bytes, byte start){
-      return (long)((0xFF & bytes[start]) << 56 |
-                    (0xFF & bytes[start + 1]) << 48 |
-                    (0xFF & bytes[start + 2]) << 40 |
-                    (0xFF & bytes[start + 3]) << 32 |
-                    (0xFF & bytes[start + 4]) << 24 |
-                    (0xFF & bytes[start + 5]) << 16 |
-                    (0xFF & bytes[start + 6]) << 8 |
-                    (0xFF & bytes[start + 7]));
-   }
+   public static long bytesToLong(byte[] bytes, byte i){
+        return (((long) bytes[i + 7]) & 0xFF) +
+              ((((long) bytes[i + 6]) & 0xFF) << 8) +
+              ((((long) bytes[i + 5]) & 0xFF) << 16) +
+              ((((long) bytes[i + 4]) & 0xFF) << 24) +
+              ((((long) bytes[i + 3]) & 0xFF) << 32) +
+              ((((long) bytes[i + 2]) & 0xFF) << 40) +
+              ((((long) bytes[i + 1]) & 0xFF) << 48) +
+              ((((long) bytes[i]) & 0xFF) << 56);
+    }
 }
