@@ -51,11 +51,12 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       super.paintComponent(g);
       
       //Redirect to game screen if timed out
-      if(System.currentTimeMillis() > cg_Panel.gamePanel.getWorld().getSongStartTime()){
-         //cg_Panel.gamePanel.getWorld().startGame(voteTimeout);
-         
+      if(System.currentTimeMillis() > cg_Panel.gamePanel.getWorld().getSongStartTime() - 5000){
          cg_Client.frame.setContentPane(cg_Panel.gamePanel);
          cg_Panel.gamePanel.requestFocus();
+         cg_Client.frame.revalidate();
+         
+         return;
       }
       
       //Improve rendering quality

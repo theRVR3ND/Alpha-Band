@@ -22,7 +22,7 @@ public class g_World extends bg_World{
    
    private static ArrayList<byte[]> songList;
    
-   private NoteSpawner noteSpawner;
+   //private NoteSpawner noteSpawner;
    
    private HashMap<Byte, LinkedList<byte[]>> notes;
    
@@ -209,8 +209,8 @@ public class g_World extends bg_World{
       infoEnt.setColor(new Color(bpm, 0, 0));
       
       //Start spawning notes
-      noteSpawner = new NoteSpawner(wholeSong);
-      noteSpawner.start();
+      //noteSpawner = new NoteSpawner(wholeSong);
+      //noteSpawner.start();
    }
    
    /**
@@ -344,6 +344,7 @@ public class g_World extends bg_World{
       return ret;
    }
    
+   /*
    //Spawn notes in correct timing
    private class NoteSpawner extends Thread{
       
@@ -410,4 +411,5 @@ public class g_World extends bg_World{
          }
       }
    }
+   */
 }

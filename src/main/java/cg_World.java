@@ -78,9 +78,6 @@ public class cg_World extends bg_World{
       toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
       g2.drawString(toDraw, 40, 50);
       
-      //g2.drawString("currBeat: " + super.getCurrBeat(), 200, 200);
-      //g2.drawString("countdown: " + (songStartTime - System.currentTimeMillis()), 200, 250);
-      
       //Song info
       bpm = (byte)(super.getPlayer((byte)-1).getColor().getRed());
       
@@ -131,6 +128,31 @@ public class cg_World extends bg_World{
                100
             );
          }*/
+      }
+      
+      //Show countdown
+      if(System.currentTimeMillis() < songStartTime && songStartTime - System.currentTimeMillis() < 10000){
+         g2.setFont(new Font(
+            "Century Gothic",
+            Font.PLAIN,
+            util_Utilities.getFontSize() * 8
+         ));
+         
+         short alpha = (short)(255.0 * ((songStartTime - System.currentTimeMillis()) % 1000) / 1000);
+         g2.setColor(new Color(
+            g2.getColor().getRed(),
+            g2.getColor().getGreen(),
+            g2.getColor().getBlue(),
+            alpha
+         ));
+         
+         toDraw = 1 + (songStartTime - System.currentTimeMillis()) / 1000 + "";
+         
+         g2.drawString(
+            toDraw,
+            cg_Client.SCREEN_WIDTH / 2 - g2.getFontMetrics().stringWidth(toDraw) / 2,
+            cg_Client.SCREEN_HEIGHT / 2
+         );
       }
    }
    
