@@ -49,7 +49,7 @@ public class util_Music{
    
    public static void main(String[] args){
       //playSong(generateSong((byte)2, (short)(Math.random() * Short.MAX_VALUE)));
-      final byte toPlay = PIANO;
+      final byte toPlay = BASS;
       playSong(toPlay, generatePart((byte)2, (short)(Math.random() * Short.MAX_VALUE), toPlay));
    }
    
@@ -71,6 +71,7 @@ public class util_Music{
       final short songLength = (short)((rand.nextDouble() * 3 + 3) * measureLength * 40);//in beats
       final byte scale = (byte)(rand.nextDouble() * NUM_SCALES);
       final byte key = (byte)(rand.nextInt(12));
+      final byte beatInterval = (byte)((rand.nextInt(4) * (4 - difficulty)) + (4 - difficulty));
       
       ArrayList<ArrayList<Byte>> song = new ArrayList<>(songLength);//For only given instrument
       
@@ -79,12 +80,20 @@ public class util_Music{
       song.get(0).add(scale);
       song.get(0).add(key);
       
-      //---Generate notes based on instrument---//
+      //---Generate notes based on instrument---//sammy was here
       //PIANO
       if(instrument == PIANO){
-         byte prevNote = key;
-         for(short i = 0; i < songLength; i++){
+         for(short i = 0; i < songLength; i += measureLength){
+            //Single chord per measure
+            byte temp = (byte)rand.nextInt();
+            ArrayList<Byte> chord = new ArrayList<>();
+            for(byte i = (byte)(rand.nextInt(2) + 2); i > 0; i--){
+               chord.add((byte)(key + INTERVALS[scale][]);
+            }
             
+            for(short j = 0; j < measureLength; j++){
+               song.add(new ArrayList<>());
+            }
          }
          
       //GUITAR
@@ -93,13 +102,12 @@ public class util_Music{
       //DRUMS
       }else if(instrument == DRUMS){
          //Beat statistacs
-         final byte bassDrumInterval = (byte)((rand.nextInt(4) * (4 - difficulty)) + (4 - difficulty)),
-                   snareDrumInterval = (byte)((rand.nextInt(2) * (4 - difficulty)) + (4 - difficulty));
+         final byte snareDrumInterval = (byte)((rand.nextInt(2) * (4 - difficulty)) + (4 - difficulty));
          
          byte cymbalBeat;
          do{
             cymbalBeat = (byte)(rand.nextInt(measureLength));
-         }while(cymbalBeat % bassDrumInterval == 0 || cymbalBeat % snareDrumInterval == 0);
+         }while(cymbalBeat % beatInterval == 0 || cymbalBeat % snareDrumInterval == 0);
          
          ArrayList<ArrayList<Byte>> fadeMeasure = new ArrayList<>(measureLength),
                                     mainMeasure = new ArrayList<>(measureLength);
@@ -108,7 +116,7 @@ public class util_Music{
             ArrayList<Byte> fadeChord = new ArrayList<>(),
                             mainChord = new ArrayList<>();
             
-            if(i % bassDrumInterval == 0){
+            if(i % beatInterval == 0){
                fadeChord.add((byte)35);
                mainChord.add((byte)35);
             
@@ -139,15 +147,19 @@ public class util_Music{
       //BASS GUITAR
       }else if(instrument == BASS){
          ArrayList<ArrayList<Byte>> measure = new ArrayList<>();
+         byte addNote = (byte)(40);
+         
          for(byte i = 0; i < measureLength; i++){
             ArrayList<Byte> chord = new ArrayList<>();
-            if(i % 2 == 0){
-               chord.add((byte)40);
-               if(i == 2)
-                 chord.add((byte)41);
-            }else{
-               chord.add((byte)42);
-            }
+            
+            addNote += rand.nextDouble() * 8 - 4;
+            
+            if(i % beatInterval == 0){
+               chord.add(addNote);
+               
+            }//else{
+            //   chord.add((byte)(addNote - 4));
+            //}
             measure.add(chord);
          }
          

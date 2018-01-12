@@ -29,6 +29,8 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
     */
    private HashSet<Byte> currActions;
    
+   private HashSet<Byte> currNotes;
+   
    private final HashMap<Integer, Byte> noteMap;
    
    /**
@@ -38,17 +40,20 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       //Initialize stuff
       world = null;
       currActions = new HashSet<Byte>();
+      currNotes = new HashSet<Byte>();
       
       //Map note values to keys
       noteMap = new HashMap<Integer, Byte>();
-      noteMap.put(KeyEvent.VK_A, (byte)-4);
-      noteMap.put(KeyEvent.VK_S, (byte)-3);
-      noteMap.put(KeyEvent.VK_D, (byte)-2);
-      noteMap.put(KeyEvent.VK_F, (byte)-1);
-      noteMap.put(KeyEvent.VK_G, (byte)0);
-      noteMap.put(KeyEvent.VK_H, (byte)0);
-      noteMap.put(KeyEvent.VK_J, (byte)0);
-      noteMap.put(KeyEvent.VK_I, (byte)0);
+      noteMap.put(KeyEvent.VK_A,         (byte)0);
+      noteMap.put(KeyEvent.VK_S,         (byte)1);
+      noteMap.put(KeyEvent.VK_D,         (byte)2);
+      noteMap.put(KeyEvent.VK_F,         (byte)3);
+      noteMap.put(KeyEvent.VK_G,         (byte)4);
+      noteMap.put(KeyEvent.VK_H,         (byte)5);
+      noteMap.put(KeyEvent.VK_J,         (byte)6);
+      noteMap.put(KeyEvent.VK_K,         (byte)7);
+      noteMap.put(KeyEvent.VK_L,         (byte)8);
+      noteMap.put(KeyEvent.VK_SEMICOLON, (byte)9);
       
       //Add listeners
       this.addMouseListener(this);
@@ -119,12 +124,25 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          if(bindTable.containsKey((short)(e.getKeyCode()))){
             currActions.add(bindTable.get((short)(e.getKeyCode())));
          }
+         
+         if(noteMap.containsKey((short)(e.getKeyCode()))){
+            //Check if need to play new note
+            if(currNotes.contains((short)(e.getKeyCode()))){
+               
+            }
+            
+            currNotes.add(noteMap.get((short)(e.getKeyCode())));
+         }
       }
    }
    
    @Override
    public void keyReleased(KeyEvent e){
-      currActions.remove(bindTable.get((short)(e.getKeyCode())));
+      if(bindTable.containsKey((short)(e.getKeyCode())))
+         currActions.remove(bindTable.get((short)(e.getKeyCode())));
+      
+      if(noteMap.containsKey((short)(e.getKeyCode())))
+         currNotes.remove(noteMap.get((short)(e.getKeyCode())));
    }
    
    @Override

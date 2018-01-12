@@ -130,7 +130,7 @@ public class g_World extends bg_World{
    
    public void startVote(){
       //voteTimeout = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      songStartTime = (long)(System.currentTimeMillis() + 15000);//TEMPORARY
+      songStartTime = (long)(System.currentTimeMillis() + 180000);//TEMPORARY
       
       HashSet<Byte> toVoteOn = new HashSet<>();
       
