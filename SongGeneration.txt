@@ -28,7 +28,7 @@
 
 Additional 6th option:
 	Randomness:
-	- have preset rhythyms that are randomly chosen; as randomness increases, more individual notes are picked 	  instead of having different preset rhythyms picked
+	- have preset rhythyms that are randomly chosen; as randomness increases, more individual notes are picked instead of having different preset rhythyms picked
 
 Drums Idea:
 	- Left 4 fingers are constant beat (constant), right 4 are filler notes (unique, different)

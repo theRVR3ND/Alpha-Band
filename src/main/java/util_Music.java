@@ -14,13 +14,13 @@ import javax.sound.midi.*;
 public class util_Music{
    
    //********STATIC CONSTANTS********//
-   
+   /*
    private static final byte MAJOR = 0,
                              MINOR = 1,
                              BLUES = 2,
                           HARMONIC = 3,            //Harmoic minor
                         NUM_SCALES = 4;
-   
+   */
    public static final byte PIANO = 0,
                      CLEAN_GUITAR = 1,
                             DRUMS = 2,
@@ -45,126 +45,153 @@ public class util_Music{
       {0, 2, 3, 5, 7, 8,  11, 12}
    };
    
-   public static final short[] INSTRUMENTS = new short[] {0, 27, 33, 38, 30, 113};
+   public static final short[] INSTRUMENTS = new short[] {0, 27, 33, 34, 30, 113};
    
    public static void main(String[] args){
       //playSong(generateSong((byte)2, (short)(Math.random() * Short.MAX_VALUE)));
-      final byte toPlay = BASS;
-      playSong(toPlay, generatePart((byte)2, (short)(Math.random() * Short.MAX_VALUE), toPlay));
+      final byte toPlay = PIANO;
+      
+      /****
+      playSong(toPlay, generatePart((byte)4, (short)(Math.random() * Short.MAX_VALUE), toPlay));
+      //                            0 to 4
+      /******/
+      
+      /****/
+      ArrayList<HashMap<Short, HashSet<Byte>>> allParts = new ArrayList<>();
+      final short seed = (short)(Math.random() * Short.MAX_VALUE);
+      for(byte i = 0; i < NUM_INSTRUMENTS; i++){
+         allParts.add(generatePart((byte)2, seed, i));
+      }
+      playSongs(allParts);
+      /*****/
    }
    
    public static byte generateBPM(byte difficulty, short seed){
-      //Make a random number genrator
-      Random rand = new Random(seed);
-      
-      return (byte)(difficulty * 10 + 20 + (rand.nextDouble() * 15));
+      return (byte)(Math.pow(8, difficulty / 2.0) + 30 + ((new Random(seed)).nextDouble() * 15));// * 2 for actual
    }
    
    //Generate specified instrument's part
-   public static ArrayList<ArrayList<Byte>> generatePart(final byte difficulty, final short seed, final byte instrument){
+   public static HashMap<Short, HashSet<Byte>> generatePart(final byte difficulty, final short seed, final byte instrument){
       //Make a random number genrator
       Random rand = new Random(seed);
       
       //Generate song parameters
       final byte bpm = generateBPM(difficulty, seed);
-      final byte measureLength = (byte)(Math.pow(2, difficulty) + 4);//how many columns in gen make up one measure
-      final short songLength = (short)((rand.nextDouble() * 3 + 3) * measureLength * 40);//in beats
-      final byte scale = (byte)(rand.nextDouble() * NUM_SCALES);
-      final byte key = (byte)(rand.nextInt(12));
-      final byte beatInterval = (byte)((rand.nextInt(4) * (4 - difficulty)) + (4 - difficulty));
+      final byte measureLength = (byte)(2 * difficulty + 4);//how many columns in gen make up one measure
+      final short songLength = (short)(measureLength * (rand.nextInt(20) + 40));//in beats
+      final byte scale = 0;//(byte)(rand.nextInt(INTERVALS.length));
+      final byte key = 48;//(byte)(rand.nextInt(12) + 48);
+      final byte beatInterval = (byte)(measureLength / (difficulty + 2));
+      System.out.println("bpm: " + bpm + "\nmeasure length:" + measureLength + "\nsong length:" + songLength + "\nscale:" + scale + "\nkey:" + key + "\nbeat interval:" + beatInterval);
+      HashMap<Short, HashSet<Byte>> song = new HashMap<>();
       
-      ArrayList<ArrayList<Byte>> song = new ArrayList<>(songLength);//For only given instrument
+      //Add neccessary song info into song data structure
+      HashSet<Byte> info = new HashSet<Byte>();
+      info.add(bpm);
+      song.put((short)0, info);
       
-      song.add(new ArrayList<Byte>(3));
-      song.get(0).add(bpm);
-      song.get(0).add(scale);
-      song.get(0).add(key);
+      //Idk what this is called in music. Generating each melody?
+      ArrayList<Byte> rootInd = new ArrayList<>(songLength / measureLength);
+      rootInd.add((byte)(0));
+      for(byte i = 1; i < songLength / measureLength; i++){
+         rootInd.add((byte)((rand.nextInt(6) * 2 - 5) % INTERVALS[scale].length));
+         //rootInd.add((byte)(i));
+      }
       
       //---Generate notes based on instrument---//sammy was here
       //PIANO
       if(instrument == PIANO){
-         for(short i = 0; i < songLength; i += measureLength){
-            //Single chord per measure
-            byte temp = (byte)rand.nextInt();
-            ArrayList<Byte> chord = new ArrayList<>();
-            for(byte i = (byte)(rand.nextInt(2) + 2); i > 0; i--){
-               chord.add((byte)(key + INTERVALS[scale][]);
+         short ind = 0;
+         /*
+         for(short beat = 0; beat < songLength - 1; beat += measureLength){
+            HashSet<Byte> chord = new HashSet<>();
+            
+            //Chord
+            final byte rootNote;
+            if(rootInd.get(ind) < 0){
+               rootNote = (byte)(key + INTERVALS[scale][rootInd.get(ind) + INTERVALS[scale].length] - 12);
+            }else if(rootInd.get(ind) >= INTERVALS[scale].length){
+               rootNote = (byte)(key + INTERVALS[scale][rootInd.get(ind) % INTERVALS[scale].length] + 12);
+            }else{
+               rootNote = (byte)(key + INTERVALS[scale][rootInd.get(ind)]);
             }
             
-            for(short j = 0; j < measureLength; j++){
-               song.add(new ArrayList<>());
+            //for(byte i = 0; i < difficulty / 2 + 2; i++){
+            for(byte i = 0; i < 2; i++){
+               byte addNote = (byte)(rootNote + i * 4 - 12);
+               chord.add(addNote);
             }
-         }
-         
+            
+            //Melody
+            for(short t = beat; t < beat + measureLength; t += randInt(2) + 1){
+               
+            }
+            
+            ind++;
+            
+            if(!chord.isEmpty())
+               song.put((short)(beat + 1), chord);
+         }*/
+      
       //GUITAR
       }else if(instrument == CLEAN_GUITAR){
       
       //DRUMS
       }else if(instrument == DRUMS){
          //Beat statistacs
-         final byte snareDrumInterval = (byte)((rand.nextInt(2) * (4 - difficulty)) + (4 - difficulty));
+         final byte snareInterval = (byte)(beatInterval + (rand.nextInt(1) + 1) * 2);
+         byte cymbalBeat = (byte)(rand.nextInt(measureLength));
+         if(cymbalBeat % beatInterval == 0)
+            cymbalBeat--;
+         System.out.println("snare interval: " + snareInterval + "\ncymbal beat: " + cymbalBeat);
          
-         byte cymbalBeat;
-         do{
-            cymbalBeat = (byte)(rand.nextInt(measureLength));
-         }while(cymbalBeat % beatInterval == 0 || cymbalBeat % snareDrumInterval == 0);
-         
-         ArrayList<ArrayList<Byte>> fadeMeasure = new ArrayList<>(measureLength),
-                                    mainMeasure = new ArrayList<>(measureLength);
-         
-         for(byte i = 0; i < measureLength; i++){
-            ArrayList<Byte> fadeChord = new ArrayList<>(),
-                            mainChord = new ArrayList<>();
+         for(short beat = 1; beat < songLength - 1; beat++){
+            HashSet<Byte> chord = new HashSet<>();
             
-            if(i % beatInterval == 0){
-               fadeChord.add((byte)35);
-               mainChord.add((byte)35);
-            
-            }else if(i % snareDrumInterval == 0){
-               mainChord.add((byte)38);
-            }
-            
-            if(i == cymbalBeat){
-               mainChord.add((byte)49);
-            }
-            
-            fadeMeasure.add(fadeChord);
-            mainMeasure.add(mainChord);
-         }
-         
-         //Repeat measure into song
-         for(short i = 0; i < songLength; i++){
-            //Intro/outro portion of song
-            if(i < songLength / 50.0 || i > songLength - songLength / 50.0){
-               song.add(fadeMeasure.get(i % measureLength));
-            
-            //Main portion of song
+            //Cymbal
+            if(beat % measureLength == cymbalBeat){
+               if(beat >= measureLength && beat < songLength - measureLength)
+                  chord.add((byte)49);
             }else{
-               song.add(mainMeasure.get(i % measureLength));
+               //Bass drum
+               if(beat % beatInterval == 0 || beat % measureLength == 0){
+                  if(beat + beatInterval >= measureLength && beat < songLength - measureLength)
+                     chord.add((byte)35);
+               }
+               
+               //Snare
+               if((beat % measureLength) % snareInterval == 0){
+                  if(beat >= measureLength && beat < songLength - measureLength)
+                     chord.add((byte)38);
+               }
             }
+            
+            if(!chord.isEmpty())
+               song.put((short)(beat + 1), chord);
          }
       
       //BASS GUITAR
       }else if(instrument == BASS){
-         ArrayList<ArrayList<Byte>> measure = new ArrayList<>();
-         byte addNote = (byte)(40);
-         
-         for(byte i = 0; i < measureLength; i++){
-            ArrayList<Byte> chord = new ArrayList<>();
+         short ind = 0;
+         for(short beat = measureLength; beat < songLength - 1; beat += measureLength){
+            HashSet<Byte> chord = new HashSet<>();
             
-            addNote += rand.nextDouble() * 8 - 4;
+            final byte note;
+            if(rootInd.get(ind) < 0){
+               note = (byte)(key + INTERVALS[scale][rootInd.get(ind) + INTERVALS[scale].length] - 12);
+            }else if(rootInd.get(ind) >= INTERVALS[scale].length){
+               note = (byte)(key + INTERVALS[scale][rootInd.get(ind) % INTERVALS[scale].length] + 12);
+            }else{
+               note = (byte)(key + INTERVALS[scale][rootInd.get(ind)]);
+            }
+            chord.add(note);
             
-            if(i % beatInterval == 0){
-               chord.add(addNote);
-               
-            }//else{
-            //   chord.add((byte)(addNote - 4));
-            //}
-            measure.add(chord);
-         }
-         
-         for(short i = 0; i < songLength; i++){
-            song.add(measure.get(i % measureLength));
+            ind++;
+            if(ind >= rootInd.size())
+               ind = 0;
+            
+            if(!chord.isEmpty())
+               song.put((short)(beat + 1), chord);
          }
       
       //DISTORTED GUITAR
@@ -172,6 +199,7 @@ public class util_Music{
       
       //AGOGO
       }else if(instrument == AGOGO){
+         /*
          short playBeat = (short)(rand.nextInt(songLength));
          for(short i = 0; i < songLength; i++){
             ArrayList<Byte> chord = new ArrayList<Byte>();
@@ -180,16 +208,16 @@ public class util_Music{
             }
             song.add(chord);
          }
+         */
       
       }else{
          System.out.println("Oh shucks!");
          System.exit(1);
       }
-      
       return song;
    }
    
-   public static void playSong(final byte instrument, ArrayList<ArrayList<Byte>> song){
+   public static void playSong(final byte instrument, HashMap<Short, HashSet<Byte>> song){
       //Set up midi
       try{
          Synthesizer synth = MidiSystem.getSynthesizer();
@@ -212,6 +240,38 @@ public class util_Music{
       }
    }
    
+   public static void playSongs(ArrayList<HashMap<Short, HashSet<Byte>>> songs){
+      Synthesizer synth = null;
+      MidiChannel[] channels = null;
+      Instrument[] instruments = null;
+      
+      try{
+         synth = MidiSystem.getSynthesizer();
+         synth.open();
+         
+         channels = synth.getChannels();
+         instruments = synth.getDefaultSoundbank().getInstruments();
+      }catch(MidiUnavailableException e){
+         e.printStackTrace();
+      }
+      
+      ArrayList<MusicPlayer> players = new ArrayList<>();
+      
+      for(byte i = 0; i < NUM_INSTRUMENTS; i++){
+         MusicPlayer mp;
+         
+         if(i != DRUMS)
+            mp = new MusicPlayer(channels[i], instruments[INSTRUMENTS[i]], songs.get(i));
+         else
+            mp = new MusicPlayer(channels[9], instruments[INSTRUMENTS[i]], songs.get(i));
+         
+         players.add(mp);
+      }
+      
+      for(MusicPlayer mp : players)
+         mp.start();
+   }
+   
    /**
     * Thread class to play one player's music without interrupting other processes.
     */
@@ -221,9 +281,9 @@ public class util_Music{
       
       private Instrument instrument;
       
-      private final ArrayList<ArrayList<Byte>> song;
+      private final HashMap<Short, HashSet<Byte>> song;
       
-      public MusicPlayer(MidiChannel channel, Instrument instrument, ArrayList<ArrayList<Byte>> song){
+      public MusicPlayer(MidiChannel channel, Instrument instrument, HashMap<Short, HashSet<Byte>> song){
          //Initialize stuff
          this.channel = channel;
          this.instrument = instrument;
@@ -235,44 +295,58 @@ public class util_Music{
       @Override
       public void run(){
          //Figure out song metrics
-         final short bpm = (short)(song.get(0).get(0) * 4);
-         final byte scale = song.get(0).get(1),
-                      key = song.get(0).get(2);
+         final short bpm = (Byte)(song.get((short)0).iterator().next());
+         
+         //Find length of song
+         Iterator<Short> keys = song.keySet().iterator();
+         short songLength = 0;
+         while(keys.hasNext())
+            songLength = (short)(Math.max((Short)(keys.next()), songLength));
          
          HashSet<Byte> currNotes = new HashSet<>();
-         ArrayList<Byte> toRemove = new ArrayList<>();
          
          //Progress through each beat
-         for(short beat = 1; beat < song.size() - 1; beat++){
+         for(short beat = 1; beat < songLength + 1; beat++){
             //Play all notes for current beat
-            ArrayList<Byte> chord = song.get(beat);
+            HashSet<Byte> chord = song.get(beat);
             
-            //End previous notes
-            for(Byte b : toRemove){
-               channel.noteOff(b);
-               currNotes.remove(b);
-            }
-            toRemove.clear();
-            
-            //Process notes in chord
-            for(Byte b : chord){
-               //Start note
-               if(!currNotes.contains(b)){
-                  channel.noteOn(b, 100);
-                  currNotes.add(b);
+            System.out.print(beat + " - ");
+            if(chord != null){
+               //Play new notes
+               for(Byte note : chord){
+                  if(!currNotes.contains(note)){
+                     channel.noteOn(note, 100);
+                     currNotes.add(note);
+                  }
+                  System.out.print(note + " ");
                }
                
-               //Note is to be removed
-               if(!song.get(beat + 1).contains(b)){
-                  toRemove.add(b);
-               }
-            }
+               //Wait until beat time passes
+               try{
+                  sleep((int)(30000.0 / bpm));
+               }catch(InterruptedException e){}
             
-            //Wait until beat time passes
-            try{
-               sleep((int)(60000.0 / bpm));
-            }catch(InterruptedException e){
-               e.printStackTrace();
+            //No notes to play
+            }else{
+               System.out.println();
+               
+               //Wait until beat time passes
+               try{
+                  sleep((int)(30000.0 / bpm));
+               }catch(InterruptedException e){}
+               
+               continue;
+            }
+               System.out.println();
+            
+            //End applicable notes
+            HashSet<Byte> nextChord = song.get((short)(beat + 1));
+            
+            for(Byte note : chord){
+               if(nextChord == null || !nextChord.contains(note)){
+                  channel.noteOff(note);
+                  currNotes.remove(note);
+               }
             }
          }
       }
