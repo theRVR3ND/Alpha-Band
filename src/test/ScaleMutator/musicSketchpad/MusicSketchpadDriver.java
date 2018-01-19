@@ -17,6 +17,7 @@ public class MusicSketchpadDriver								   //Driver Program
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setContentPane(screen);		
       frame.setVisible(true);
+      frame.setResizable(true);
       frame.addKeyListener(new listen());		               //Get input from the keyboard
    
    }

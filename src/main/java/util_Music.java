@@ -16,8 +16,8 @@ public class util_Music{
    //********STATIC CONSTANTS********//
    /*
    private static final byte MAJOR = 0,
-                             MINOR = 1,
-                             BLUES = 2,
+                             BLUES = 1,
+                             MINOR = 2,
                           HARMONIC = 3,            //Harmoic minor
                         NUM_SCALES = 4;
    */
@@ -38,25 +38,65 @@ public class util_Music{
       "Agogo",
    };
    
-   private static final byte[][] INTERVALS = new byte[][]{
+   private static final byte[][] INTERVALS = new byte[][] {
       {0, 2, 4, 5, 7, 9,  11, 12},
-      {0, 2, 3, 5, 7, 9,  11, 12},
       {0, 3, 5, 6, 7, 10, 12},
+      {0, 2, 3, 5, 7, 9,  11, 12},
       {0, 2, 3, 5, 7, 8,  11, 12}
    };
    
+   private static final byte[][] PENTATONICS = new byte[][] {
+      {0, 2, 4, 7, 9,  12},   //Major pentatonic interval
+      {0, 3, 5, 7, 10, 12}    //Minor pentatonic
+   };
+   /*
+   private static final byte[][][] PROGRESSIONS = new byte[][][]{
+      {
+         {1, 4, 5},
+         {1, 6, 4, 5},
+         {2, 5, 1},
+         {1, 6, 2, 5},
+         {1, 5, 6, 4},
+         {1, 4, 6, 5},
+         {1, 3, 4, 5},
+         {1, 4, 1, 5},
+         {1, 4, 2, 5}
+      },
+      {
+         {1, 6, 7},
+         {1, 4, 7},
+         {1, 4, 5},
+         {1, 6, 3, 7},
+         {2, 5, 1},
+         {1, 4, 5, 1},
+         {6, 7, 1, 1},
+         {1, 7, 6, 7},
+         {1, 4, 1},
+      },
+      {
+         {1, 4, 5}
+      },
+      {
+         {1, 4, 5, 6},
+         {1, 5, 4, 6},
+         {5, 1, 5, 6},
+         {4, 1, 5, 6},
+         {6, 5, 4, 1}
+      }
+   };
+   */
    public static final short[] INSTRUMENTS = new short[] {0, 27, 33, 34, 30, 113};
    
    public static void main(String[] args){
       //playSong(generateSong((byte)2, (short)(Math.random() * Short.MAX_VALUE)));
       final byte toPlay = PIANO;
       
-      /****
-      playSong(toPlay, generatePart((byte)4, (short)(Math.random() * Short.MAX_VALUE), toPlay));
+      /****/
+      playSong(toPlay, generatePart((byte)1, (short)(Math.random() * Short.MAX_VALUE), toPlay));
       //                            0 to 4
       /******/
       
-      /****/
+      /****
       ArrayList<HashMap<Short, HashSet<Byte>>> allParts = new ArrayList<>();
       final short seed = (short)(Math.random() * Short.MAX_VALUE);
       for(byte i = 0; i < NUM_INSTRUMENTS; i++){
@@ -82,7 +122,8 @@ public class util_Music{
       final byte scale = 0;//(byte)(rand.nextInt(INTERVALS.length));
       final byte key = 48;//(byte)(rand.nextInt(12) + 48);
       final byte beatInterval = (byte)(measureLength / (difficulty + 2));
-      System.out.println("bpm: " + bpm + "\nmeasure length:" + measureLength + "\nsong length:" + songLength + "\nscale:" + scale + "\nkey:" + key + "\nbeat interval:" + beatInterval);
+      //final byte chordProgression = (byte)(rand.nextInt(PROGRESSIONS[scale].length));//which chord progression to use
+      System.out.println("bpm: " + (bpm * 2) + "\nmeasure length:" + measureLength + "\nsong length:" + songLength + "\nscale:" + scale + "\nkey:" + key + "\nbeat interval:" + beatInterval);
       HashMap<Short, HashSet<Byte>> song = new HashMap<>();
       
       //Add neccessary song info into song data structure
@@ -90,48 +131,30 @@ public class util_Music{
       info.add(bpm);
       song.put((short)0, info);
       
-      //Idk what this is called in music. Generating each melody?
-      ArrayList<Byte> rootInd = new ArrayList<>(songLength / measureLength);
-      rootInd.add((byte)(0));
-      for(byte i = 1; i < songLength / measureLength; i++){
-         rootInd.add((byte)((rand.nextInt(6) * 2 - 5) % INTERVALS[scale].length));
-         //rootInd.add((byte)(i));
-      }
-      
       //---Generate notes based on instrument---//sammy was here
       //PIANO
       if(instrument == PIANO){
-         short ind = 0;
-         /*
-         for(short beat = 0; beat < songLength - 1; beat += measureLength){
+         //Generate part by measure
+         for(byte i = 0; i < songLength / measureLength; i++){ 
+            //Form sustained chord
+            //byte root = (byte)(key + INTERVALS[scale][PROGRESSIONS[scale][chordProgression][i % PROGRESSIONS[scale][chordProgression].length] - 1]);
+            byte root = (byte)(key + PENTATONICS[scale / 2][rand.nextInt(PENTATONICS[scale / 2].length)]);
             HashSet<Byte> chord = new HashSet<>();
-            
-            //Chord
-            final byte rootNote;
-            if(rootInd.get(ind) < 0){
-               rootNote = (byte)(key + INTERVALS[scale][rootInd.get(ind) + INTERVALS[scale].length] - 12);
-            }else if(rootInd.get(ind) >= INTERVALS[scale].length){
-               rootNote = (byte)(key + INTERVALS[scale][rootInd.get(ind) % INTERVALS[scale].length] + 12);
-            }else{
-               rootNote = (byte)(key + INTERVALS[scale][rootInd.get(ind)]);
+            for(byte j = 0; j < difficulty / 2 + 1; j++){
+               byte interval;
+               if(j == 0)
+                  interval = 0;
+               else if(j == 1){
+                  if(scale <= 1)
+                     interval = 2;
+                  else
+                     interval = 3;
+               }else
+                  interval = 5;
+               //chord.add((byte)(root + INTERVALS[scale][(interval + chordProgression) % INTERVALS[scale].length] + (12 * (interval + chordProgression) / INTERVALS[scale].length)));
             }
-            
-            //for(byte i = 0; i < difficulty / 2 + 2; i++){
-            for(byte i = 0; i < 2; i++){
-               byte addNote = (byte)(rootNote + i * 4 - 12);
-               chord.add(addNote);
-            }
-            
-            //Melody
-            for(short t = beat; t < beat + measureLength; t += randInt(2) + 1){
-               
-            }
-            
-            ind++;
-            
-            if(!chord.isEmpty())
-               song.put((short)(beat + 1), chord);
-         }*/
+            song.put((short)(i * measureLength), chord);
+         }
       
       //GUITAR
       }else if(instrument == CLEAN_GUITAR){
@@ -175,7 +198,7 @@ public class util_Music{
          short ind = 0;
          for(short beat = measureLength; beat < songLength - 1; beat += measureLength){
             HashSet<Byte> chord = new HashSet<>();
-            
+            /*
             final byte note;
             if(rootInd.get(ind) < 0){
                note = (byte)(key + INTERVALS[scale][rootInd.get(ind) + INTERVALS[scale].length] - 12);
@@ -192,6 +215,7 @@ public class util_Music{
             
             if(!chord.isEmpty())
                song.put((short)(beat + 1), chord);
+            */
          }
       
       //DISTORTED GUITAR
@@ -295,8 +319,8 @@ public class util_Music{
       @Override
       public void run(){
          //Figure out song metrics
-         final short bpm = (Byte)(song.get((short)0).iterator().next());
-         
+         final short bpm = (short)(2 * (Byte)(song.get((short)0).iterator().next()));
+         System.out.println("shae" + bpm);
          //Find length of song
          Iterator<Short> keys = song.keySet().iterator();
          short songLength = 0;
