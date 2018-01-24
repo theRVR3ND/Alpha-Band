@@ -100,7 +100,6 @@ public class util_Music{
    }
    
    public static byte generateBPM(byte difficulty, short seed){
-      //System.out.println("seed: " + seed);
       return (byte)(Math.pow(9, difficulty / 2.0) + 30 + 5 * ((new Random(seed)).nextInt(5) - 2));// * 2 for actual
    }
    
@@ -116,7 +115,6 @@ public class util_Music{
       final byte scale = (byte)(rand.nextInt(INTERVALS.length));
       final byte key = (byte)(rand.nextInt(12) + 60);
       final byte beatInterval = (byte)(measureLength / (difficulty + 2));
-      //final byte chordProgression = (byte)(rand.nextInt(PROGRESSIONS[scale].length));//which chord progression to use
       //System.out.println("bpm: " + (bpm * 2) + "\nmeasure length:" + measureLength + "\nsong length:" + songLength + "\nscale:" + scale + "\nkey:" + key + "\nbeat interval:" + beatInterval);
       HashMap<Short, HashSet<Byte>> song = new HashMap<>();
       
@@ -128,7 +126,6 @@ public class util_Music{
       //---Generate notes based on instrument---//sammy was here
       //PIANO
       if(instrument == PIANO){
-         /*
          byte root = (byte)(key + PENTATONICS[scale / 2][0] - 24);
          
          for(short beat = 1; beat < songLength; beat++){ 
@@ -136,23 +133,22 @@ public class util_Music{
             
             final byte pentatonicsIndex = (byte)(rand.nextInt(PENTATONICS[scale / 2].length));
             
-            //Melody
-            if(beat % beatInterval == 0){
-               root = (byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24);
-               chord.add((byte)(root + 12));
-            }
-            
             //Pedal tone
             if(beat % measureLength == 0){
                for(byte i = 0; i < difficulty / 2 + 1; i++){
                   chord.add((byte)(root + CHORDS[scale / 2][pentatonicsIndex][i]));
                }
+               chord.add((byte)(root + 12));
+            
+            //Melody
+            }else if(beat % beatInterval == 0){
+               root = (byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24);
+               chord.add((byte)(root + 12));
             }
             
             if(!chord.isEmpty())
                song.put(beat, chord);
          }
-         /*/
       
       //GUITAR
       }else if(instrument == CLEAN_GUITAR){
@@ -196,15 +192,13 @@ public class util_Music{
       }else if(instrument == BASS){
          byte root = (byte)(key + PENTATONICS[scale / 2][0] - 24);
          
-         for(short beat = 1; beat < songLength; beat++){ 
+         for(short beat = beatInterval; beat < songLength; beat += 4 * beatInterval){ 
             HashSet<Byte> chord = new HashSet<>();
             
             //Melody
-            if(beat % beatInterval == 1){
-               final byte pentatonicsIndex = (byte)(rand.nextInt(PENTATONICS[scale / 2].length));
-               root = (byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24);
-               chord.add((byte)(root - 12));
-            }
+            final byte pentatonicsIndex = (byte)(rand.nextInt(PENTATONICS[scale / 2].length));
+            root = (byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24);
+            chord.add(root);
             
             if(!chord.isEmpty())
                song.put(beat, chord);
@@ -251,7 +245,7 @@ public class util_Music{
             
             channels = synth.getChannels();
             instruments = synth.getDefaultSoundbank().getInstruments();
-            
+            System.out.println("Dropping the bass: " + instruments[INSTRUMENTS[BASS]]);
             //Set channels' instruments
             for(byte i = 0; i < channels.length; i++){
                channels[i].programChange(instruments[i].getPatch().getProgram());
@@ -259,6 +253,7 @@ public class util_Music{
          }catch(MidiUnavailableException e){
             e.printStackTrace();
          }
+         
       }
       
       @Override
