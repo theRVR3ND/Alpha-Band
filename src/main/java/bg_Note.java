@@ -5,76 +5,34 @@
  * W.T.Woodson H.S.
  * 2017
  * 
- * Game musical note. Scrolls down for sweet rhythym magic.
+ * Musical note.
  */
 
 import java.util.*;
 
-public class bg_Note extends bg_Entity{
+public class bg_Note{
    
-   /**
-    * How many frames this note will last.
-    */
-   private byte duration;
+   protected final byte note;
    
-   /**
-    * Key note note.
-    */
-   private byte note;
+   protected final short beat;
    
-   private byte instrument;
+   protected final byte duration;
    
-   //Beat in song at which note hits bottom
-   private short hitBeat;
-   
-   /**
-    * Constructor. Establish note parameters.
-    */
-   public bg_Note(byte duration, byte note, byte instrument, short hitBeat){
-      super();
-      
-      this.duration = duration;
+   public bg_Note(final byte note, final short beat, final byte duration){
       this.note = note;
-      this.instrument = instrument;
-      this.hitBeat = hitBeat;
-   }
-   
-   public bg_Note(){
-      this((byte)0, (byte)0, (byte)0, (short)0);
-   }
-   
-   public void think(short deltaTime){}
-   
-   public byte getDuration(){
-      return duration;
+      this.beat = beat;
+      this.duration = duration;
    }
    
    public byte getNote(){
       return note;
    }
    
-   public byte getInstrument(){
-      return instrument;
+   public short getBeat(){
+      return beat;
    }
    
-   public void setData(byte duration, byte note, byte instrument, short hitBeat){
-      this.duration = duration;
-      this.note = note;
-      this.instrument = instrument;
-      this.hitBeat = hitBeat;
-   }
-   
-   public LinkedList<Object> getData(LinkedList<Object> list){
-      list.add(duration);
-      list.add(note);
-      list.add(hitBeat);
-      
-      return list;
-   }
-   
-   public void setData(LinkedList<Object> data){
-      duration = (Byte)(data.remove(0));
-      note = (Byte)(data.remove(0));
-      hitBeat = (Short)(data.remove(0));
+   public byte getDuration(){
+      return duration;
    }
 }

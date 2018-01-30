@@ -44,20 +44,10 @@ public class g_Server extends Thread implements bg_Constants{
    /**
     * Creates new server if one does not already exist.
     */
-   public g_Server(String name, byte gamemode){
-      //Launch server
-      try{
-         socket = new ServerSocket(PORT * 2);
-      }catch(IOException e){
-         System.out.println(
-            "Fail! Server could not be launched. Horrible. " +
-            "The Chinese are making this all up. Sad!"
-         );
-         e.printStackTrace();
-         System.exit(1);
-      }
-      
+   public g_Server(ServerSocket socket, String name, byte gamemode){
+      System.out.println("It's happening!");
       //Initialize stuff
+      this.socket = socket;
       this.name = name;
       
       clients = new ArrayList<g_Connection>();

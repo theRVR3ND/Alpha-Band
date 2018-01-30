@@ -14,12 +14,12 @@ public interface bg_Constants{
    /**
     * Port number to use for connections.
     */
-   public static final short PORT = 27012;
+   public static final int SERVER_PORT = 54024;
    
    /**
     * Port number to use for server requests.
     */
-   public static final short ECHO = 27013;
+   public static final int ECHO_PORT = 54025;
    
    /**
     * Standard format request from client for connection.
@@ -54,7 +54,7 @@ public interface bg_Constants{
    /*
       This should match Binds.cfg exactly.
       First value must equal 0 and following
-      values must increment up by one.
+      values must be sequential.
    */
    public static final byte CHAT = 0,
                             TEST = 1;
@@ -69,8 +69,7 @@ public interface bg_Constants{
    /**
     * Entity type.
     */
-   public static final byte PLAYER = 0,
-                              NOTE = 1;
+   public static final byte PLAYER = 0;
    
    /**
     * Game modes.

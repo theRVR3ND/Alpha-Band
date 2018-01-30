@@ -216,7 +216,7 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
                //Try to ping echo server
                Socket echo = new Socket();
                try{
-                  echo.connect(new InetSocketAddress(pingIP, ECHO * 2), timeout);
+                  echo.connect(new InetSocketAddress(pingIP, ECHO_PORT), timeout);
                   
                   InputStream in = echo.getInputStream();
                   OutputStream out = echo.getOutputStream();

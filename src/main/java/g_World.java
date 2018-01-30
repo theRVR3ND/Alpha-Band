@@ -24,7 +24,7 @@ public class g_World extends bg_World{
    
    //private NoteSpawner noteSpawner;
    
-   private HashMap<Byte, LinkedList<byte[]>> notes;
+   private HashMap<Byte, HashSet<byte[]>> notes;
    
    /**
     * Master gamestate. Holds all current entity states.
@@ -39,6 +39,8 @@ public class g_World extends bg_World{
     */
    private HashMap<Byte, HashMap<Short, byte[]>> snapshots;
    
+   private NoteSpawner noteSpawner;
+   
    /**
     * Constructor.
     */
@@ -48,10 +50,10 @@ public class g_World extends bg_World{
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
-      notes = new HashMap<Byte, LinkedList<byte[]>>();
+      notes = new HashMap<Byte, HashSet<byte[]>>();
       
       for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++)
-         notes.put(i, new LinkedList<byte[]>());
+         notes.put(i, new HashSet<byte[]>());
       
       this.serverDifficulty = serverDifficulty;
       
@@ -130,7 +132,7 @@ public class g_World extends bg_World{
    
    public void startVote(){
       //voteTimeout = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      songStartTime = (long)(System.currentTimeMillis() + 180000);//TEMPORARY
+      songStartTime = (long)(System.currentTimeMillis() + 10000);//TEMPORARY
       
       HashSet<Byte> toVoteOn = new HashSet<>();
       
@@ -195,22 +197,22 @@ public class g_World extends bg_World{
       byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));//Index in currVote
       
       //Generate all song parts
-      ArrayList<ArrayList<ArrayList<Byte>>> wholeSong = new ArrayList<>();
+      ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
       //if(choice == currVote.length - 1){//Randomly generated song
          final short seed = (short)(Math.random() * Short.MAX_VALUE);
          
-         bpm = util_Music.generateBPM((byte)2, seed);
-         wholeSong.add(util_Music.generatePart((byte)2, seed, util_Music.DRUMS));
+         bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
+         song.add(util_Music.generatePart((byte)2, seed, util_Music.DRUMS));
       //}else{//Load song
       
       //}
       
       //"Send" song info to clients
-      infoEnt.setColor(new Color(bpm, 0, 0));
+      infoEnt.setColor(new Color(bpm / 2, 0, 0));
       
       //Start spawning notes
-      //noteSpawner = new NoteSpawner(wholeSong);
-      //noteSpawner.start();
+      noteSpawner = new NoteSpawner(song);
+      noteSpawner.start();
    }
    
    /**
@@ -325,9 +327,6 @@ public class g_World extends bg_World{
          //Send entity's type
          if(entities.get(key) instanceof bg_Player)
             add[2] = PLAYER;
-         else if(entities.get(key) instanceof bg_Note){
-            add[2] = NOTE;
-         }
          
          for(byte i = 0; i < comp.length; i++)
             add[i + 3] = comp[i];
@@ -338,10 +337,94 @@ public class g_World extends bg_World{
       return ret;
    }
    
-   public LinkedList<byte[]> getNotes(byte instrument){
-      LinkedList<byte[]> ret = notes.get(instrument);
-      notes.put(instrument, new LinkedList<byte[]>());
-      return ret;
+   //Should only be requested by single player who is playing instrument
+   public HashSet<byte[]> getNotes(byte clientID){
+      return notes.remove(getPlayer(clientID).getInstrument());
+   }
+   
+   /**
+    * THIS IS A THING THAT SPAWNS NOTES. YES IT IS UGLY BUT IT IS MINE. SO BACK OFF.
+    */
+   private class NoteSpawner extends Thread{
+      
+      private final ArrayList<HashMap<Short, HashSet<Byte>>> song;
+      
+      public NoteSpawner(ArrayList<HashMap<Short, HashSet<Byte>>> song){
+         //Initialize stuff
+         this.song = song;
+      }
+      
+      @Override
+      public void run(){
+         //Wait until time for song to start
+         try{
+            final int sleepTime = (int)(songStartTime - System.currentTimeMillis());
+            if(sleepTime > 0)
+               sleep(sleepTime);
+         }catch(InterruptedException e){}
+         
+         //Figure out song metrics
+         final short bpm = (short)(2 * (Byte)(song.get(0).get((short)0).iterator().next()));
+         
+         //Track currently "playing" notes
+         ArrayList<HashSet<Byte>> currNotes = new ArrayList<>();
+         for(byte i = 0; i < song.size(); i++)
+            currNotes.add(new HashSet<Byte>());
+         
+         //Progress through each beat
+         short beat = 1;
+         while(true){//YEAH CHANGE THIS LATER BUDDY
+            //Track start time of loop
+            final long startTime = System.currentTimeMillis();
+            
+            //Play chord for each instrument in current beat
+            for(byte instrument = 0; instrument < song.size(); instrument++){
+               //Current beat's notes to play
+               HashSet<Byte> chord = song.get(instrument).get(beat);
+               
+               if(chord == null)
+                  continue;
+               
+               //Spawn new notes
+               if(notes.get(instrument) == null)
+                  notes.put(instrument, new HashSet<byte[]>());
+               
+               HashSet<byte[]> spawn = notes.get(instrument);
+               for(Byte note : chord){
+                  //Check if note has already been spawned
+                  if(currNotes.get(instrument).contains(note))
+                     continue;
+                  
+                  //Find duration of note
+                  byte duration = 1;
+                  HashSet<Byte> nextChord = song.get(instrument).get((short)(beat + duration));
+                  while(nextChord != null && nextChord.contains(note))
+                     duration++;
+                  
+                  //Spawn note
+                  byte[] bytes = shortToBytes(beat);//Maybe delet
+                  spawn.add(new byte[] {
+                     note,
+                     bytes[0],
+                     bytes[1],
+                     duration
+                  });
+                  
+                  //OR
+                  //entities.add(new bg_Note());
+               }
+            }
+            
+            //Wait until next beat
+            try{
+               int sleepTime = (int)(startTime + 60000.0 / bpm - System.currentTimeMillis());
+               if(sleepTime > 0)
+                  sleep(sleepTime);
+            }catch(InterruptedException e){}
+            
+            beat++;
+         }
+      }
    }
    
    /*

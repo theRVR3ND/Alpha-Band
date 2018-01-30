@@ -27,7 +27,7 @@ public class g_Echo implements Runnable, bg_Constants{
    public g_Echo(){
       if(echo == null){
          try{
-            socket = new ServerSocket(ECHO * 2);
+            socket = new ServerSocket(ECHO_PORT);
             echo = this;
          }catch(IOException e){}
       }

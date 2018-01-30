@@ -11,6 +11,8 @@
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.*;
+import java.io.*;
 
 public class ui_CreateServer extends ui_Menu implements KeyListener,
                                                         MouseWheelListener,
@@ -110,8 +112,16 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       //Redirect to other menus
       if(buttons[0].isDown()){
          //Launch server
-         g_Server server = new g_Server(nameTextbox.getContents(), gamemodeList.getHoverRow());
-         server.start();
+         ServerSocket socket;
+         try{
+            socket = new ServerSocket(SERVER_PORT);
+         }catch(IOException exception){
+            return;
+         }
+         if(socket.isBound()){
+            g_Server server = new g_Server(socket, nameTextbox.getContents(), gamemodeList.getHoverRow());
+            server.start();
+         }
          
          //Join said server. Use loopback IP address.
          ui_Menu.servers.joinServer(

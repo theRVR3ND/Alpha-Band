@@ -20,7 +20,7 @@ public class cg_World extends bg_World{
     */
    private HashMap<Short, byte[]> gamestate;
    
-   private HashSet<byte[]> notes;
+   private ArrayList<cg_Note> notes;
    
    /**
     * Constructor.
@@ -30,7 +30,7 @@ public class cg_World extends bg_World{
       
       //Initialize stuff
       gamestate = new HashMap<Short, byte[]>();
-      notes = new HashSet<byte[]>();
+      notes = new ArrayList<cg_Note>();
    }
    
    /**
@@ -46,7 +46,7 @@ public class cg_World extends bg_World{
       g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
       g2.fillRect(0, 0, cg_Client.SCREEN_WIDTH, cg_Client.SCREEN_HEIGHT);
       
-      //Graphics tings
+      //Text tings
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       FontMetrics fm;
       
@@ -77,11 +77,11 @@ public class cg_World extends bg_World{
       //Draw player info
       toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
       g2.drawString(toDraw, 40, 50);
-      
+      g2.drawString(notes.size() + " " + super.getCurrBeat(), 100, 200);
       //Song info
-      bpm = (byte)(super.getPlayer((byte)-1).getColor().getRed());
+      bpm = (short)(super.getPlayer((byte)-1).getColor().getRed() * 2);
       
-      //Draw all entities' info
+      //Draw all players' info
       int shiftInd = 1;
       byte spacing = (byte)(fm.getHeight() * 1.2);
       for(Short key : entities.keySet()){
@@ -112,23 +112,13 @@ public class cg_World extends bg_World{
             }
             
             shiftInd++;
-         
-         //Draw note
-         }/*else if(entities.get(key) instanceof bg_Note){
-            bg_Note note = (bg_Note)(entities.get(key));
-            
-            final short noteWidth = (short)(cg_Client.SCREEN_WIDTH / (Byte.MAX_VALUE + 1.0));
-            //final short noteY = (short)();
-            
-            g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
-            g2.fillRect(
-               noteWidth * note.getNote(),
-               100,
-               noteWidth,
-               100
-            );
-         }*/
+         }
       }
+      
+      //Draw notes
+      final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
+      for(cg_Note note : notes)
+         note.render(g2, currMilliBeats);
       
       //Show countdown
       if(System.currentTimeMillis() < songStartTime && songStartTime - System.currentTimeMillis() < 10000){
@@ -172,8 +162,6 @@ public class cg_World extends bg_World{
          
          if(entType == PLAYER)
             spawn = new bg_Player();
-         else if(entType == NOTE)
-            spawn = new bg_Note();
          
          entities.put(ID, spawn);
       }
@@ -208,27 +196,15 @@ public class cg_World extends bg_World{
    
    //Spawn new notes from noteData
    public void processNotes(byte[] noteData){
-      for(byte i = 0; i < noteData.length; i += 5){
+      byte i = 0;
+      while(i < noteData.length){
          //Spawn new note
-         /*
-         short key = bg_Entity.getEntityCount();
-         entities.put(
-            key,
-            new bg_Note(
-               noteData[i],
-               noteData[i + 1],
-               noteData[i + 2],
-               bytesToShort(noteData, (byte)(i + 3))
-            )
-         );
-         */
-         notes.add(new byte[] {
-               noteData[i],
-               noteData[i + 1],
-               noteData[i + 2],
-               noteData[i + 3],
-               noteData[i + 4],
-         });
+         notes.add(new cg_Note(
+            noteData[i],
+            bytesToShort(noteData, (byte)(i + 1)),
+            noteData[i + 3]
+         ));
+         i += 4;
       }
    }
 }

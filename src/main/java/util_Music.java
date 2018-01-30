@@ -70,7 +70,7 @@ public class util_Music{
       },
    };
    
-   public static final short[] INSTRUMENTS = new short[] {0, 27, 33, 34, 30, 113};
+   public static final short[] INSTRUMENTS = new short[] {0, 27, 33, 35, 30, 113};
    
    public static void main(String[] args){
       ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
@@ -123,28 +123,43 @@ public class util_Music{
       info.add(bpm);
       song.put((short)0, info);
       
+      //Generate each measure's pentatonic chord index
+      ArrayList<Byte> pentIndex = new ArrayList<>(songLength / measureLength);
+      for(byte i = 0; i < songLength / measureLength; i++){
+         pentIndex.add((byte)(rand.nextInt(PENTATONICS[scale / 2].length)));
+      }
+      
       //---Generate notes based on instrument---//sammy was here
       //PIANO
       if(instrument == PIANO){
-         byte root = (byte)(key + PENTATONICS[scale / 2][0] - 24);
-         
          for(short beat = 1; beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
             
-            final byte pentatonicsIndex = (byte)(rand.nextInt(PENTATONICS[scale / 2].length));
+            final byte root = (byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)] - 24);
             
             //Pedal tone
             if(beat % measureLength == 0){
                for(byte i = 0; i < difficulty / 2 + 1; i++){
-                  chord.add((byte)(root + CHORDS[scale / 2][pentatonicsIndex][i]));
+                  chord.add((byte)(root + CHORDS[scale / 2][pentIndex.get(beat / measureLength)][i]));
                }
                chord.add((byte)(root + 12));
             
             //Melody
             }else if(beat % beatInterval == 0){
-               root = (byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24);
-               chord.add((byte)(root + 12));
+               chord.add((byte)(root + INTERVALS[scale][rand.nextInt(INTERVALS[scale].length)] + 12));
             }
+            /*
+            //Pedal tone
+            if(beat % measureLength == 0){
+               for(byte i = 0; i < difficulty / 2 + 1; i++){
+                  chord.add((byte)(roots.get(beat / measureLength) + CHORDS[scale / 2][pentatonicsIndex][i]));
+               }
+               chord.add((byte)(roots.get() + 12));
+            
+            //Melody
+            }else if(beat % beatInterval == 0){
+               chord.add((byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 12));
+            }*/
             
             if(!chord.isEmpty())
                song.put(beat, chord);
@@ -172,8 +187,7 @@ public class util_Music{
             }else{
                //Bass drum
                if(beat % beatInterval == 0 || beat % measureLength == 0){
-                  if(beat + beatInterval >= measureLength && beat < songLength - measureLength)
-                     chord.add((byte)35);
+                  chord.add((byte)35);
                }
                
                //Snare
@@ -192,16 +206,23 @@ public class util_Music{
       }else if(instrument == BASS){
          byte root = (byte)(key + PENTATONICS[scale / 2][0] - 24);
          
-         for(short beat = beatInterval; beat < songLength; beat += 4 * beatInterval){ 
+         for(short beat = 1; beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
             
-            //Melody
             final byte pentatonicsIndex = (byte)(rand.nextInt(PENTATONICS[scale / 2].length));
-            root = (byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24);
-            chord.add(root);
             
-            if(!chord.isEmpty())
-               song.put(beat, chord);
+            //Root note
+            if(beat % (measureLength / 2) == 0){
+               if(beat % measureLength == 0){
+                  root = (byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24);
+               }
+               chord.add(root);
+            }else if(beat % beatInterval == 0 && rand.nextDouble() < 0.3){
+               chord.add((byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24));
+            }
+            
+            //if(!chord.isEmpty())
+               //song.put(beat, chord);
          }
       
       //DISTORTED GUITAR
@@ -211,7 +232,7 @@ public class util_Music{
       }else if(instrument == AGOGO){
          short playBeat = (short)(rand.nextInt(songLength));
          HashSet<Byte> note = new HashSet<>();
-         note.add((byte)(rand.nextInt(60) + 30));
+         note.add((byte)(rand.nextInt(20) + key));
          song.put(playBeat, note);
       
       }else{
@@ -245,7 +266,7 @@ public class util_Music{
             
             channels = synth.getChannels();
             instruments = synth.getDefaultSoundbank().getInstruments();
-            System.out.println("Dropping the bass: " + instruments[INSTRUMENTS[BASS]]);
+            
             //Set channels' instruments
             for(byte i = 0; i < channels.length; i++){
                channels[i].programChange(instruments[i].getPatch().getProgram());
@@ -296,7 +317,7 @@ public class util_Music{
                      if(!currNotes.get(instrument).contains(note)){
                         //Percussion
                         if(instrument == DRUMS)
-                           channels[9].noteOn(note, 20);
+                           channels[9].noteOn(note, 35);
                         //Other instrument
                         else
                            channels[instrument].noteOn(note, 30);

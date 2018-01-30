@@ -25,8 +25,8 @@ public class cg_Client{
    /**
     * Dimensions of screen, needed for proportional rendering.
     */
-   public static short SCREEN_WIDTH = (short)Toolkit.getDefaultToolkit().getScreenSize().getWidth(),
-                      SCREEN_HEIGHT = (short)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+   public static final short SCREEN_WIDTH = (short)Toolkit.getDefaultToolkit().getScreenSize().getWidth(),
+                            SCREEN_HEIGHT = (short)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
    
    /**
     * Client run method.
@@ -35,9 +35,9 @@ public class cg_Client{
       //Initialize and launch frame
       frame = new JFrame("Alpha Band");
       
-      //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-      frame.setUndecorated(true);
-      frame.setResizable(false);
+      frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+      //frame.setUndecorated(true);
+      //frame.setResizable(false);
       frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
       frame.setIconImage(util_Utilities.loadImage("menu/icon.png"));
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -81,7 +81,6 @@ public class g_Connection extends Thread implements bg_Constants{
          
          while(true){
             //long lastUpdateTime = System.currentTimeMillis();
-            
             //Receive input stream from client
             if(in.available() > 0){
                byte[] info = new byte[Byte.MAX_VALUE];
@@ -120,7 +119,7 @@ public class g_Connection extends Thread implements bg_Constants{
                sentBallot = true;
             
             //Send game world updates
-            }else if(g_Server.server.getWorld().getPlayer(clientID) != null){
+            }else{// if(g_Server.server.getWorld().getPlayer(clientID) != null){
                //Send entity data
                LinkedList<byte[]> data = g_Server.server.getWorld().getRelevantData(clientID);
                for(byte i = 0; i < data.size(); i++){
@@ -141,24 +140,20 @@ public class g_Connection extends Thread implements bg_Constants{
                }
                
                //Send note data
-               //***************
-               final byte playerInstrument = g_Server.server.getWorld().getPlayer(clientID).getInstrument();
-               data = g_Server.server.getWorld().getNotes(playerInstrument);
-               
-               if(data.size() == 0)
-                  continue;
-               
-               byte[] toSend = new byte[data.size() * 5 + 1];
-               
-               toSend[0] = NOTES;
-               
-               byte i = 1;
-               for(byte[] d : data){
-                  for(byte b : d)
-                     toSend[i++] = b;
+               HashSet<byte[]> noteData = g_Server.server.getWorld().getNotes(clientID);
+               if(noteData != null && !noteData.isEmpty()){
+                  byte[] toSend = new byte[noteData.size() * 4 + 1];
+                  
+                  toSend[0] = NOTES;
+                  
+                  byte i = 1;
+                  for(byte[] d : noteData){
+                     for(byte b : d)
+                        toSend[i++] = b;
+                  }
+                  
+                  writeOut(toSend);
                }
-               
-               writeOut(toSend);
                //**/
             }
          }

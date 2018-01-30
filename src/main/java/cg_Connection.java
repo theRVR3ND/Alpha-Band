@@ -39,7 +39,7 @@ public class cg_Connection extends Thread implements bg_Constants{
     */
    public cg_Connection(final String IP) throws IOException{
       //Establish connection
-      socket = new Socket(IP, PORT * 2);
+      socket = new Socket(IP, SERVER_PORT);
       in = socket.getInputStream();
       out = socket.getOutputStream();
       
@@ -64,7 +64,7 @@ public class cg_Connection extends Thread implements bg_Constants{
             }
          }
       }catch(IOException e){
-         //e.printStackTrace();
+         e.printStackTrace();
       
       }finally{
          //Exit out to menu
@@ -200,6 +200,7 @@ public class cg_Connection extends Thread implements bg_Constants{
          //cg_Client.frame.setContentPane(ui_Menu.vote);
          //cg_Client.frame.revalidate();
       
+      //Process incomming notes for user to play
       }else if(info[0] == NOTES){
          //Clip out update tag
          byte[] send = new byte[numByte - 1];

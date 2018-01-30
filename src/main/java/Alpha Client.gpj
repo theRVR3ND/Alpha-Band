@@ -12,7 +12,7 @@ s#i0
 s#k0
 s#j0
 s#l0
-!675;g
+!693;g
 %\011ui_Guide.java
 %\011bg_Note.java
 %\011ui_Theme.java
@@ -22,6 +22,7 @@ s#l0
 %\011ui_Button.java
 %\011ui_Controls.java
 %\011ui_Menu.java
+%\011cg_Note.java
 %\011bg_Player.java
 %\011cg_Client.java
 %\011cg_Connection.java
@@ -46,7 +47,7 @@ s#l0
 %\011bg_Vector.java
 %\011ui_CreateServer.java
 %\011ui_Vote.java
-!675;f
+!693;f
 %\011ui_Guide.java
 %\011bg_Note.java
 %\011ui_Theme.java
@@ -56,6 +57,7 @@ s#l0
 %\011ui_Button.java
 %\011ui_Controls.java
 %\011ui_Menu.java
+%\011cg_Note.java
 %\011bg_Player.java
 %\011cg_Client.java
 %\011cg_Connection.java
