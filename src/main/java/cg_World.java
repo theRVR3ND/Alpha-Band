@@ -117,8 +117,12 @@ public class cg_World extends bg_World{
       
       //Draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
-      for(cg_Note note : notes)
-         note.render(g2, currMilliBeats);
+      Iterator iter = notes.iterator();
+      while(iter.hasNext()){
+         try{
+            ((cg_Note)(iter.next())).render(g2, currMilliBeats);
+         }catch(ConcurrentModificationException e){}
+      }
       
       //Show countdown
       if(System.currentTimeMillis() < songStartTime && songStartTime - System.currentTimeMillis() < 10000){

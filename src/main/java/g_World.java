@@ -183,6 +183,11 @@ public class g_World extends bg_World{
       //Figure out winner of vote
       byte highestVotes = 0;
       ArrayList<Byte> maxVotes = new ArrayList<>();
+      while(currVote == null){
+         try{
+            Thread.sleep(10);
+         }catch(InterruptedException e){}
+      }
       for(byte i = 0; i < currVote.length; i++){
          if(currVote[i][1] == highestVotes){
             maxVotes.add(i);

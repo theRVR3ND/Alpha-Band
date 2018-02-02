@@ -33,6 +33,8 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    
    private final HashMap<Integer, Byte> noteMap;
    
+   private final char[] KEYS = new char[] {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'};
+   
    /**
     * Constructor.
     */
@@ -92,6 +94,30 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       //World rendering handled in cg_Renderer
       world.render(g2);
       
+      //Draw current depressed keys
+      for(byte i = 0; i < noteMap.size(); i++){
+         //Key is pressed
+         if(currNotes.contains(i)){
+            g2.drawRect(
+               (int)((i + 0.05) * cg_Client.SCREEN_WIDTH / 10.0),
+               (int)(cg_Client.SCREEN_HEIGHT * 15.75 / 20),
+               (int)(cg_Client.SCREEN_WIDTH * 0.09),
+               (int)(cg_Client.SCREEN_HEIGHT * 1.0 / 20)
+            );
+         //Key is up
+         }else{
+            g2.drawRect(
+               (int)((i + 0.1) * cg_Client.SCREEN_WIDTH / 10.0),
+               (int)(cg_Client.SCREEN_HEIGHT * 15.85 / 20),
+               (int)(cg_Client.SCREEN_WIDTH * 0.08),
+               (int)(cg_Client.SCREEN_HEIGHT * 0.8 / 20)
+            );
+         }
+         
+         //Label key
+         //g2.
+      }
+      
       //Draw chat messages
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       super.drawMessages(g2);
@@ -125,13 +151,12 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
             currActions.add(bindTable.get((short)(e.getKeyCode())));
          }
          
-         if(noteMap.containsKey((short)(e.getKeyCode()))){
-            //Check if need to play new note
-            if(currNotes.contains((short)(e.getKeyCode()))){
+         //Play new note
+         if(noteMap.containsKey(e.getKeyCode())){
+            if(currNotes.contains(e.getKeyCode())){
                
             }
-            
-            currNotes.add(noteMap.get((short)(e.getKeyCode())));
+            currNotes.add(noteMap.get(e.getKeyCode()));
          }
       }
    }
@@ -141,8 +166,8 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       if(bindTable.containsKey((short)(e.getKeyCode())))
          currActions.remove(bindTable.get((short)(e.getKeyCode())));
       
-      if(noteMap.containsKey((short)(e.getKeyCode())))
-         currNotes.remove(noteMap.get((short)(e.getKeyCode())));
+      if(noteMap.containsKey(e.getKeyCode()))
+         currNotes.remove(noteMap.get(e.getKeyCode()));
    }
    
    @Override

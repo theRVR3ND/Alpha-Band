@@ -239,6 +239,17 @@ public class util_Music{
          System.out.println("Oh shucks!");
          System.exit(1);
       }
+      
+      //Print song
+      for(short b = 0; b < 100; b++){
+         String toPrint = b + ": ";
+         if(song.get(b) != null){
+            for(Byte n : song.get(b))
+               toPrint += n + " ";
+         }
+         System.out.println(toPrint);
+      }
+      
       return song;
    }
    
