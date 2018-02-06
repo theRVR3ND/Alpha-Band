@@ -11,6 +11,7 @@
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.geom.*;
+import java.awt.event.*;
 import java.util.*;
 
 public class cg_World extends bg_World{
@@ -22,6 +23,12 @@ public class cg_World extends bg_World{
    
    private ArrayList<cg_Note> notes;
    
+   private short currPoints; //Number of recently earned points
+   
+   private byte pointsMessage;
+   
+   private byte pointsMessageTimeout;
+   
    /**
     * Constructor.
     */
@@ -31,6 +38,10 @@ public class cg_World extends bg_World{
       //Initialize stuff
       gamestate = new HashMap<Short, byte[]>();
       notes = new ArrayList<cg_Note>();
+      
+      currPoints = 0;
+      pointsMessage = -1;
+      pointsMessageTimeout = -1;
    }
    
    /**
@@ -72,12 +83,12 @@ public class cg_World extends bg_World{
          util_Utilities.getFontSize()
       ));
       fm = g2.getFontMetrics();
-      g2.drawString(entities.size() + "", 100, 100);
+      //g2.drawString(entities.size() + "", 100, 100);
       
       //Draw player info
       toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
       g2.drawString(toDraw, 40, 50);
-      g2.drawString(notes.size() + " " + super.getCurrBeat(), 100, 200);
+      g2.drawString(super.getCurrBeat() + "", 100, 200);
       //Song info
       bpm = (short)(super.getPlayer((byte)-1).getColor().getRed() * 2);
       
@@ -115,13 +126,58 @@ public class cg_World extends bg_World{
          }
       }
       
-      //Draw notes
+      //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
-      Iterator iter = notes.iterator();
-      while(iter.hasNext()){
-         try{
-            ((cg_Note)(iter.next())).render(g2, currMilliBeats);
-         }catch(ConcurrentModificationException e){}
+      try{
+         for(cg_Note note : notes){
+            //*Try* drawing
+            note.render(g2, currMilliBeats);
+            
+            //Get rid of note if it ded
+            if(currMilliBeats - (note.getBeat() + note.getDuration()) > 1.5){
+               notes.remove(note);
+            }
+         }
+      }catch(ConcurrentModificationException e){}
+      
+      //Show points messages
+      if(pointsMessageTimeout > 0){
+         String message = null;
+         final short alpha = (short)(255.0 * pointsMessageTimeout / Byte.MAX_VALUE);
+         
+         if(currPoints > 0){
+            g2.drawString("+" + currPoints, 100, 160);
+            if(clientPlayer.getBonus() > 0){
+               g2.drawString("x" + clientPlayer.getBonus() + " Bonus Combo", 100, 220);
+            }
+         }
+         
+         if(pointsMessage == 0){
+            message = "Perfect!";
+            g2.setColor(new Color(25, 255, 0, alpha));  //Green
+         
+         }else if(pointsMessage == 1){
+            message = "Great!";
+            g2.setColor(new Color(157, 224, 0, alpha)); //Yellow-green
+         
+         }else if(pointsMessage == 2){
+            message = "Nice!";
+            g2.setColor(new Color(196, 196, 0, alpha)); //Yellow
+         
+         }else if(pointsMessage == 3){
+            message = "Okay...";
+            g2.setColor(new Color(255, 125, 0, alpha)); //Orange
+         
+         }else{
+            message = "Potato!";
+            g2.setColor(Color.RED);                     //Red
+         }
+         
+         g2.drawString(message, 100, 100);
+         
+         pointsMessageTimeout--;
+      }else{
+         currPoints = 0;
       }
       
       //Show countdown
@@ -134,9 +190,9 @@ public class cg_World extends bg_World{
          
          short alpha = (short)(255.0 * ((songStartTime - System.currentTimeMillis()) % 1000) / 1000);
          g2.setColor(new Color(
-            g2.getColor().getRed(),
-            g2.getColor().getGreen(),
-            g2.getColor().getBlue(),
+            ui_Theme.getColor(ui_Theme.TEXT).getRed(),
+            ui_Theme.getColor(ui_Theme.TEXT).getGreen(),
+            ui_Theme.getColor(ui_Theme.TEXT).getBlue(),
             alpha
          ));
          
@@ -196,6 +252,59 @@ public class cg_World extends bg_World{
       ));
       
       gamestate.put(ID, data);
+   }
+   
+   public void processAction(final byte noteValue, final long actionTime){
+      final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
+      float closestGap = Float.MAX_VALUE;
+      final bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
+      
+      //Key pressed
+      if(noteValue > 0){
+      //if(true){
+         //Find closest note to current beat
+         for(cg_Note note : notes){
+            if(note.getNote() == noteValue){
+               closestGap = Math.min(closestGap, Math.abs(actionBeat - note.getBeat()));
+            }
+         }
+         
+         //Show points message
+         if(closestGap < 0.1){
+            pointsMessage = 0;
+         }else if(closestGap < 0.2){
+            pointsMessage = 1;
+         }else if(closestGap < 0.4){
+            pointsMessage = 2;
+         }else if(closestGap < 0.8){
+            pointsMessage = 3;
+         }else{
+            pointsMessage = 4;
+         }
+         
+         //Award bonus combo
+         if(pointsMessage == 0)
+            player.setBonus((byte)(player.getBonus() + 1));
+         else
+            player.setBonus((byte)(0));
+         
+         pointsMessageTimeout = Byte.MAX_VALUE;
+      
+      //Key released
+      }else{
+         //Find closest note end to current beat
+         for(cg_Note note : notes){
+            if(note.getNote() == noteValue){
+               closestGap = Math.min(closestGap, Math.abs(actionBeat - (note.getBeat() + note.getDuration())));
+            }
+         }
+      }
+      
+      //Award points
+      if(closestGap < 1){
+         currPoints = super.calculateScore(closestGap, player.getBonus());
+         player.setScore((short)(player.getScore() + currPoints));
+      }
    }
    
    //Spawn new notes from noteData

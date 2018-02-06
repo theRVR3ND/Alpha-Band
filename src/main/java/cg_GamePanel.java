@@ -31,7 +31,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    
    private HashSet<Byte> currNotes;
    
-   private final HashMap<Integer, Byte> noteMap;
+   public static final HashMap<Integer, Byte> noteMap = new HashMap<Integer, Byte>();
    
    private final char[] KEYS = new char[] {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'};
    
@@ -45,7 +45,6 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       currNotes = new HashSet<Byte>();
       
       //Map note values to keys
-      noteMap = new HashMap<Integer, Byte>();
       noteMap.put(KeyEvent.VK_A,         (byte)0);
       noteMap.put(KeyEvent.VK_S,         (byte)1);
       noteMap.put(KeyEvent.VK_D,         (byte)2);
@@ -75,7 +74,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          return;
       
       //Process current actions
-      sendActions();
+      //sendActions();
       
       //Improve rendering quality
       Graphics2D g2 = util_Utilities.improveQuality(g);
@@ -95,12 +94,14 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       world.render(g2);
       
       //Draw current depressed keys
+      g2.setFont(ui_Menu.defaultFont);
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       for(byte i = 0; i < noteMap.size(); i++){
          //Key is pressed
          if(currNotes.contains(i)){
             g2.drawRect(
                (int)((i + 0.05) * cg_Client.SCREEN_WIDTH / 10.0),
-               (int)(cg_Client.SCREEN_HEIGHT * 15.75 / 20),
+               (int)(cg_Client.SCREEN_HEIGHT * 14.5 / 20.0),
                (int)(cg_Client.SCREEN_WIDTH * 0.09),
                (int)(cg_Client.SCREEN_HEIGHT * 1.0 / 20)
             );
@@ -108,14 +109,20 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          }else{
             g2.drawRect(
                (int)((i + 0.1) * cg_Client.SCREEN_WIDTH / 10.0),
-               (int)(cg_Client.SCREEN_HEIGHT * 15.85 / 20),
+               (int)(cg_Client.SCREEN_HEIGHT * 14.6 / 20.0),
                (int)(cg_Client.SCREEN_WIDTH * 0.08),
                (int)(cg_Client.SCREEN_HEIGHT * 0.8 / 20)
             );
          }
          
          //Label key
-         //g2.
+         short letterWidth = (short)g2.getFontMetrics().charWidth(KEYS[i]),
+              letterHeight = (short)g2.getFontMetrics().getHeight();
+         g2.drawString(
+            KEYS[i] + "",
+            (int)((i + 0.5) * cg_Client.SCREEN_WIDTH / 10.0 - letterWidth / 2),
+            (int)(cg_Client.SCREEN_HEIGHT * 15 / 20.0 + letterHeight / 4)
+         );
       }
       
       //Draw chat messages
@@ -145,29 +152,50 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    public void keyPressed(KeyEvent e){
       super.keyPressed(e);
       
-      //Action key, send to process
+      //Action key
       if(chatMessage == null){
-         if(bindTable.containsKey((short)(e.getKeyCode()))){
-            currActions.add(bindTable.get((short)(e.getKeyCode())));
-         }
-         
          //Play new note
          if(noteMap.containsKey(e.getKeyCode())){
             if(currNotes.contains(e.getKeyCode())){
                
             }
             currNotes.add(noteMap.get(e.getKeyCode()));
+            
+            //Send to server and client worlds
+            byte[] bytes = bg_World.longToBytes(e.getWhen());
+            connection.writeOut(new byte[] {
+               ACTION,
+               (byte)(noteMap.get(e.getKeyCode()) + 34),
+               bytes[0],
+               bytes[1],
+               bytes[2],
+               bytes[3]
+            });
+            world.processAction((byte)(noteMap.get(e.getKeyCode()) + 34), e.getWhen());
          }
       }
    }
    
    @Override
    public void keyReleased(KeyEvent e){
-      if(bindTable.containsKey((short)(e.getKeyCode())))
-         currActions.remove(bindTable.get((short)(e.getKeyCode())));
+      //if(bindTable.containsKey((short)(e.getKeyCode())))
+         //currActions.remove(bindTable.get((short)(e.getKeyCode())));
       
-      if(noteMap.containsKey(e.getKeyCode()))
+      if(noteMap.containsKey(e.getKeyCode())){
          currNotes.remove(noteMap.get(e.getKeyCode()));
+         
+         //Send to server and client worlds
+         byte[] bytes = bg_World.longToBytes(e.getWhen());
+         connection.writeOut(new byte[] {
+            ACTION,
+            (byte)(-(noteMap.get(e.getKeyCode()) + 34)),
+            bytes[0],
+            bytes[1],
+            bytes[2],
+            bytes[3]
+         });
+         world.processAction((byte)(-(noteMap.get(e.getKeyCode()) + 34)), e.getWhen());
+      }
    }
    
    @Override
@@ -211,6 +239,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    /**
     * Send all current actions to server and client's world.
     */
+   /*
    private void sendActions(){
       //Don't try to send if disconnected
       if(connection == null)
@@ -226,10 +255,14 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       byte i = 1;
       for(Byte action : currActions){
          send[i++] = action;
-         
-         //Send to our version of world
-         world.getPlayer(connection.getClientID()).processAction(action);
       }
       connection.writeOut(send);
+         
+      //Send to our version of world
+      byte[] ourSend = new byte[send.length - 1];
+      for(byte k = 1; k < send.length; k++)
+         ourSend[k - 1] = send[k];
+      world.getPlayer(connection.getClientID()).processActions(ourSend);
    }
+   */
 }

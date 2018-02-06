@@ -56,15 +56,7 @@ public interface bg_Constants{
       First value must equal 0 and following
       values must be sequential.
    */
-   public static final byte CHAT = 0,
-                            TEST = 1;
-   
-   /**
-    * Visible (to client) dimensions. Any entity within
-    * range should be visible.
-    */
-   public static final short VIEW_WIDTH = 480,
-                            VIEW_HEIGHT = 270;
+   public static final byte CHAT = 0;
    
    /**
     * Entity type.
@@ -74,6 +66,9 @@ public interface bg_Constants{
    /**
     * Game modes.
     */
+   public static final byte COMPETITION = 0,
+                          COLLABORATIVE = 1;
+   
    public static final String[] gamemodes = new String[]{
       "Competition",
       "Collaborative"

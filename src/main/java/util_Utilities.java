@@ -83,6 +83,20 @@ public class util_Utilities{
    }
    
    /**
+    * Returns high-quality resized version of image.
+    * 
+    * @param image            Image to be resized.
+    * @param width            Resized image width.
+    * @param height           Resized image height.
+    */
+   public static BufferedImage resize(BufferedImage image, final short width, final short height){
+      BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g2 = improveQuality(ret.createGraphics());
+      g2.drawImage(image, 0, 0, width, height, null);
+      return ret;
+   }
+   
+   /**
     * Returns contents of text file loaded from "Client->Resources" folder.
     *
     * @param fileName         Name of file to load.

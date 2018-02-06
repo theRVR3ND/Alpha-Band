@@ -241,10 +241,9 @@ public class g_Connection extends Thread implements bg_Constants{
       
       //Record action press/release state
       }else if(info[0] == ACTION){
-         //Send action to our player for processing
-         for(byte i = 1; i < numByte; i++){
-            g_Server.server.getWorld().getPlayer(clientID).processAction(info[i]);
-         }
+         //Send action to server for processing
+         final long time = bg_World.bytesToShort(info, (byte)2);
+         g_Server.server.getWorld().processAction(clientID, info[1], time);
       
       //Relay message to all other clients
       }else if(info[0] == MESSAGE){

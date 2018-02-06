@@ -22,9 +22,9 @@ public class g_World extends bg_World{
    
    private static ArrayList<byte[]> songList;
    
-   //private NoteSpawner noteSpawner;
+   private HashMap<Byte, HashSet<bg_Note>> notes; //Key: instrument number, Value: note buffer
    
-   private HashMap<Byte, HashSet<byte[]>> notes;
+   private HashMap<Byte, HashSet<byte[]>> noteData; //Notes to send to client
    
    /**
     * Master gamestate. Holds all current entity states.
@@ -50,10 +50,13 @@ public class g_World extends bg_World{
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
-      notes = new HashMap<Byte, HashSet<byte[]>>();
+      notes = new HashMap<Byte, HashSet<bg_Note>>();
+      noteData = new HashMap<Byte, HashSet<byte[]>>();
       
-      for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++)
-         notes.put(i, new HashSet<byte[]>());
+      for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
+         notes.put(i, new HashSet<bg_Note>());
+         noteData.put(i, new HashSet<byte[]>());
+      }
       
       this.serverDifficulty = serverDifficulty;
       
@@ -104,8 +107,8 @@ public class g_World extends bg_World{
    /**
     * Update world. Record world state.
     */
-   public void think(){
-      super.think();
+   public void think(final byte deltaTime){
+      super.think(deltaTime);
       
       //Record world state
       for(Short key : entities.keySet()){
@@ -122,144 +125,14 @@ public class g_World extends bg_World{
       }
    }
    
+   //********ACCESSORS********//
+   
    public byte[][] getCurrVote(){
       return currVote;
    }
    
    public ArrayList<byte[]> getSongList(){
       return songList;
-   }
-   
-   public void startVote(){
-      //voteTimeout = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      songStartTime = (long)(System.currentTimeMillis() + 10000);//TEMPORARY
-      
-      HashSet<Byte> toVoteOn = new HashSet<>();
-      
-      byte numChoices = (byte)(Math.min(3, songList.size()));
-      
-      currVote = new byte[numChoices + 2][2];
-      currVote[numChoices][0] = -1;
-      currVote[numChoices + 1][0] = -1;
-      
-      //Choose three songs to vote on
-      byte difficulty = 0;//Target difficulty for choosing song
-      for(byte r = 0; r < numChoices; r++){
-         byte voteSong = 0;
-         
-         attempt:
-            for(byte tolerance = 0; tolerance < 3; tolerance++){
-               for(byte tries = 0; tries < 20; tries++){
-                  voteSong = (byte)(songList.size() * Math.random());
-                  
-                  if(!toVoteOn.contains(voteSong) && Math.abs(songList.get(voteSong)[0] - difficulty) > tolerance)
-                     break attempt;
-               }
-            }
-         
-         //Track song we're voting on
-         currVote[r][0] = voteSong;
-         toVoteOn.add(voteSong);
-         
-         difficulty += 2;
-      }
-   }
-   
-   /**
-    * Trigger song playing in game.
-    */
-   public void startSong(){
-      bg_Player infoEnt = getPlayer((byte)-1);
-      
-      //Assign instruments to players
-      byte currInstrument = 0;
-      for(Short key : entities.keySet()){
-         if(entities.get(key) instanceof bg_Player && entities.get(key) != infoEnt){
-            bg_Player player = (bg_Player)(entities.get(key));
-            player.setInstrument(currInstrument++);
-         }
-      }
-      
-      //Figure out winner of vote
-      byte highestVotes = 0;
-      ArrayList<Byte> maxVotes = new ArrayList<>();
-      while(currVote == null){
-         try{
-            Thread.sleep(10);
-         }catch(InterruptedException e){}
-      }
-      for(byte i = 0; i < currVote.length; i++){
-         if(currVote[i][1] == highestVotes){
-            maxVotes.add(i);
-         }else if(currVote[i][1] > highestVotes){
-            maxVotes.clear();
-            maxVotes.add(i);
-            highestVotes = currVote[i][1];
-         }
-      }
-      
-      //Choose song out of all tied maximums
-      byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));//Index in currVote
-      
-      //Generate all song parts
-      ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
-      //if(choice == currVote.length - 1){//Randomly generated song
-         final short seed = (short)(Math.random() * Short.MAX_VALUE);
-         
-         bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
-         song.add(util_Music.generatePart((byte)2, seed, util_Music.DRUMS));
-      //}else{//Load song
-      
-      //}
-      
-      //"Send" song info to clients
-      infoEnt.setColor(new Color(bpm / 2, 0, 0));
-      
-      //Start spawning notes
-      noteSpawner = new NoteSpawner(song);
-      noteSpawner.start();
-   }
-   
-   /**
-    * Track incomming vote from client.
-    */
-   public void tallyVote(byte vote){
-      currVote[vote][1]++;
-   }
-   
-   /**
-    * Create new player in world. Called once for each client join.
-    * 
-    * @param name             In-game name of new player.
-    * @param color            In-game theme color of new player.
-    * @param controller       ID of client that controlls new player.
-    */
-   public void spawnPlayer(String name, Color color, byte controller){
-      //Get all player names
-      HashSet<String> allNames = new HashSet<String>();
-      for(Short key : entities.keySet())
-         if(entities.get(key) instanceof bg_Player)
-            allNames.add(((bg_Player)(entities.get(key))).getName());
-      
-      //Make sure name is unique (no other players can have same exact name)
-      String actualName = name;
-      byte i = 1;
-      while(allNames.contains(actualName)){
-         actualName = name + "(" + i + ")";
-         i++;
-      }
-      name = actualName;
-      
-      //Create player
-      Short key = bg_Entity.getEntityCount();
-      bg_Player player = new bg_Player(name, color, controller);
-      
-      entities.put(key, player);
-      
-      //Start taking snapshots of world for client
-      snapshots.put(controller, new HashMap<Short, byte[]>());
-      
-      //System.out.println(player);
    }
    
    public long getVoteTimeout(){
@@ -281,22 +154,6 @@ public class g_World extends bg_World{
       Iterator iter = entities.keySet().iterator();
       while(iter.hasNext()){
          Short key = (Short)iter.next();
-         
-         /*
-         do{
-            try{
-               key = (Short)iter.next();
-            }catch(ConcurrentModificationException e){}
-         }while(key == Short.MIN_VALUE);
-         
-         //Check if data should be sent
-         if(entities.get(key) instanceof bg_Note){
-            bg_Note test = (bg_Note)(entities.get(key));
-            if(test.isDepreciated() || test.getInstrument() != player.getInstrument()){
-               continue;
-            }
-         }
-         */
          
          //Entity's data
          byte[] comp = dataToBytes(entities.get(key).getData(new LinkedList<Object>()));
@@ -344,7 +201,233 @@ public class g_World extends bg_World{
    
    //Should only be requested by single player who is playing instrument
    public HashSet<byte[]> getNotes(byte clientID){
-      return notes.remove(getPlayer(clientID).getInstrument());
+      HashSet<byte[]> ret = noteData.remove(getPlayer(clientID).getInstrument());
+      noteData.put(getPlayer(clientID).getInstrument(), new HashSet<byte[]>());
+      return ret;
+   }
+   
+   //********MUTATORS********//
+   
+   public void startVote(){
+      //voteTimeout = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
+      songStartTime = (long)(System.currentTimeMillis() + 10000);//TEMPORARY
+      
+      HashSet<Byte> toVoteOn = new HashSet<>();
+      
+      byte numChoices = (byte)(Math.min(3, songList.size()));
+      
+      currVote = new byte[numChoices + 2][2];
+      currVote[numChoices][0] = -1;
+      currVote[numChoices + 1][0] = -1;
+      
+      //Choose three songs to vote on
+      byte difficulty = 0;//Target difficulty for choosing song
+      for(byte r = 0; r < numChoices; r++){
+         byte voteSong = 0;
+         
+         attempt:
+            for(byte tolerance = 0; tolerance < 3; tolerance++){
+               for(byte tries = 0; tries < 20; tries++){
+                  voteSong = (byte)(songList.size() * Math.random());
+                  
+                  if(!toVoteOn.contains(voteSong) && Math.abs(songList.get(voteSong)[0] - difficulty) > tolerance)
+                     break attempt;
+               }
+            }
+         
+         //Track song we're voting on
+         currVote[r][0] = voteSong;
+         toVoteOn.add(voteSong);
+         
+         difficulty += 2;
+      }
+   }
+   
+   /**
+    * Trigger song playing in game.
+    */
+   public void startSong(){
+      bg_Player infoEnt = null;
+      do{
+         infoEnt = getPlayer((byte)-1);
+      }while(infoEnt == null);
+      
+      //Assign instruments to players
+      //if(super.gamemode == COMPETITION){
+      if(false){
+         //Competition - every player plays piano
+         for(Short key : entities.keySet()){
+            if(entities.get(key) instanceof bg_Player && entities.get(key) != infoEnt){
+               bg_Player player = (bg_Player)(entities.get(key));
+               player.setInstrument(util_Music.PIANO);
+            }
+         }
+      }else{
+         //Collaborative (band) mode - each player gets unique instrument
+         byte currInstrument = 0;
+         for(Short key : entities.keySet()){
+            if(entities.get(key) instanceof bg_Player && entities.get(key) != infoEnt){
+               bg_Player player = (bg_Player)(entities.get(key));
+               player.setInstrument(currInstrument++);
+            }
+         }
+      }
+      
+      //Figure out winner of vote
+      byte highestVotes = 0;
+      ArrayList<Byte> maxVotes = new ArrayList<>();
+      while(currVote == null){
+         try{
+            Thread.sleep(10);
+         }catch(InterruptedException e){}
+      }
+      for(byte i = 0; i < currVote.length; i++){
+         if(currVote[i][1] == highestVotes){
+            maxVotes.add(i);
+         }else if(currVote[i][1] > highestVotes){
+            maxVotes.clear();
+            maxVotes.add(i);
+            highestVotes = currVote[i][1];
+         }
+      }
+      
+      //Choose song out of all tied maximums
+      byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));//Index in currVote
+      
+      //Generate all song parts
+      ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
+      //if(choice == currVote.length - 1){//Randomly generated song
+         final short seed = (short)(Math.random() * Short.MAX_VALUE);
+         
+         bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
+         song.add(util_Music.generatePart((byte)2, seed, util_Music.DRUMS));
+      //}else{//Load song
+      
+      //}
+      
+      //"Send" song info to clients
+      infoEnt.setColor(new Color(bpm / 2, 0, 0));
+      
+      //Start spawning notes
+      noteSpawner = new NoteSpawner(song);
+      noteSpawner.start();
+   }
+   
+   /**
+    * Create new player in world. Called once for each client join.
+    * 
+    * @param name             In-game name of new player.
+    * @param color            In-game theme color of new player.
+    * @param controller       ID of client that controlls new player.
+    */
+   public void spawnPlayer(String name, Color color, byte controller){
+      //Get all player names
+      HashSet<String> allNames = new HashSet<String>();
+      for(Short key : entities.keySet())
+         if(entities.get(key) instanceof bg_Player)
+            allNames.add(((bg_Player)(entities.get(key))).getName());
+      
+      //Make sure name is unique (no other players can have same exact name)
+      String actualName = name;
+      byte i = 1;
+      while(allNames.contains(actualName)){
+         actualName = name + "(" + i + ")";
+         i++;
+      }
+      name = actualName;
+      
+      //Create player
+      Short key = bg_Entity.getEntityCount();
+      bg_Player player = new bg_Player(name, color, controller);
+      
+      entities.put(key, player);
+      
+      //Start taking snapshots of world for client
+      snapshots.put(controller, new HashMap<Short, byte[]>());
+      
+      //System.out.println(player);
+   }
+   
+   /**
+    * Track incomming vote from client.
+    */
+   public void tallyVote(byte vote){
+      currVote[vote][1]++;
+   }
+   
+   public void processAction(final byte clientID, final byte noteValue, final long actionTime){
+      /*
+      final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
+      final bg_Player player = getPlayer(clientID);
+      float closestGap = Float.MAX_VALUE;
+      
+      //Key pressed
+      if(noteValue > 0){
+         //Find closest note to current beat
+         for(bg_Note note : notes.get(player.getInstrument())){
+            if(note.getNote() == noteValue){
+               closestGap = Math.min(closestGap, Math.abs(actionBeat - note.getBeat()));
+            }
+         }
+         
+         //Award bonus combo
+         if(closestGap < 0.1)
+            player.setBonus((byte)(player.getBonus() + 1));
+         else
+            player.setBonus((byte)(0));
+      
+      //Key released
+      }else{
+         //Find closest note end to current beat
+         for(bg_Note note : notes.get(player.getInstrument())){
+            if(note.getNote() == noteValue){
+               closestGap = Math.min(closestGap, Math.abs(actionBeat - (note.getBeat() + note.getDuration())));
+            }
+         }
+      }
+      
+      //Award points
+      if(closestGap < 1){
+         player.setScore((short)(player.getScore() + super.calculateScore(closestGap, player.getBonus())));
+      }
+      */
+      final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
+      final bg_Player player = getPlayer(clientID);
+      float closestGap = Float.MAX_VALUE;
+      //System.out.println(clientID + " " + player.getInstrument() + " " + noteValue);
+      //Key pressed
+      if(noteValue > 0){
+      //if(true){
+         //Find closest note to current beat
+         for(bg_Note note : notes.get(player.getInstrument())){
+            if(note.getNote() == noteValue){
+               closestGap = Math.min(closestGap, Math.abs(actionBeat - note.getBeat()));
+            }
+         }
+         
+         //Award bonus combo
+         if(closestGap < 0.1)
+            player.setBonus((byte)(player.getBonus() + 1));
+         else
+            player.setBonus((byte)(0));
+      
+      //Key released
+      }/*
+      }else{
+         //Find closest note end to current beat
+         for(bg_Note note : notes.get(player.getInstrument())){
+            if(note.getNote() == noteValue){
+               closestGap = Math.min(closestGap, Math.abs(actionBeat - (note.getBeat() + note.getDuration())));
+            }
+         }
+      }
+      */
+      //Award points
+      System.out.println(closestGap);
+      if(closestGap < 1){
+         player.setScore((short)(player.getScore() + super.calculateScore(closestGap, player.getBonus())));
+         System.out.println(player.getScore() + " " + super.calculateScore(closestGap, player.getBonus()));
+      }
    }
    
    /**
@@ -363,7 +446,7 @@ public class g_World extends bg_World{
       public void run(){
          //Wait until time for song to start
          try{
-            final int sleepTime = (int)(songStartTime - System.currentTimeMillis());
+            final int sleepTime = (int)((songStartTime - 4000) - System.currentTimeMillis());
             if(sleepTime > 0)
                sleep(sleepTime);
          }catch(InterruptedException e){}
@@ -390,11 +473,6 @@ public class g_World extends bg_World{
                if(chord == null)
                   continue;
                
-               //Spawn new notes
-               if(notes.get(instrument) == null)
-                  notes.put(instrument, new HashSet<byte[]>());
-               
-               HashSet<byte[]> spawn = notes.get(instrument);
                for(Byte note : chord){
                   //Check if note has already been spawned
                   if(currNotes.get(instrument).contains(note))
@@ -407,16 +485,11 @@ public class g_World extends bg_World{
                      duration++;
                   
                   //Spawn note
-                  byte[] bytes = shortToBytes(beat);//Maybe delet
-                  spawn.add(new byte[] {
-                     note,
-                     bytes[0],
-                     bytes[1],
-                     duration
-                  });
+                  notes.get(instrument).add(new bg_Note(note, beat, duration));
                   
-                  //OR
-                  //entities.add(new bg_Note());
+                  //Byte data of note (to send to client)
+                  byte[] bytes = shortToBytes(beat);
+                  noteData.get(instrument).add(new byte[] {note, bytes[0], bytes[1], duration});
                }
             }
             
@@ -431,73 +504,4 @@ public class g_World extends bg_World{
          }
       }
    }
-   
-   /*
-   //Spawn notes in correct timing
-   private class NoteSpawner extends Thread{
-      
-      //            W  H  A  T   T  H  E   F  R  I  C  K  .  .  .
-      private final ArrayList<ArrayList<ArrayList<Byte>>> allParts;
-      //Outer: each instrument part. Index = instrument number
-      //Middle: Each beat of song for specific part
-      //Inner: Each chord
-      
-      private final short bpm;
-      
-      private final byte scale, key;
-      
-      public NoteSpawner(ArrayList<ArrayList<ArrayList<Byte>>> allParts){
-         //Initialize stuff
-         this.allParts = allParts;
-         
-         //Figure out song metrics
-         bpm = (short)(allParts.get(0).get(0).get(0) * 4);
-         scale = allParts.get(0).get(0).get(1);
-         key = allParts.get(0).get(0).get(2);
-      }
-      
-      @Override
-      public void run(){
-         //Progress through each beat
-         for(short beat = 1; beat < allParts.get(0).size(); beat++){
-            //Execute for each instrument
-            for(byte i = 0; i < allParts.size(); i++){
-               ArrayList<Byte> chord = allParts.get(i).get(beat);
-               
-               //Process each note in chord
-               processChord:
-                  for(Byte note : chord){
-                     //Figure out duration of note
-                     byte duration = 1;
-                     for(short checkBeat = beat; checkBeat < allParts.get(0).size(); checkBeat++){
-                        if(allParts.get(i).get(checkBeat).contains(note))
-                           duration++;
-                        else
-                           break;
-                     }
-                     
-                     //Must spawn new note
-                     byte[] bytes = shortToBytes(beat);
-                     byte[] noteData = new byte[] {
-                        duration,
-                        note,
-                        util_Music.PIANO,//CHANGE THIS TO "i" LATER ONNLY TEMPORARY PLEESe
-                        bytes[0],
-                        bytes[1]
-                     };
-                     
-                     notes.get(i).add(noteData);
-                  }
-            }
-            
-            //Wait until beat time passes
-            try{
-               sleep((int)(60000.0 / bpm));
-            }catch(InterruptedException e){
-               e.printStackTrace();
-            }
-         }
-      }
-   }
-   */
 }

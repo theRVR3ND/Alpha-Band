@@ -65,7 +65,7 @@ public abstract class cg_Panel extends JPanel implements KeyListener,
    /**
     * Highest allowed repaint rate. Used to ensure consistent rendering.
     */
-   private static final byte MAX_FPS = 30;
+   private static final byte MAX_FPS = 45;
    
    /**
     * Panel for game world display.

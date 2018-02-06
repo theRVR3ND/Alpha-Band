@@ -52,8 +52,9 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
          new float[] {0.41f}
       );
       ArrayList<String[]> modeList = new ArrayList<String[]>();
-      modeList.add(new String[] {"Competition"});
-      modeList.add(new String[] {"Band"});
+      for(String gm : gamemodes){
+         modeList.add(new String[] {gm});
+      }
       gamemodeList.setContents(modeList);
       gamemodeList.setHoverRow((byte)0);
       

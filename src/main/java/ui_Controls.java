@@ -102,7 +102,7 @@ public class ui_Controls extends ui_Menu implements KeyListener, MouseWheelListe
       //Check if currently changing a control bind
       if(modInd != -1){
          //New key pressed, change bind
-         if(! alreadyBound(e.getKeyCode())){//Do not allow conflicting binds
+         if(!alreadyBound(e.getKeyCode())){//Do not allow conflicting binds
             binds.get(modInd).setCode((short)e.getKeyCode());
          }
          

@@ -39,6 +39,11 @@ public class bg_Player extends bg_Entity implements bg_Constants{
    private short score;
    
    /**
+    * Bonus combo.
+    */
+   private byte bonus;
+   
+   /**
     * Constructor.
     * 
     * @param name          Player name.
@@ -52,6 +57,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       this.instrument = 0;
       
       score = 0;
+      bonus = 0;
    }
    
    /**
@@ -99,12 +105,16 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       return controller;
    }
    
+   public byte getInstrument(){
+      return instrument;
+   }
+   
    public short getScore(){
       return score;
    }
    
-   public byte getInstrument(){
-      return instrument;
+   public byte getBonus(){
+      return bonus;
    }
    
    /**
@@ -125,23 +135,16 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       this.color = color;
    }
    
-   public void setScore(byte score){
-      this.score = score;
-   }
-   
    public void setInstrument(byte instrument){
       this.instrument = instrument;
    }
    
-   /**
-    * Execute action based on action code.
-    * 
-    * @param action        Code of action to execute.
-    */
-   public void processAction(final byte action){
-      if(action == TEST){
-         score++;
-      }
+   public void setScore(short score){
+      this.score = score;
+   }
+   
+   public void setBonus(byte bonus){
+      this.bonus = bonus;
    }
    
    /**
@@ -155,6 +158,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       list.add(controller);
       list.add(instrument);
       list.add(score);
+      list.add(bonus);
       
       return list;
    }
@@ -170,6 +174,7 @@ public class bg_Player extends bg_Entity implements bg_Constants{
       controller = (Byte)(data.remove(0));
       instrument = (Byte)(data.remove(0));
       score = (Short)(data.remove(0));
+      bonus = (Byte)(data.remove(0));
    }
    
    public String toString(){

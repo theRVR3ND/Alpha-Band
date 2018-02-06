@@ -161,8 +161,8 @@ public class util_Music{
                chord.add((byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 12));
             }*/
             
-            if(!chord.isEmpty())
-               song.put(beat, chord);
+            //if(!chord.isEmpty())
+             //  song.put(beat, chord);
          }
       
       //GUITAR
@@ -208,7 +208,7 @@ public class util_Music{
          
          for(short beat = 1; beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
-            
+            /*
             final byte pentatonicsIndex = (byte)(rand.nextInt(PENTATONICS[scale / 2].length));
             
             //Root note
@@ -220,9 +220,9 @@ public class util_Music{
             }else if(beat % beatInterval == 0 && rand.nextDouble() < 0.3){
                chord.add((byte)(key + PENTATONICS[scale / 2][pentatonicsIndex] - 24));
             }
-            
-            //if(!chord.isEmpty())
-               //song.put(beat, chord);
+            */
+            if(!chord.isEmpty())
+               song.put(beat, chord);
          }
       
       //DISTORTED GUITAR
@@ -241,6 +241,7 @@ public class util_Music{
       }
       
       //Print song
+      //*
       for(short b = 0; b < 100; b++){
          String toPrint = b + ": ";
          if(song.get(b) != null){
@@ -249,7 +250,7 @@ public class util_Music{
          }
          System.out.println(toPrint);
       }
-      
+      //*/
       return song;
    }
    

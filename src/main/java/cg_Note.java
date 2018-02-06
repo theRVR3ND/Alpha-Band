@@ -21,12 +21,11 @@ public class cg_Note extends bg_Note{
    public void render(Graphics2D g2, final float currMilliBeats){
       //Figure out dimensions and location of note
       final short drawX = (short)((note - 33.5) * cg_Client.SCREEN_WIDTH / 10),
-                  drawY = (short)((currMilliBeats - beat) * cg_Client.SCREEN_HEIGHT),
+                  drawY = (short)((1 - (beat - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
              drawHeight = (short)(duration * 25000 / cg_Client.SCREEN_HEIGHT);
       
       //Draw note I guess
       g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
       g2.fillRect(drawX - NOTE_WIDTH / 2, drawY, NOTE_WIDTH, drawHeight);
-      g2.drawString(currMilliBeats + "", 100, 300);
    }
 }

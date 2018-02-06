@@ -17,7 +17,11 @@ public class ui_Main extends ui_Menu{
    /**
     * Game icon.
     */
-   private final BufferedImage icon = util_Utilities.loadImage("menu/icon.png");
+   private final BufferedImage icon = util_Utilities.resize(
+      util_Utilities.loadImage("menu/icon.png"),
+      (short)(0.1 * cg_Client.SCREEN_WIDTH),
+      (short)(0.1 * cg_Client.SCREEN_WIDTH)
+   );
    
    /**
     * Constructor. Initialize all buttons in menu.
@@ -45,8 +49,6 @@ public class ui_Main extends ui_Menu{
          icon,
          (int)(0.45 * cg_Client.SCREEN_WIDTH),
          (int)(0.05 * cg_Client.SCREEN_HEIGHT),
-         (int)(0.1 * cg_Client.SCREEN_WIDTH),
-         (int)(0.1 * cg_Client.SCREEN_WIDTH * icon.getHeight() / icon.getWidth()),
          null
       );
       

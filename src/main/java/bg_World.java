@@ -53,7 +53,13 @@ public abstract class bg_World implements bg_Constants{
       Thread thinker = new Thread(){
          public void run(){
             while(true){
-               think();
+               //Time (in milliseconds) since last time think() was called
+               byte deltaTime = (byte)(System.currentTimeMillis() - lastThinkTime);
+               
+               think(deltaTime);
+               
+               //lastThinkTime now equals current time
+               lastThinkTime += deltaTime;
             }
          }
       };
@@ -63,24 +69,21 @@ public abstract class bg_World implements bg_Constants{
    /**
     * World's update method. Called once per frame.
     */
-   public void think(){
-      //Time (in milliseconds) since last time think() was called
-      byte deltaTime = (byte)(System.currentTimeMillis() - lastThinkTime);
-      
-      //lastThinkTime now equals current time
-      lastThinkTime += deltaTime;
-      
+   public void think(final byte deltaTime){
       //Limit rate of update
+      /*
       if(deltaTime < 1000.0 / THINK_RATE){
          try{
             Thread.sleep((int)(1000.0 / THINK_RATE - deltaTime));
          }catch(InterruptedException e){}
       }
-      
+      */
       //Run think for all entities
-      for(Short key : entities.keySet()){
-         entities.get(key).think(deltaTime);
-      }
+      try{
+         for(Short key : entities.keySet()){
+            entities.get(key).think(deltaTime);
+         }
+      }catch(ConcurrentModificationException e){}
       
       //Update currBeat count
       if(songStartTime < System.currentTimeMillis()){
@@ -96,13 +99,15 @@ public abstract class bg_World implements bg_Constants{
     */
    public bg_Player getPlayer(byte controller){
       //Search through all entities
-      for(Short key : entities.keySet()){
-         if(entities.get(key) instanceof bg_Player){
-            bg_Player player = (bg_Player)(entities.get(key));
-            if(player.getController() == controller)
-               return player;
+      try{
+         for(Short key : entities.keySet()){
+            if(entities.get(key) instanceof bg_Player){
+               bg_Player player = (bg_Player)(entities.get(key));
+               if(player.getController() == controller)
+                  return player;
+            }
          }
-      }
+      }catch(ConcurrentModificationException e){}
       return null;
    }
    
@@ -138,6 +143,11 @@ public abstract class bg_World implements bg_Constants{
    
    public void setSongStartTime(long songStartTime){
       this.songStartTime = songStartTime;
+   }
+   
+   //Calculate score for a key press *gapBeat* beats away from actual note start/end
+   protected short calculateScore(float gapBeat, byte bonusCombo){
+      return (short)(Math.pow(1 - gapBeat, 2) * 100 * (bonusCombo + 1));
    }
    
    /**

@@ -35,6 +35,8 @@ public class cg_Client{
       //Initialize and launch frame
       frame = new JFrame("Alpha Band");
       
+      frame.setContentPane(new ui_Splash());
+      
       frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
       //frame.setUndecorated(true);
       //frame.setResizable(false);
@@ -45,7 +47,6 @@ public class cg_Client{
       //Enable OpenGL (dunno if it does anything)
       System.setProperty("sun.java2d.opengl", "True");
       
-      frame.setContentPane(new ui_Splash());
       frame.setVisible(true);
    }
 }

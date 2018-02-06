@@ -20,7 +20,11 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
     */
    protected ui_Button[] buttons;
    
-   private final BufferedImage background = util_Utilities.loadImage("menu/background.png");
+   private final BufferedImage background = util_Utilities.resize(
+      util_Utilities.loadImage("menu/background.png"),
+      cg_Client.SCREEN_WIDTH,
+      cg_Client.SCREEN_HEIGHT
+   );
    
    /**
     * Main menu page.
@@ -87,16 +91,16 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
    public static void load(){
       Thread load = new Thread() {
          public void run(){
-                settings = new ui_Settings();
-                    main = new ui_Main();
-                 servers = new ui_Servers();
+            settings     = new ui_Settings();
+            main         = new ui_Main();
+            servers      = new ui_Servers();
             createServer = new ui_CreateServer();
-                   guide = new ui_Guide();
-                   setup = new ui_Setup();
-                  player = new ui_Player();
-                controls = new ui_Controls();
-                    vote = new ui_Vote();
-                   pause = new ui_Pause();
+            guide        = new ui_Guide();
+            setup        = new ui_Setup();
+            player       = new ui_Player();
+            controls     = new ui_Controls();
+            vote         = new ui_Vote();
+            pause        = new ui_Pause();
          }
       };
       load.start();
@@ -126,13 +130,7 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
       g2.fillRect(0, 0, cg_Client.SCREEN_WIDTH, cg_Client.SCREEN_HEIGHT);
       
       //Draw background
-      g2.drawImage(
-         background,
-         0, 0,
-         cg_Client.SCREEN_WIDTH,
-         cg_Client.SCREEN_HEIGHT,
-         null
-      );
+      g2.drawImage(background, 0, 0, null);
       
       //Write program info (so I don't waste another hour changing the wrong project)
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
