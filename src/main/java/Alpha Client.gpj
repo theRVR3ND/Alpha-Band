@@ -13,10 +13,12 @@ s#i0
 s#k0
 s#j0
 s#l0
-!714;g
+!752;g
+%\011ui_Studio.java
 %\011ui_Guide.java
 %\011bg_Note.java
 %\011ui_Theme.java
+%\011cg_MIDI.java
 %\011ui_Setup.java
 %\011ui_Splash.java
 %\011ui_Checkbox.java
@@ -49,10 +51,12 @@ s#l0
 %\011bg_Vector.java
 %\011ui_CreateServer.java
 %\011ui_Vote.java
-!714;f
+!752;f
+%\011ui_Studio.java
 %\011ui_Guide.java
 %\011bg_Note.java
 %\011ui_Theme.java
+%\011cg_MIDI.java
 %\011ui_Setup.java
 %\011ui_Splash.java
 %\011ui_Checkbox.java

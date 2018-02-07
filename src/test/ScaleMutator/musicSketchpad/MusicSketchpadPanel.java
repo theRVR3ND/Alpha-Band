@@ -2283,6 +2283,7 @@ public class MusicSketchpadPanel extends JPanel implements MouseListener, MouseM
          if(realTimeNote != -1)                    //turn on any notes played in real time
          {
             channels[0].noteOn(realTimeNote, 100);
+            System.out.println(realTimeNote + "");
             realTimeNote = -1;
          }   
          if(realTimeChord != null)                 //turn on any chords played in real time

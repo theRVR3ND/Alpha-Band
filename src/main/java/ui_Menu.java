@@ -44,7 +44,12 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
    /**
     * Guide page. Provides game instructions.
     */
-   public static ui_Guide guide;
+   //public static ui_Guide guide;
+   
+   /**
+    * Music creation page.
+    */
+   public static ui_Studio studio;
    
    /**
     * User setup redirection menu.
@@ -95,7 +100,8 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
             main         = new ui_Main();
             servers      = new ui_Servers();
             createServer = new ui_CreateServer();
-            guide        = new ui_Guide();
+            //guide        = new ui_Guide();
+            studio       = new ui_Studio();
             setup        = new ui_Setup();
             player       = new ui_Player();
             controls     = new ui_Controls();

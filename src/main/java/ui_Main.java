@@ -30,7 +30,7 @@ public class ui_Main extends ui_Menu{
       buttons = new ui_Button[] {
          new ui_Button("SERVERS", 0.5f, 0.4f),
          new ui_Button("SETUP",   0.5f, 0.55f),
-         new ui_Button("GUIDE",   0.5f, 0.7f),
+         new ui_Button("STUDIO",  0.5f, 0.7f),
          new ui_Button("EXIT",    0.5f, 0.85f)
       };
    }
@@ -66,10 +66,12 @@ public class ui_Main extends ui_Menu{
       //Redirect to other menus
       if(buttons[0].isDown()){
          cg_Client.frame.setContentPane(ui_Menu.servers);
+      
       }else if(buttons[1].isDown()){
          cg_Client.frame.setContentPane(ui_Menu.setup);
+      
       }else if(buttons[2].isDown()){
-         cg_Client.frame.setContentPane(ui_Menu.guide);
+         cg_Client.frame.setContentPane(ui_Menu.studio);
       
       //Exit program
       }else if(buttons[3].isDown()){

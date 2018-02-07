@@ -85,16 +85,16 @@ public class cg_World extends bg_World{
       fm = g2.getFontMetrics();
       //g2.drawString(entities.size() + "", 100, 100);
       
-      //Draw player info
-      toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
-      g2.drawString(toDraw, 40, 50);
-      g2.drawString(super.getCurrBeat() + "", 100, 200);
       //Song info
       bpm = (short)(super.getPlayer((byte)-1).getColor().getRed() * 2);
+      byte spacing = (byte)(fm.getHeight() * 1.2);
+      
+      //Draw player info
+      toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
+      g2.drawString(toDraw, 40, spacing);
       
       //Draw all players' info
       int shiftInd = 1;
-      byte spacing = (byte)(fm.getHeight() * 1.2);
       for(Short key : entities.keySet()){
          //Draw player scores and stuff
          if(entities.get(key) instanceof bg_Player){
@@ -145,13 +145,6 @@ public class cg_World extends bg_World{
          String message = null;
          final short alpha = (short)(255.0 * pointsMessageTimeout / Byte.MAX_VALUE);
          
-         if(currPoints > 0){
-            g2.drawString("+" + currPoints, 100, 160);
-            if(clientPlayer.getBonus() > 0){
-               g2.drawString("x" + clientPlayer.getBonus() + " Bonus Combo", 100, 220);
-            }
-         }
-         
          if(pointsMessage == 0){
             message = "Perfect!";
             g2.setColor(new Color(25, 255, 0, alpha));  //Green
@@ -173,7 +166,20 @@ public class cg_World extends bg_World{
             g2.setColor(Color.RED);                     //Red
          }
          
-         g2.drawString(message, 100, 100);
+         g2.drawString(message, 40, spacing * 2);
+         
+         if(currPoints > 0){
+            g2.setColor(new Color(
+               ui_Theme.getColor(ui_Theme.TEXT).getRed(),
+               ui_Theme.getColor(ui_Theme.TEXT).getGreen(),
+               ui_Theme.getColor(ui_Theme.TEXT).getBlue(),
+               alpha
+            ));
+            g2.drawString("+" + currPoints, 40, spacing * 3);
+            if(clientPlayer.getBonus() > 0){
+               g2.drawString("x" + clientPlayer.getBonus() + " Bonus Combo", 40, spacing * 4);
+            }
+         }
          
          pointsMessageTimeout--;
       }else{
@@ -261,7 +267,6 @@ public class cg_World extends bg_World{
       
       //Key pressed
       if(noteValue > 0){
-      //if(true){
          //Find closest note to current beat
          for(cg_Note note : notes){
             if(note.getNote() == noteValue){
@@ -270,13 +275,13 @@ public class cg_World extends bg_World{
          }
          
          //Show points message
-         if(closestGap < 0.1){
+         if(closestGap < ALLOWED_ERROR){
             pointsMessage = 0;
-         }else if(closestGap < 0.2){
+         }else if(closestGap < ALLOWED_ERROR * 2){
             pointsMessage = 1;
-         }else if(closestGap < 0.4){
+         }else if(closestGap < ALLOWED_ERROR * 4){
             pointsMessage = 2;
-         }else if(closestGap < 0.8){
+         }else if(closestGap < ALLOWED_ERROR * 8){
             pointsMessage = 3;
          }else{
             pointsMessage = 4;
@@ -289,7 +294,7 @@ public class cg_World extends bg_World{
             player.setBonus((byte)(0));
          
          pointsMessageTimeout = Byte.MAX_VALUE;
-      
+         
       //Key released
       }else{
          //Find closest note end to current beat

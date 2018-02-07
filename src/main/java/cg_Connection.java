@@ -197,8 +197,6 @@ public class cg_Connection extends Thread implements bg_Constants{
       //Start vote
       }else if(info[0] == VOTE){
          ui_Menu.vote.startVote(info);
-         //cg_Client.frame.setContentPane(ui_Menu.vote);
-         //cg_Client.frame.revalidate();
       
       //Process incomming notes for user to play
       }else if(info[0] == NOTES){
@@ -208,6 +206,10 @@ public class cg_Connection extends Thread implements bg_Constants{
             send[i] = info[i + 1];
          
          cg_Panel.gamePanel.getWorld().processNotes(send);
+      
+      //Play note press by other player(s)
+      }else if(info[0] == ACTION){
+         
       
       //Uh oh!
       }else{

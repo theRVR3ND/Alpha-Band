@@ -31,6 +31,8 @@ public abstract class bg_World implements bg_Constants{
    
    protected final byte gamemode;
    
+   protected final float ALLOWED_ERROR = 0.02f; //For hit scoring
+   
    /**
     * Maximum update rate of world.
     */
@@ -145,9 +147,9 @@ public abstract class bg_World implements bg_Constants{
       this.songStartTime = songStartTime;
    }
    
-   //Calculate score for a key press *gapBeat* beats away from actual note start/end
-   protected short calculateScore(float gapBeat, byte bonusCombo){
-      return (short)(Math.pow(1 - gapBeat, 2) * 100 * (bonusCombo + 1));
+   //Calculate score for a key press *gap* beats away from actual note start/end
+   protected short calculateScore(float gap, byte bonusCombo){
+      return (short)(Math.pow(1 - gap, 2) * 50 * (bonusCombo + 1));
    }
    
    /**

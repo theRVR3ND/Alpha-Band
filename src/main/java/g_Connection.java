@@ -166,11 +166,10 @@ public class g_Connection extends Thread implements bg_Constants{
             socket.close();
             
             //Send disconnect message to others
+            byte[] message = concatenateMessage(g_Server.server.getWorld().getPlayer(clientID).getName() + " has disconnected.");
             for(g_Connection other : g_Server.server.getClients()){
-               if(this == other){
-                  other.relayMessage(
-                     g_Server.server.getWorld().getPlayer(clientID).getName() + " has disconnected."
-                  );
+               if(this != other){
+                  other.writeOut(message);
                }
             }
             
@@ -186,26 +185,6 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public byte getID(){
       return clientID;
-   }
-   
-   /**
-    * Send message to client.
-    * 
-    * @param message             Message to send.
-    */
-   public void relayMessage(String message){
-      byte[] messageBytes = message.getBytes();
-      byte[] outLine = new byte[message.length() + 1];
-      
-      //Transfer messageBytes to outLine with space at index 0 for stream tag
-      for(short i = 1; i < outLine.length; i++){
-         outLine[i] = messageBytes[i - 1];
-      }
-      
-      //Stream tag
-      outLine[0] = MESSAGE;
-      
-      writeOut(outLine);
    }
    
    /**
@@ -228,12 +207,11 @@ public class g_Connection extends Thread implements bg_Constants{
          g_Server.server.getWorld().spawnPlayer(playerName, playerColor, clientID);
          
          //Tell other clients of connection
+         byte[] bytes = concatenateMessage(g_Server.server.getWorld().getPlayer(clientID).getName() + " has joined the game.");
          for(byte i = 0; i < g_Server.server.getClients().size(); i++){
-            if(this == g_Server.server.getClients().get(i))
-               continue;
-            g_Server.server.getClients().get(i).relayMessage(
-               g_Server.server.getWorld().getPlayer(clientID).getName() + " has joined the game."
-            );
+            if(this != g_Server.server.getClients().get(i)){
+               g_Server.server.getClients().get(i).writeOut(bytes);
+            }
          }
    
          //Send back client ID
@@ -242,18 +220,28 @@ public class g_Connection extends Thread implements bg_Constants{
       //Record action press/release state
       }else if(info[0] == ACTION){
          //Send action to server for processing
-         final long time = bg_World.bytesToShort(info, (byte)2);
+         final long time = bg_World.bytesToLong(info, (byte)2);
          g_Server.server.getWorld().processAction(clientID, info[1], time);
-      
+         
+         //Send action to other clients for playing
+         byte[] bytes = new byte[] {ACTION, g_Server.server.getWorld().getPlayer(clientID).getInstrument(), info[1]};
+         for(byte i = 0; i < g_Server.server.getClients().size(); i++){
+            if(i != clientID){
+               g_Server.server.getClients().get(i).writeOut(bytes);
+            }
+         }
+         
       //Relay message to all other clients
       }else if(info[0] == MESSAGE){
          String message =
             "[" + g_Server.server.getWorld().getPlayer(clientID).getName() + "]: " +
             (new String(info, 1, info.length - 1)).trim();
          
+         byte[] bytes = concatenateMessage(message);
+         
          //Send message to all clients
          for(byte i = 0; i < g_Server.server.getClients().size(); i++)
-            g_Server.server.getClients().get(i).relayMessage(message);
+            g_Server.server.getClients().get(i).writeOut(bytes);
          
       //Player has cast vote on song choice
       }else if(info[0] == VOTE){
@@ -266,10 +254,21 @@ public class g_Connection extends Thread implements bg_Constants{
     * 
     * @param line                Byte array to write out.
     */
-   private void writeOut(byte[] line){
+   public void writeOut(byte[] line){
       //Write out through stream
       try{
          out.write(line);
       }catch(IOException e){}
+   }
+   
+   //Return byte[] formatted message ready for sending across *the web*
+   private byte[] concatenateMessage(String message){
+      byte[] bytes = new byte[message.length() + 1];
+      
+      bytes[0] = MESSAGE;
+      for(short i = 0; i < message.length(); i++)
+         bytes[i + 1] = (byte)message.charAt(i);
+      
+      return bytes;
    }
 }

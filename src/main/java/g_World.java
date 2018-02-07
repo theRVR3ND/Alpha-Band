@@ -356,7 +356,6 @@ public class g_World extends bg_World{
    }
    
    public void processAction(final byte clientID, final byte noteValue, final long actionTime){
-      /*
       final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
       final bg_Player player = getPlayer(clientID);
       float closestGap = Float.MAX_VALUE;
@@ -371,7 +370,7 @@ public class g_World extends bg_World{
          }
          
          //Award bonus combo
-         if(closestGap < 0.1)
+         if(closestGap < ALLOWED_ERROR)
             player.setBonus((byte)(player.getBonus() + 1));
          else
             player.setBonus((byte)(0));
@@ -389,44 +388,6 @@ public class g_World extends bg_World{
       //Award points
       if(closestGap < 1){
          player.setScore((short)(player.getScore() + super.calculateScore(closestGap, player.getBonus())));
-      }
-      */
-      final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
-      final bg_Player player = getPlayer(clientID);
-      float closestGap = Float.MAX_VALUE;
-      //System.out.println(clientID + " " + player.getInstrument() + " " + noteValue);
-      //Key pressed
-      if(noteValue > 0){
-      //if(true){
-         //Find closest note to current beat
-         for(bg_Note note : notes.get(player.getInstrument())){
-            if(note.getNote() == noteValue){
-               closestGap = Math.min(closestGap, Math.abs(actionBeat - note.getBeat()));
-            }
-         }
-         
-         //Award bonus combo
-         if(closestGap < 0.1)
-            player.setBonus((byte)(player.getBonus() + 1));
-         else
-            player.setBonus((byte)(0));
-      
-      //Key released
-      }/*
-      }else{
-         //Find closest note end to current beat
-         for(bg_Note note : notes.get(player.getInstrument())){
-            if(note.getNote() == noteValue){
-               closestGap = Math.min(closestGap, Math.abs(actionBeat - (note.getBeat() + note.getDuration())));
-            }
-         }
-      }
-      */
-      //Award points
-      System.out.println(closestGap);
-      if(closestGap < 1){
-         player.setScore((short)(player.getScore() + super.calculateScore(closestGap, player.getBonus())));
-         System.out.println(player.getScore() + " " + super.calculateScore(closestGap, player.getBonus()));
       }
    }
    
@@ -470,8 +431,10 @@ public class g_World extends bg_World{
                //Current beat's notes to play
                HashSet<Byte> chord = song.get(instrument).get(beat);
                
-               if(chord == null)
+               if(chord == null){
+                  currNotes.get(instrument).clear();
                   continue;
+               }
                
                for(Byte note : chord){
                   //Check if note has already been spawned
