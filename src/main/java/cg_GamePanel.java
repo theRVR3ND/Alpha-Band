@@ -31,6 +31,8 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    
    private HashSet<Byte> currNotes;
    
+   private byte keyShift; //How far along the scale the keys are shifted. Did that make sense?
+   
    public static final HashMap<Integer, Byte> noteMap = new HashMap<Integer, Byte>();
    
    private final char[] KEYS = new char[] {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'};
@@ -43,6 +45,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       world = null;
       currActions = new HashSet<Byte>();
       currNotes = new HashSet<Byte>();
+      keyShift = 0;
       
       //Map note values to keys
       noteMap.put(KeyEvent.VK_A,         (byte)0);
@@ -156,27 +159,29 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       if(chatMessage == null){
          //Trigger new note
          if(noteMap.containsKey(e.getKeyCode())){
-            //Play note through midi
             if(!currNotes.contains(noteMap.get(e.getKeyCode()))){
-            
+               //Play note through midi
+               byte instrument = world.getPlayer(connection.getClientID()).getInstrument();
+               cg_MIDI.playNote((byte)(noteMap.get(e.getKeyCode()) + 34), instrument);
+               
+               //Send to server and client worlds
+               byte[] bytes = bg_World.longToBytes(e.getWhen());
+               connection.writeOut(new byte[] {
+                  ACTION,
+                  (byte)(noteMap.get(e.getKeyCode()) + 34),
+                  bytes[0],
+                  bytes[1],
+                  bytes[2],
+                  bytes[3],
+                  bytes[4],
+                  bytes[5],
+                  bytes[6],
+                  bytes[7]
+               });
+               world.processAction((byte)(noteMap.get(e.getKeyCode()) + 34), e.getWhen());
+               
+               currNotes.add(noteMap.get(e.getKeyCode()));
             }
-            currNotes.add(noteMap.get(e.getKeyCode()));
-            
-            //Send to server and client worlds
-            byte[] bytes = bg_World.longToBytes(e.getWhen());
-            connection.writeOut(new byte[] {
-               ACTION,
-               (byte)(noteMap.get(e.getKeyCode()) + 34),
-               bytes[0],
-               bytes[1],
-               bytes[2],
-               bytes[3],
-               bytes[4],
-               bytes[5],
-               bytes[6],
-               bytes[7]
-            });
-            world.processAction((byte)(noteMap.get(e.getKeyCode()) + 34), e.getWhen());
          }
       }
    }
@@ -250,34 +255,4 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    
    @Override
    public void mouseWheelMoved(MouseWheelEvent e){}
-   
-   /**
-    * Send all current actions to server and client's world.
-    */
-   /*
-   private void sendActions(){
-      //Don't try to send if disconnected
-      if(connection == null)
-         return;
-      
-      //Don't send empty space
-      if(currActions.size() == 0)
-         return;
-      
-      //Send to server
-      byte[] send = new byte[currActions.size() + 1];
-      send[0] = ACTION;
-      byte i = 1;
-      for(Byte action : currActions){
-         send[i++] = action;
-      }
-      connection.writeOut(send);
-         
-      //Send to our version of world
-      byte[] ourSend = new byte[send.length - 1];
-      for(byte k = 1; k < send.length; k++)
-         ourSend[k - 1] = send[k];
-      world.getPlayer(connection.getClientID()).processActions(ourSend);
-   }
-   */
 }

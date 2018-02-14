@@ -107,6 +107,8 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
             controls     = new ui_Controls();
             vote         = new ui_Vote();
             pause        = new ui_Pause();
+            
+            cg_MIDI.loadChannels();
          }
       };
       load.start();

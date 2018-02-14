@@ -111,12 +111,14 @@ public class g_World extends bg_World{
       super.think(deltaTime);
       
       //Record world state
-      for(Short key : entities.keySet()){
-         gamestate.put(
-            key,
-            dataToBytes(entities.get(key).getData(new LinkedList<Object>()))
-         );
-      }
+      try{
+         for(Short key : entities.keySet()){
+            gamestate.put(
+               key,
+               dataToBytes(entities.get(key).getData(new LinkedList<Object>()))
+            );
+         }
+      }catch(ConcurrentModificationException e){}
       
       //Start game
       if(System.currentTimeMillis() > voteTimeout){
@@ -298,9 +300,11 @@ public class g_World extends bg_World{
       ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
       //if(choice == currVote.length - 1){//Randomly generated song
          final short seed = (short)(Math.random() * Short.MAX_VALUE);
-         
          bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
-         song.add(util_Music.generatePart((byte)2, seed, util_Music.DRUMS));
+         
+         for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
+            song.add(util_Music.generatePart(serverDifficulty, seed, i));
+         }
       //}else{//Load song
       
       //}
@@ -455,6 +459,8 @@ public class g_World extends bg_World{
                   noteData.get(instrument).add(new byte[] {note, bytes[0], bytes[1], duration});
                }
             }
+            
+            //System.out.println(noteData.get((byte)0).size() + " " + noteData.get((byte)1).size() + " " + noteData.get((byte)2).size());
             
             //Wait until next beat
             try{

@@ -16,25 +16,24 @@ public class cg_MIDI{
    
    private static Instrument[] instruments;
    
-   public static void playNote(final byte note, final byte instrument){
-      //Set up MIDI if not done already
-      if(channels == null){
-         try{
-            Synthesizer synth = MidiSystem.getSynthesizer();
-            synth.open();
-            
-            channels = synth.getChannels();
-            instruments = synth.getDefaultSoundbank().getInstruments();
-            
-            //Set channels' instruments
-            for(byte i = 0; i < util_Music.INSTRUMENTS.length; i++){
-               channels[i].programChange(instruments[util_Music.INSTRUMENTS[i]].getPatch().getProgram());
-            }
-         }catch(MidiUnavailableException e){
-            e.printStackTrace();
+   public static void loadChannels(){
+      try{
+         Synthesizer synth = MidiSystem.getSynthesizer();
+         synth.open();
+         
+         channels = synth.getChannels();
+         instruments = synth.getDefaultSoundbank().getInstruments();
+         
+         //Set channels' instruments
+         for(byte i = 0; i < util_Music.INSTRUMENTS.length; i++){
+            channels[i].programChange(instruments[util_Music.INSTRUMENTS[i]].getPatch().getProgram());
          }
+      }catch(MidiUnavailableException e){
+         e.printStackTrace();
       }
-      
+   }
+   
+   public static void playNote(final byte note, final byte instrument){
       //Play note
       if(instrument == util_Music.DRUMS){ //Percussion
          channels[9].allNotesOff();
