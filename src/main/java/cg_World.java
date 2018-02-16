@@ -29,6 +29,10 @@ public class cg_World extends bg_World{
    
    private byte pointsMessageTimeout;
    
+   private byte keyShift; //How far along the scale the keys are shifted. Did that make sense?
+   
+   private byte scale;
+   
    /**
     * Constructor.
     */
@@ -42,6 +46,8 @@ public class cg_World extends bg_World{
       currPoints = 0;
       pointsMessage = -1;
       pointsMessageTimeout = -1;
+      keyShift = 0;
+      scale = -1;
    }
    
    /**
@@ -55,6 +61,10 @@ public class cg_World extends bg_World{
       do{
          clientPlayer = super.getPlayer(cg_Panel.getConnection().getClientID());
       }while(clientPlayer == null);
+      
+      //Find song scale
+      if(scale < 0)
+         scale = (byte)clientPlayer.getColor().getRed();
       
       //Background
       g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
@@ -128,13 +138,13 @@ public class cg_World extends bg_World{
             shiftInd++;
          }
       }
-      
+      g2.drawString(keyShift + " key shift", 100, 200);
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       try{
          for(cg_Note note : notes){
             //*Try* drawing
-            note.render(g2, currMilliBeats);
+            note.render(g2, currMilliBeats, keyShift);
             
             //Get rid of note if it ded
             if(currMilliBeats - (note.getBeat() + note.getDuration()) > 1.5){
@@ -215,6 +225,10 @@ public class cg_World extends bg_World{
       }
    }
    
+   public byte getKeyShift(){
+      return keyShift;
+   }
+   
    /**
     * Set data of particular entity.
     * 
@@ -263,13 +277,14 @@ public class cg_World extends bg_World{
       gamestate.put(ID, data);
    }
    
-   public void processAction(final byte noteValue, final long actionTime){
+   public void processAction(final byte intervalIndex, final long actionTime){
       final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
       float closestGap = Float.MAX_VALUE;
       final bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
+      final byte noteValue = (byte)(keyShift + util_Music.INTERVALS[scale][Math.abs(intervalIndex)]);
       
       //Key pressed
-      if(noteValue > 0){
+      if(intervalIndex > 0){
          //Find closest note to current beat
          for(cg_Note note : notes){
             if(note.getNote() == noteValue){
@@ -298,6 +313,10 @@ public class cg_World extends bg_World{
          
          pointsMessageTimeout = Byte.MAX_VALUE;
          
+         //Play note through midi
+         byte instrument = getPlayer(cg_Panel.getConnection().getClientID()).getInstrument();
+         cg_MIDI.playNote(noteValue, instrument);
+         
       //Key released
       }else{
          //Find closest note end to current beat
@@ -325,6 +344,13 @@ public class cg_World extends bg_World{
             bytesToShort(noteData, (byte)(i + 1)),
             noteData[i + 3]
          ));
+         
+         //Shift key shift if necessary
+         if(noteData[i] < keyShift || noteData[i] > keyShift + 8){
+            System.out.println(noteData[i] + "");
+            keyShift = (byte)(noteData[i] - 2);
+         }
+         
          i += 4;
       }
    }

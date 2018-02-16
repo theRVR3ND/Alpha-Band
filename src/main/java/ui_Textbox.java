@@ -74,7 +74,7 @@ public class ui_Textbox{
       g2.drawString(
          getContents(),
          getX() + spacing,
-         getY() + getHeight() - spacing
+         getY() + getHeight() / 2 + fontMetrics.getHeight() / 4
       );
       
       //Draw outline
@@ -100,7 +100,7 @@ public class ui_Textbox{
     * Return pixel y-position of textbox in panel.
     */
    public short getY(){
-      return (short)(y * cg_Client.SCREEN_WIDTH);
+      return (short)(y * cg_Client.SCREEN_HEIGHT);
    }
    
    /**
@@ -114,7 +114,7 @@ public class ui_Textbox{
     * Return pixel height of textbox in panel.
     */
    public short getHeight(){
-      return (short)(h * cg_Client.SCREEN_WIDTH);
+      return (short)(h * cg_Client.SCREEN_HEIGHT);
    }
    
    /**
@@ -161,7 +161,7 @@ public class ui_Textbox{
                contents[--index] = '\u0000';
          
          //Add letters
-         }else if(Character.isAlphabetic(e.getKeyChar())){
+         }else if(Character.isAlphabetic(e.getKeyChar()) || symbolAllowed(e.getKeyChar())){
             if(index < contents.length){
                contents[index++] = e.getKeyChar();
             }
@@ -188,5 +188,11 @@ public class ui_Textbox{
          this.contents[i] = contents[i];
          index = (byte)(i + 1);
       }
+      for(byte i = (byte)contents.length; i < this.contents.length; i++)
+         this.contents[i] = '\u0000';
+   }
+   
+   private static boolean symbolAllowed(final char symbol){
+      return symbol == '(' || symbol == ')' || symbol == '-' || symbol == ' ' || symbol == '?' || symbol == '!';
    }
 }

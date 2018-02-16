@@ -31,14 +31,12 @@ public abstract class bg_World implements bg_Constants{
    
    protected final byte gamemode;
    
-   protected final float ALLOWED_ERROR = 0.02f; //For hit scoring
+   protected final float ALLOWED_ERROR = 0.02f; //For hit scoring. Lower = more stringent.
    
    /**
     * Maximum update rate of world.
     */
    private final byte THINK_RATE = 30;
-   
-   //protected byte[][] currSong;
    
    /**
     * Constructor.

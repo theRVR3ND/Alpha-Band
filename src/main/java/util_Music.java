@@ -38,7 +38,7 @@ public class util_Music{
       "Agogo",
    };
    
-   private static final byte[][] INTERVALS = new byte[][] {
+   public static final byte[][] INTERVALS = new byte[][] {
       {0, 2, 4, 5, 7, 9,  11, 12},
       {0, 3, 5, 6, 7, 10, 12},
       {0, 2, 3, 5, 7, 9,  11, 12},
@@ -103,6 +103,10 @@ public class util_Music{
       return (byte)(Math.pow(9, difficulty / 2.0) + 30 + 5 * ((new Random(seed)).nextInt(5) - 2));// * 2 for actual
    }
    
+   public static byte chooseScale(short seed){
+      return (byte)((new Random(seed)).nextInt(INTERVALS.length));
+   }
+   
    //Generate specified instrument's part
    public static HashMap<Short, HashSet<Byte>> generatePart(final byte difficulty, final short seed, final byte instrument){
       //Make a random number genrator
@@ -112,7 +116,7 @@ public class util_Music{
       final byte bpm = generateBPM(difficulty, seed);
       final byte measureLength = (byte)(2 * difficulty + 4);//how many columns in gen make up one measure
       final short songLength = (short)(measureLength * (rand.nextInt(20) + 40));//in beats
-      final byte scale = (byte)(rand.nextInt(INTERVALS.length));
+      final byte scale = chooseScale(seed);
       final byte key = (byte)(rand.nextInt(12) + 60);
       final byte beatInterval = (byte)(measureLength / (difficulty + 2));
       

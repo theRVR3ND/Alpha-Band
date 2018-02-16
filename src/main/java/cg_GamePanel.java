@@ -31,8 +31,6 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    
    private HashSet<Byte> currNotes;
    
-   private byte keyShift; //How far along the scale the keys are shifted. Did that make sense?
-   
    public static final HashMap<Integer, Byte> noteMap = new HashMap<Integer, Byte>();
    
    private final char[] KEYS = new char[] {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'};
@@ -45,7 +43,6 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       world = null;
       currActions = new HashSet<Byte>();
       currNotes = new HashSet<Byte>();
-      keyShift = 0;
       
       //Map note values to keys
       noteMap.put(KeyEvent.VK_A,         (byte)0);
@@ -160,15 +157,11 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          //Trigger new note
          if(noteMap.containsKey(e.getKeyCode())){
             if(!currNotes.contains(noteMap.get(e.getKeyCode()))){
-               //Play note through midi
-               byte instrument = world.getPlayer(connection.getClientID()).getInstrument();
-               cg_MIDI.playNote((byte)(noteMap.get(e.getKeyCode()) + 34), instrument);
-               
                //Send to server and client worlds
                byte[] bytes = bg_World.longToBytes(e.getWhen());
                connection.writeOut(new byte[] {
                   ACTION,
-                  (byte)(noteMap.get(e.getKeyCode()) + 34),
+                  noteMap.get(e.getKeyCode()),
                   bytes[0],
                   bytes[1],
                   bytes[2],
@@ -178,7 +171,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
                   bytes[6],
                   bytes[7]
                });
-               world.processAction((byte)(noteMap.get(e.getKeyCode()) + 34), e.getWhen());
+               world.processAction(noteMap.get(e.getKeyCode()), e.getWhen());
                
                currNotes.add(noteMap.get(e.getKeyCode()));
             }
@@ -188,14 +181,11 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    
    @Override
    public void keyReleased(KeyEvent e){
-      //if(bindTable.containsKey((short)(e.getKeyCode())))
-         //currActions.remove(bindTable.get((short)(e.getKeyCode())));
-      
       if(noteMap.containsKey(e.getKeyCode())){
          currNotes.remove(noteMap.get(e.getKeyCode()));
          
          //Send to client world
-         world.processAction((byte)(-(noteMap.get(e.getKeyCode()) + 34)), e.getWhen());
+         world.processAction((byte)-noteMap.get(e.getKeyCode()), e.getWhen());
          
          //Send to server world
          try{
@@ -205,7 +195,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          byte[] bytes = bg_World.longToBytes(e.getWhen());
          connection.writeOut(new byte[] {
             ACTION,
-            (byte)(-(noteMap.get(e.getKeyCode()) + 34)),
+            (byte)-noteMap.get(e.getKeyCode()),
             bytes[0],
             bytes[1],
             bytes[2],

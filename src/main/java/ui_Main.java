@@ -72,6 +72,7 @@ public class ui_Main extends ui_Menu{
       
       }else if(buttons[2].isDown()){
          cg_Client.frame.setContentPane(ui_Menu.studio);
+         studio.requestFocus();
       
       //Exit program
       }else if(buttons[3].isDown()){

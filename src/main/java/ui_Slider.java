@@ -30,7 +30,7 @@ public class ui_Slider{
    /**
     * Range limit on slider value.
     */
-   private final byte min, max;
+   private final short min, max;
    
    /**
     * Slider's current value, from 0 to 1.
@@ -53,7 +53,7 @@ public class ui_Slider{
     * @param min                 Slider's minimum value.
     * @param max                 Slider's maximum value.
     */
-   public ui_Slider(String name, float x, float y, float w, float h, byte min, byte max){
+   public ui_Slider(String name, float x, float y, float w, float h, short min, short max){
       this.name = name;
       this.x = x;
       this.y = y;
@@ -61,7 +61,7 @@ public class ui_Slider{
       this.h = h;
       this.min = min;
       this.max = max;
-      this.val = (float)((max - min) / 2.0);
+      this.val = 0.5f;
       dragging = false;
    }
    
@@ -102,7 +102,7 @@ public class ui_Slider{
       g2.drawString(
          name,
          getX() - (short)(nameWidth * 1.1),
-         getY() + getHeight()
+         getY() + getHeight() / 2 + fontMetrics.getHeight() / 4
       );
    }
    
@@ -137,8 +137,8 @@ public class ui_Slider{
    /**
     * Return current slider value.
     */
-   public byte getValue(){
-      return (byte)(min + val * (max - min));
+   public short getValue(){
+      return (short)(min + val * (max - min));
    }
    
    /**
@@ -146,7 +146,7 @@ public class ui_Slider{
     * 
     * @param val                 New value to set to.
     */
-   public void setValue(byte val){
+   public void setValue(short val){
       this.val = (float)(val / (max - min * 1.0));
    }
    

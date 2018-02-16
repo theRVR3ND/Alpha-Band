@@ -298,19 +298,22 @@ public class g_World extends bg_World{
       
       //Generate all song parts
       ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
+      byte scale = 0;//Song's scale
       //if(choice == currVote.length - 1){//Randomly generated song
+      if(true){
          final short seed = (short)(Math.random() * Short.MAX_VALUE);
          bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
+         scale = util_Music.chooseScale(seed);
          
          for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
             song.add(util_Music.generatePart(serverDifficulty, seed, i));
          }
-      //}else{//Load song
+      }else{//Load song
       
-      //}
+      }
       
       //"Send" song info to clients
-      infoEnt.setColor(new Color(bpm / 2, 0, 0));
+      infoEnt.setColor(new Color(scale, 0, 0));
       
       //Start spawning notes
       noteSpawner = new NoteSpawner(song);

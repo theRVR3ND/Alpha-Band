@@ -18,9 +18,9 @@ public class cg_Note extends bg_Note{
       super(note, beat, duration);
    }
    
-   public void render(Graphics2D g2, final float currMilliBeats){
+   public void render(Graphics2D g2, final float currMilliBeats, final byte keyShift){
       //Figure out dimensions and location of note
-      final short drawX = (short)((note - 33.5) * cg_Client.SCREEN_WIDTH / 10),
+      final short drawX = (short)((note - keyShift + 0.5) * cg_Client.SCREEN_WIDTH / 10),
                   drawY = (short)((1 - (beat - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
              drawHeight = (short)(duration * 25000 / cg_Client.SCREEN_HEIGHT);
       

@@ -33,7 +33,8 @@ public class ui_Settings extends ui_Menu implements MouseWheelListener{
             "Volume:",
             0.4f, 0.45f,
             0.2f, 0.02f,
-            (byte)0, (byte)100),
+            (short)0, (short)100
+         ),
       };
       
       themeList = new ui_Table(
