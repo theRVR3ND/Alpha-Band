@@ -45,7 +45,6 @@ public class g_Server extends Thread implements bg_Constants{
     * Creates new server if one does not already exist.
     */
    public g_Server(ServerSocket socket, String name, byte gamemode){
-      System.out.println("It's happening!");
       //Initialize stuff
       this.socket = socket;
       this.name = name;

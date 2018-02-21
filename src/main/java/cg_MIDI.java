@@ -1,11 +1,11 @@
 /**
- * Alpha Band - Multiplayer Rythym Game | cg_World
+ * Alpha Band - Multiplayer Rythym Game | cg_MIDI
  * Concept and game by Shae McMillan
  * Engine by Kelvin Peng
  * W.T.Woodson H.S.
  * 2017
  * 
- * Client-side version of world. Handle client-only actions.
+ * Client MIDI player.
  */
 
 import javax.sound.midi.*;

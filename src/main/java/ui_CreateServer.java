@@ -40,7 +40,7 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       //Initialize stuff
       nameTextbox = new ui_Textbox(
          0.35f, 0.08f,
-         0.3f, 0.03f,
+         0.3f, 0.05f,
          (byte)18
       );
       nameTextbox.setContents("Server");

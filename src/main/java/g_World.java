@@ -174,11 +174,9 @@ public class g_World extends bg_World{
          comp = compress(comp);
          
          //Check if sending data is neccessary
-         /*
          if(comp.length == 2 && comp[0] == 0){
             continue;
          }
-         */
          
          //Add other entity info
          byte[] keyBytes = shortToBytes(key);
@@ -203,8 +201,9 @@ public class g_World extends bg_World{
    
    //Should only be requested by single player who is playing instrument
    public HashSet<byte[]> getNotes(byte clientID){
-      HashSet<byte[]> ret = noteData.remove(getPlayer(clientID).getInstrument());
-      noteData.put(getPlayer(clientID).getInstrument(), new HashSet<byte[]>());
+      final byte instrument = getPlayer(clientID).getInstrument();
+      HashSet<byte[]> ret = noteData.get(instrument);
+      noteData.put(instrument, new HashSet<byte[]>());
       return ret;
    }
    
@@ -298,12 +297,14 @@ public class g_World extends bg_World{
       
       //Generate all song parts
       ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
-      byte scale = 0;//Song's scale
+      byte scale = 0, //Song's scale
+             key = 0; //Song's key
       //if(choice == currVote.length - 1){//Randomly generated song
       if(true){
          final short seed = (short)(Math.random() * Short.MAX_VALUE);
          bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
          scale = util_Music.chooseScale(seed);
+         key = util_Music.chooseKey(seed);
          
          for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
             song.add(util_Music.generatePart(serverDifficulty, seed, i));
@@ -313,7 +314,7 @@ public class g_World extends bg_World{
       }
       
       //"Send" song info to clients
-      infoEnt.setColor(new Color(scale, 0, 0));
+      infoEnt.setColor(new Color(bpm, scale, key));
       
       //Start spawning notes
       noteSpawner = new NoteSpawner(song);
@@ -412,13 +413,6 @@ public class g_World extends bg_World{
       
       @Override
       public void run(){
-         //Wait until time for song to start
-         try{
-            final int sleepTime = (int)((songStartTime - 4000) - System.currentTimeMillis());
-            if(sleepTime > 0)
-               sleep(sleepTime);
-         }catch(InterruptedException e){}
-         
          //Figure out song metrics
          final short bpm = (short)(2 * (Byte)(song.get(0).get((short)0).iterator().next()));
          
@@ -434,7 +428,7 @@ public class g_World extends bg_World{
             final long startTime = System.currentTimeMillis();
             
             //Play chord for each instrument in current beat
-            for(byte instrument = 0; instrument < song.size(); instrument++){
+            for(byte instrument = 0; instrument < util_Music.NUM_INSTRUMENTS; instrument++){
                //Current beat's notes to play
                HashSet<Byte> chord = song.get(instrument).get(beat);
                
@@ -462,8 +456,6 @@ public class g_World extends bg_World{
                   noteData.get(instrument).add(new byte[] {note, bytes[0], bytes[1], duration});
                }
             }
-            
-            //System.out.println(noteData.get((byte)0).size() + " " + noteData.get((byte)1).size() + " " + noteData.get((byte)2).size());
             
             //Wait until next beat
             try{

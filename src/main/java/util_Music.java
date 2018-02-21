@@ -107,6 +107,10 @@ public class util_Music{
       return (byte)((new Random(seed)).nextInt(INTERVALS.length));
    }
    
+   public static byte chooseKey(short seed){
+      return (byte)((new Random(seed)).nextInt(12) + 60);
+   }
+   
    //Generate specified instrument's part
    public static HashMap<Short, HashSet<Byte>> generatePart(final byte difficulty, final short seed, final byte instrument){
       //Make a random number genrator
@@ -117,9 +121,9 @@ public class util_Music{
       final byte measureLength = (byte)(2 * difficulty + 4);//how many columns in gen make up one measure
       final short songLength = (short)(measureLength * (rand.nextInt(20) + 40));//in beats
       final byte scale = chooseScale(seed);
-      final byte key = (byte)(rand.nextInt(12) + 60);
+      final byte key = chooseKey(seed);
       final byte beatInterval = (byte)(measureLength / (difficulty + 2));
-      
+      System.out.println("key: " + key);
       HashMap<Short, HashSet<Byte>> song = new HashMap<>();
       
       //Add neccessary song info into song data structure
@@ -139,32 +143,18 @@ public class util_Music{
          for(short beat = 1; beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
             
-            final byte root = (byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)] - 24);
+            final byte root = (byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)]);
             
-            //Pedal tone
-            /*
-            if(beat % measureLength == 0){
-               for(byte i = 0; i < difficulty / 2 + 1; i++){
-                  chord.add((byte)(root + CHORDS[scale / 2][pentIndex.get(beat / measureLength)][i]));
-               }
-               chord.add((byte)(root + 12));
-            
-            //Melody
-            }else if(beat % beatInterval == 0){
-               chord.add((byte)(root + INTERVALS[scale][rand.nextInt(INTERVALS[scale].length)] + 12));
-            }
-            /*/
-            //*
             //Pedal tone
             if(beat % measureLength == 0){
                for(byte i = 0; i < difficulty / 2 + 1; i++){
                   chord.add((byte)(root + CHORDS[scale / 2][pentIndex.get(beat / measureLength)][i]));
                }
-               chord.add((byte)(root + 12));
+               chord.add((byte)(root));
             
             //Melody
             }else if(beat % beatInterval == 0){
-               chord.add((byte)(key + PENTATONICS[scale / 2][rand.nextInt(PENTATONICS[scale / 2].length)] - 12));
+               chord.add((byte)(key + PENTATONICS[scale / 2][rand.nextInt(PENTATONICS[scale / 2].length)]));
             }
             
             if(!chord.isEmpty())
@@ -209,13 +199,13 @@ public class util_Music{
       
       //BASS GUITAR
       }else if(instrument == BASS){
-         byte root = (byte)(key + PENTATONICS[scale / 2][0] - 24);
+         byte root = (byte)(key + PENTATONICS[scale / 2][0]);
          
          for(short beat = 1; beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
             
             if(beat % measureLength == 0)
-               chord.add((byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)] - 24));
+               chord.add((byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)] - 12));
             
             if(!chord.isEmpty())
                song.put(beat, chord);
@@ -247,6 +237,7 @@ public class util_Music{
          System.out.println(toPrint);
       }
       //*/
+      
       return song;
    }
    

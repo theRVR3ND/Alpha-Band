@@ -5,7 +5,7 @@
  * W.T.Woodson H.S.
  * 2017
  *
- * Song studio! For transcribing/creating songs in game format.
+ * Song studio for transcribing/creating songs into game format.
  */
 
 import java.awt.*;
@@ -17,6 +17,8 @@ public class ui_Studio extends ui_Menu implements KeyListener{
    
    private ui_Slider bpmSlider;
    
+   private byte currInstrument;
+   
    /**
     * Constructor.
     */
@@ -24,10 +26,8 @@ public class ui_Studio extends ui_Menu implements KeyListener{
       buttons = new ui_Button[] {
          new ui_Button("SAVE", 0.5f, 0.7f),
          new ui_Button("BACK", 0.5f, 0.85f),
-         new ui_Button("PREV", 0.08f, 0.5f),
-         new ui_Button("NEXT", 0.21f, 0.5f),
-         new ui_Button("<", 0.77f, 0.7f),
-         new ui_Button(">", 0.90f, 0.7f)
+         new ui_Button("PREV", 0.08f, 0.58f),
+         new ui_Button("NEXT", 0.21f, 0.58f)
       };
       
       nameTextbox = new ui_Textbox(
@@ -43,6 +43,9 @@ public class ui_Studio extends ui_Menu implements KeyListener{
          0.2f, 0.02f,
          (short)60, (short)210
       );
+      
+      //Initialize stuff
+      currInstrument = 0;
       
       //Add key listener for entering player name
       this.setFocusable(true);
@@ -62,6 +65,8 @@ public class ui_Studio extends ui_Menu implements KeyListener{
       
       nameTextbox.draw(g2);
       bpmSlider.draw(g2);
+      
+      g2.drawString(util_Music.instruments[currInstrument], 100, 100);
       
       g2.drawRect(
          (short)(0.34 * cg_Client.SCREEN_WIDTH),
@@ -88,6 +93,18 @@ public class ui_Studio extends ui_Menu implements KeyListener{
       //Redirect to main page
       }else if(buttons[1].isDown()){
          cg_Client.frame.setContentPane(ui_Menu.main);
+      
+      //Scroll to previous instrument
+      }else if(buttons[2].isDown()){
+         currInstrument--;
+         if(currInstrument < 0)
+            currInstrument = (byte)(util_Music.NUM_INSTRUMENTS - 1);
+      
+      //Scroll to next instrument
+      }else if(buttons[3].isDown()){
+         currInstrument++;
+         if(currInstrument >= util_Music.NUM_INSTRUMENTS )
+            currInstrument = 0;
       
       }else{
          nameTextbox.checkClick((short)e.getX(), (short)e.getY());

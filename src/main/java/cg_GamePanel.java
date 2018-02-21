@@ -45,16 +45,16 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       currNotes = new HashSet<Byte>();
       
       //Map note values to keys
-      noteMap.put(KeyEvent.VK_A,         (byte)0);
-      noteMap.put(KeyEvent.VK_S,         (byte)1);
-      noteMap.put(KeyEvent.VK_D,         (byte)2);
-      noteMap.put(KeyEvent.VK_F,         (byte)3);
-      noteMap.put(KeyEvent.VK_G,         (byte)4);
-      noteMap.put(KeyEvent.VK_H,         (byte)5);
-      noteMap.put(KeyEvent.VK_J,         (byte)6);
-      noteMap.put(KeyEvent.VK_K,         (byte)7);
-      noteMap.put(KeyEvent.VK_L,         (byte)8);
-      noteMap.put(KeyEvent.VK_SEMICOLON, (byte)9);
+      noteMap.put(KeyEvent.VK_A,         (byte)1);
+      noteMap.put(KeyEvent.VK_S,         (byte)2);
+      noteMap.put(KeyEvent.VK_D,         (byte)3);
+      noteMap.put(KeyEvent.VK_F,         (byte)4);
+      noteMap.put(KeyEvent.VK_G,         (byte)5);
+      noteMap.put(KeyEvent.VK_H,         (byte)6);
+      noteMap.put(KeyEvent.VK_J,         (byte)7);
+      noteMap.put(KeyEvent.VK_K,         (byte)8);
+      noteMap.put(KeyEvent.VK_L,         (byte)9);
+      noteMap.put(KeyEvent.VK_SEMICOLON, (byte)10);
       
       //Add listeners
       this.addMouseListener(this);
@@ -98,7 +98,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       for(byte i = 0; i < noteMap.size(); i++){
          //Key is pressed
-         if(currNotes.contains(i)){
+         if(currNotes.contains((byte)(i + 1))){
             g2.drawRect(
                (int)((i + 0.05) * cg_Client.SCREEN_WIDTH / 10.0),
                (int)(cg_Client.SCREEN_HEIGHT * 14.5 / 20.0),
