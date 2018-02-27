@@ -44,13 +44,13 @@ public class g_Server extends Thread implements bg_Constants{
    /**
     * Creates new server if one does not already exist.
     */
-   public g_Server(ServerSocket socket, String name, byte gamemode){
+   public g_Server(ServerSocket socket, String name, byte gamemode, byte difficulty){
       //Initialize stuff
       this.socket = socket;
       this.name = name;
       
       clients = new ArrayList<g_Connection>();
-      world = new g_World(gamemode, (byte)0);
+      world = new g_World(gamemode, difficulty);
       
       server = this;
       

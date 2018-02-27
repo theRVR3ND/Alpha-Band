@@ -123,7 +123,7 @@ public class util_Music{
       final byte scale = chooseScale(seed);
       final byte key = chooseKey(seed);
       final byte beatInterval = (byte)(measureLength / (difficulty + 2));
-      System.out.println("key: " + key);
+      
       HashMap<Short, HashSet<Byte>> song = new HashMap<>();
       
       //Add neccessary song info into song data structure

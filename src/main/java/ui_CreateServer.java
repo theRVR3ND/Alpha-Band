@@ -28,6 +28,8 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
     */
    private ui_Table gamemodeList;
    
+   private ui_Slider difficultySlider;
+   
    /**
     * Constructor. Load map list from text file.
     */
@@ -45,9 +47,16 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       );
       nameTextbox.setContents("Server");
       
+      difficultySlider = new ui_Slider(
+         "Difficulty:",
+         0.4f, 0.45f,
+         0.2f, 0.02f,
+         (short)1, (short)5
+      );
+      
       //List available game modes
       gamemodeList = new ui_Table(
-         0.4f, 0.3f, 0.2f, 0.2f,
+         0.4f, 0.2f, 0.2f, 0.2f,
          new String[] {"Game Mode"},
          new float[] {0.41f}
       );
@@ -86,6 +95,9 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
       //Draw table
       gamemodeList.draw(g2);
       
+      //Draw difficulty slider
+      difficultySlider.draw(g2);
+      
       repaint();
    }
    
@@ -120,15 +132,20 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
             return;
          }
          if(socket.isBound()){
-            g_Server server = new g_Server(socket, nameTextbox.getContents(), gamemodeList.getHoverRow());
+            g_Server server = new g_Server(
+               socket,
+               nameTextbox.getContents(),
+               gamemodeList.getHoverRow(),
+               (byte)(difficultySlider.getValue() - 1)
+            );
             server.start();
-         }
          
-         //Join said server. Use loopback IP address.
-         ui_Menu.servers.joinServer(
-            "127.0.0.1",
-            gamemodeList.getHoverRow()
-         );
+            //Join said server. Use loopback IP address.
+            ui_Menu.servers.joinServer(
+               "127.0.0.1",
+               gamemodeList.getHoverRow()
+            );
+         }
       
       }else if(buttons[1].isDown()){
          cg_Client.frame.setContentPane(ui_Menu.servers);
@@ -157,15 +174,21 @@ public class ui_CreateServer extends ui_Menu implements KeyListener,
    
    public void mouseExited(MouseEvent e){}
    
-   public void mousePressed(MouseEvent e){}
+   public void mousePressed(MouseEvent e){
+      difficultySlider.checkPress((short)e.getX(), (short)e.getY());
+   }
    
-   public void mouseReleased(MouseEvent e){}
+   public void mouseReleased(MouseEvent e){
+      difficultySlider.release();
+   }
    
    public void mouseMoved(MouseEvent e){
       super.mouseMoved(e);
    }
    
-   public void mouseDragged(MouseEvent e){}
+   public void mouseDragged(MouseEvent e){
+      difficultySlider.checkDrag((short)e.getX());
+   }
    
    /**
     * Process mouse scroll. Scroll along map list if possible.

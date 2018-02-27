@@ -310,6 +310,10 @@ public class cg_World extends bg_World{
             }
          }
          
+         //Play note through midi
+         byte instrument = getPlayer(cg_Panel.getConnection().getClientID()).getInstrument();
+         cg_MIDI.playNote(noteValue, instrument);
+         
          //Show points message
          if(closestGap < ALLOWED_ERROR){
             pointsMessage = 0;
@@ -319,8 +323,12 @@ public class cg_World extends bg_World{
             pointsMessage = 2;
          }else if(closestGap < ALLOWED_ERROR * 8){
             pointsMessage = 3;
-         }else{
+         }else if(closestGap != Float.MAX_VALUE){
             pointsMessage = 4;
+         }else{
+            pointsMessage = -1;
+            pointsMessageTimeout = -1;
+            return;
          }
          
          //Award bonus combo
@@ -330,10 +338,6 @@ public class cg_World extends bg_World{
             player.setBonus((byte)(0));
          
          pointsMessageTimeout = Byte.MAX_VALUE;
-         
-         //Play note through midi
-         byte instrument = getPlayer(cg_Panel.getConnection().getClientID()).getInstrument();
-         cg_MIDI.playNote(noteValue, instrument);
          
       //Key released
       }else{
@@ -362,7 +366,6 @@ public class cg_World extends bg_World{
             bytesToShort(noteData, (byte)(i + 1)),
             noteData[i + 3]
          ));
-         System.out.println("note: " + noteData[i] + " hitBeat: " + bytesToShort(noteData, (byte)(i + 1)));
          i += 4;
       }
    }
