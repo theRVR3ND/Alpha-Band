@@ -148,7 +148,7 @@ public abstract class ui_Menu extends JPanel implements MouseListener, MouseMoti
          (int)(util_Utilities.getFontSize() * 0.75)
       ));
       g2.drawString(
-         "Alpha Band | By: Shae McMillan, Christina Nguyen, and Kelvin Peng, '18",
+         "Alpha Band | By: Shae McMillan, Christina Nguyen, Sammy Collins, and Kelvin Peng, '18",
          10,
          getHeight() - 10
       );

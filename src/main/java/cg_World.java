@@ -141,20 +141,23 @@ public class cg_World extends bg_World{
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-      try{
-         for(bg_Note note : notes){
+      g2.drawString(currMilliBeats + "", 100, 100);
+      for(byte i = 0; i < notes.size(); i++){
+         try{
+            bg_Note note = notes.get(i);
+            
             //Find key that correlates with note
             byte scaleInd = 0;
-            for(byte i = 0; i < util_Music.INTERVALS[scale].length; i++){
-               if(note.getNote() == keyShift + util_Music.INTERVALS[scale][i]){
-                  scaleInd = i;
+            for(byte j = 0; j < util_Music.INTERVALS[scale].length; j++){
+               if(note.getNote() == keyShift + util_Music.INTERVALS[scale][j]){
+                  scaleInd = j;
                   break;
                }
             }
             
             //Figure out dimensions and location of note
             final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
-                        drawY = (short)(1 - (note.getBeat() - currMilliBeats) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
+                        drawY = (short)(1 - (note.getBeat() - currMilliBeats) * cg_Client.SCREEN_HEIGHT * 3 / 8.0),
                    drawHeight = (short)(note.getDuration() * 50000 / cg_Client.SCREEN_HEIGHT);
             
             //Render
@@ -162,11 +165,12 @@ public class cg_World extends bg_World{
             g2.fillRect(drawX - NOTE_WIDTH / 2, drawY, NOTE_WIDTH, drawHeight);
             
             //Get rid of note if it ded
-            if(currMilliBeats - (note.getBeat() + note.getDuration()) > 1.5){
-               notes.remove(note);
+            if(currMilliBeats > note.getBeat() + 2){
+               //notes.remove(note);
+               //System.out.println(notes.size() + "");
             }
-         }
-      }catch(ConcurrentModificationException e){}
+         }catch(ConcurrentModificationException e){}
+      }
       
       //Show points messages
       if(pointsMessageTimeout > 0){
@@ -281,7 +285,7 @@ public class cg_World extends bg_World{
          data = dataToBytes(entObj);
       
       //Add delta to current data
-      for(byte i = 0; i < data.length; i++)
+      for(byte i = 0; i < data.length && i < delta.length; i++)
          data[i] += delta[i];
       
       //Set entity's data to new byte data
@@ -366,6 +370,7 @@ public class cg_World extends bg_World{
             bytesToShort(noteData, (byte)(i + 1)),
             noteData[i + 3]
          ));
+         System.out.println("pls " + notes.size());
          i += 4;
       }
    }

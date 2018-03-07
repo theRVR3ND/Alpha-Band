@@ -76,7 +76,7 @@ public class util_Music{
       ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
       final short seed = (short)(Math.random() * Short.MAX_VALUE);
       for(byte i = 0; i < NUM_INSTRUMENTS; i++){
-         song.add(generatePart((byte)4, seed, i));
+         song.add(generatePart((byte)2, seed, i));
       }
       
       //Print song

@@ -18,8 +18,6 @@ public class g_World extends bg_World{
    
    private byte[][] currVote; //Current song vote. Row 1 = index of song, row 2 = # votes.
    
-   private long voteTimeout; //Time, in milliseconds, at which vote will time out.
-   
    private static ArrayList<byte[]> songList;
    
    private HashMap<Byte, HashSet<bg_Note>> notes; //Key: instrument number, Value: note buffer
@@ -121,9 +119,10 @@ public class g_World extends bg_World{
       }catch(ConcurrentModificationException e){}
       
       //Start game
-      if(System.currentTimeMillis() > voteTimeout){
+      if(System.currentTimeMillis() > songStartTime){
          startSong();
-         voteTimeout = Long.MAX_VALUE;
+         System.out.println(System.currentTimeMillis() + " " + songStartTime);
+         songStartTime = Long.MAX_VALUE;
       }
    }
    
@@ -137,8 +136,8 @@ public class g_World extends bg_World{
       return songList;
    }
    
-   public long getVoteTimeout(){
-      return voteTimeout;
+   public long getSongStartTime(){
+      return songStartTime;
    }
    
    /**
@@ -210,8 +209,8 @@ public class g_World extends bg_World{
    //********MUTATORS********//
    
    public void startVote(){
-      //voteTimeout = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      songStartTime = (long)(System.currentTimeMillis() + 10000);//TEMPORARY
+      //songStart = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
+      songStartTime = (long)(System.currentTimeMillis() + 150000);//TEMPORARY
       
       HashSet<Byte> toVoteOn = new HashSet<>();
       
@@ -255,7 +254,7 @@ public class g_World extends bg_World{
       
       //Assign instruments to players
       //if(super.gamemode == COMPETITION){
-      if(false){
+      if(true){
          //Competition - every player plays piano
          for(Short key : entities.keySet()){
             if(entities.get(key) instanceof bg_Player && entities.get(key) != infoEnt){
@@ -317,6 +316,7 @@ public class g_World extends bg_World{
       infoEnt.setColor(new Color(bpm, scale, key));
       
       //Start spawning notes
+      System.out.println("starting song");
       noteSpawner = new NoteSpawner(song);
       noteSpawner.start();
    }
@@ -411,6 +411,7 @@ public class g_World extends bg_World{
          this.song = song;
       
          //Print song
+         /*
          System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
          for(short b = 1; b < 100; b++){
             System.out.print(b + "\t-      ");
@@ -426,6 +427,7 @@ public class g_World extends bg_World{
             }
             System.out.println();
          }
+         */
       }
       
       @Override

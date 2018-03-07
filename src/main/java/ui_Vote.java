@@ -51,14 +51,15 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       super.paintComponent(g);
       
       //Redirect to game screen if timed out
-      if(System.currentTimeMillis() > cg_Panel.gamePanel.getWorld().getSongStartTime() - 5000){
+      /*
+      if(System.currentTimeMillis() > cg_Panel.gamePanel.getWorld().getSongStartTime()){
          cg_Client.frame.setContentPane(cg_Panel.gamePanel);
          cg_Panel.gamePanel.requestFocus();
          cg_Client.frame.revalidate();
          
          return;
       }
-      
+      */
       //Improve rendering quality
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
@@ -153,6 +154,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
             //Return to game panel
             cg_Client.frame.setContentPane(cg_Panel.gamePanel);
             cg_Panel.gamePanel.requestFocus();
+            cg_Client.frame.revalidate();
          }
       }else{
          voteList.checkHover((short)e.getX(), (short)e.getY());

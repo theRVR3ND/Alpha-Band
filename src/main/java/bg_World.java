@@ -343,7 +343,7 @@ public abstract class bg_World implements bg_Constants{
                  exp: {3, 2, 4, 5, 1, 2}  <-- MUST be EVEN length
             expanded: {3, 3, 4, 4, 4, 4, 4, 1, 1}
       */
-      for(byte i = 0; i < exp.length; i += 2){
+      for(byte i = 0; i < exp.length - 2; i += 2){
          byte val = exp[i];
          for(byte k = 0; k < exp[i + 1]; k++){
             expanded.add(val);
