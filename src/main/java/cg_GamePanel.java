@@ -158,7 +158,6 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          if(noteMap.containsKey(e.getKeyCode())){
             if(!currNotes.contains(noteMap.get(e.getKeyCode()))){
                //Send to server and client worlds
-               /*
                byte[] bytes = bg_World.longToBytes(e.getWhen());
                connection.writeOut(new byte[] {
                   ACTION,
@@ -173,7 +172,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
                   bytes[7]
                });
                world.processAction(noteMap.get(e.getKeyCode()), e.getWhen());
-               */
+               
                currNotes.add(noteMap.get(e.getKeyCode()));
             }
          }
@@ -192,7 +191,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          try{
             Thread.sleep(20);
          }catch(InterruptedException ex){}
-         /*
+         
          byte[] bytes = bg_World.longToBytes(e.getWhen());
          connection.writeOut(new byte[] {
             ACTION,
@@ -206,7 +205,6 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
             bytes[6],
             bytes[7]
          });
-         */
       }
    }
    

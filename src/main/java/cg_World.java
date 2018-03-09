@@ -141,7 +141,7 @@ public class cg_World extends bg_World{
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-      g2.drawString(currMilliBeats + "", 100, 100);
+      g2.drawString(keyShift + " " + notes.size(), 100, 100);
       for(byte i = 0; i < notes.size(); i++){
          try{
             bg_Note note = notes.get(i);
@@ -169,7 +169,9 @@ public class cg_World extends bg_World{
                //notes.remove(note);
                //System.out.println(notes.size() + "");
             }
-         }catch(ConcurrentModificationException e){}
+         }catch(ConcurrentModificationException e){
+            System.out.println("ow");
+         }
       }
       
       //Show points messages
@@ -297,6 +299,9 @@ public class cg_World extends bg_World{
    }
    
    public void processAction(final byte intervalIndex, final long actionTime){
+      if(keyShift == -1)
+         return;
+      
       final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
       float closestGap = Float.MAX_VALUE;
       final bg_Player player = super.getPlayer(cg_Panel.getConnection().getClientID());
@@ -304,7 +309,7 @@ public class cg_World extends bg_World{
          keyShift + util_Music.INTERVALS[scale][Math.abs(intervalIndex - 1) % util_Music.INTERVALS[scale].length] +
          12 * (Math.abs(intervalIndex - 1) / util_Music.INTERVALS[scale].length)
       );
-      
+      System.out.println(intervalIndex + " playing");
       //Key pressed
       if(intervalIndex > 0){
          //Find closest note to current beat
@@ -370,8 +375,8 @@ public class cg_World extends bg_World{
             bytesToShort(noteData, (byte)(i + 1)),
             noteData[i + 3]
          ));
-         System.out.println("pls " + notes.size());
          i += 4;
       }
+      System.out.println("pls " + notes.size());
    }
 }

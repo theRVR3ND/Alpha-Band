@@ -121,7 +121,6 @@ public class g_World extends bg_World{
       //Start game
       if(System.currentTimeMillis() > songStartTime){
          startSong();
-         System.out.println(System.currentTimeMillis() + " " + songStartTime);
          songStartTime = Long.MAX_VALUE;
       }
    }
@@ -210,7 +209,7 @@ public class g_World extends bg_World{
    
    public void startVote(){
       //songStart = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      songStartTime = (long)(System.currentTimeMillis() + 150000);//TEMPORARY
+      songStartTime = (long)(System.currentTimeMillis() + 10000);//TEMPORARY
       
       HashSet<Byte> toVoteOn = new HashSet<>();
       
@@ -411,7 +410,6 @@ public class g_World extends bg_World{
          this.song = song;
       
          //Print song
-         /*
          System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
          for(short b = 1; b < 100; b++){
             System.out.print(b + "\t-      ");
@@ -427,7 +425,6 @@ public class g_World extends bg_World{
             }
             System.out.println();
          }
-         */
       }
       
       @Override

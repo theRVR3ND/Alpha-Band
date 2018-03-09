@@ -142,7 +142,7 @@ public class util_Music{
       if(instrument == PIANO){
          for(short beat = 1; beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
-            
+            /*
             final byte root = (byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)]);
             
             //Pedal tone
@@ -156,6 +156,9 @@ public class util_Music{
             }else if(beat % beatInterval == 0){
                chord.add((byte)(key + PENTATONICS[scale / 2][rand.nextInt(PENTATONICS[scale / 2].length)]));
             }
+            */
+            if(beat % 5 == 0)
+               chord.add((byte)(key + 3));
             
             if(!chord.isEmpty())
                song.put(beat, chord);

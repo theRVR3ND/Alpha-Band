@@ -74,13 +74,12 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public void run(){
       try{
-         //Give client some time to catch up
-         try{
-            Thread.sleep(10);
-         }catch(InterruptedException e){}
-         
          while(true){
-            //long lastUpdateTime = System.currentTimeMillis();
+            //Pause a little
+            try{
+               Thread.sleep(30);
+            }catch(InterruptedException e){}
+            
             //Receive input stream from client
             if(in.available() > 0){
                byte[] info = new byte[Byte.MAX_VALUE];

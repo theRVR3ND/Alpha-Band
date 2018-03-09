@@ -60,9 +60,9 @@ public class cg_Connection extends Thread implements bg_Constants{
             byte[] info = new byte[Byte.MAX_VALUE];
             byte numByte = (byte)in.read(info);
             if(numByte > 0){
-               for(byte i : info)
-                  System.out.print(i + " ");
-               System.out.println();
+               //for(byte i : info)
+               //   System.out.print(i + " ");
+               //System.out.println();
                processInStream(info, numByte);
             }
          }
