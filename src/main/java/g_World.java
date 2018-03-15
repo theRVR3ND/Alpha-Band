@@ -119,7 +119,7 @@ public class g_World extends bg_World{
       }catch(ConcurrentModificationException e){}
       
       //Start game
-      if(System.currentTimeMillis() > songStartTime){
+      if(System.currentTimeMillis() > songStartTime - 5000){
          startSong();
          songStartTime = Long.MAX_VALUE;
       }
@@ -209,7 +209,7 @@ public class g_World extends bg_World{
    
    public void startVote(){
       //songStart = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      songStartTime = (long)(System.currentTimeMillis() + 10000);//TEMPORARY
+      songStartTime = (long)(System.currentTimeMillis() + 30000);//TEMPORARY
       
       HashSet<Byte> toVoteOn = new HashSet<>();
       
@@ -315,7 +315,6 @@ public class g_World extends bg_World{
       infoEnt.setColor(new Color(bpm, scale, key));
       
       //Start spawning notes
-      System.out.println("starting song");
       noteSpawner = new NoteSpawner(song);
       noteSpawner.start();
    }
@@ -479,7 +478,6 @@ public class g_World extends bg_World{
                if(sleepTime > 0)
                   sleep(sleepTime);
             }catch(InterruptedException e){}
-            
             beat++;
          }
       }

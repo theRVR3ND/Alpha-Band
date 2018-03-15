@@ -109,7 +109,7 @@ public class cg_World extends bg_World{
             //Ignore data player entity
             if(otherPlayer.getController() == -1){
                //Extract song info
-               bpm = (short)(2 * otherPlayer.getColor().getRed());
+               bpm = (short)(otherPlayer.getColor().getRed());
                scale = (byte)otherPlayer.getColor().getGreen();
                keyShift = (byte)otherPlayer.getColor().getBlue();
                
@@ -141,7 +141,8 @@ public class cg_World extends bg_World{
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-      g2.drawString(keyShift + " " + notes.size(), 100, 100);
+      g2.drawString(songStartTime + " " + currMilliBeats, 100, 100);
+      int s = 0;
       for(byte i = 0; i < notes.size(); i++){
          try{
             bg_Note note = notes.get(i);
@@ -154,16 +155,16 @@ public class cg_World extends bg_World{
                   break;
                }
             }
-            
+            g2.drawString(note.getNote() + " " + note.getBeat(), 400, i * 100 + 100);
             //Figure out dimensions and location of note
             final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
-                        drawY = (short)(1 - (note.getBeat() - currMilliBeats) * cg_Client.SCREEN_HEIGHT * 3 / 8.0),
+                        drawY = (short)(1 - (note.getBeat() - currMilliBeats) * cg_Client.SCREEN_HEIGHT/* * 3 / 4.0*/),
                    drawHeight = (short)(note.getDuration() * 50000 / cg_Client.SCREEN_HEIGHT);
             
             //Render
             g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
             g2.fillRect(drawX - NOTE_WIDTH / 2, drawY, NOTE_WIDTH, drawHeight);
-            
+            g2.drawString(drawX - NOTE_WIDTH / 2 + " " + drawY, 500, i * 100 + 100);
             //Get rid of note if it ded
             if(currMilliBeats > note.getBeat() + 2){
                //notes.remove(note);
@@ -309,7 +310,7 @@ public class cg_World extends bg_World{
          keyShift + util_Music.INTERVALS[scale][Math.abs(intervalIndex - 1) % util_Music.INTERVALS[scale].length] +
          12 * (Math.abs(intervalIndex - 1) / util_Music.INTERVALS[scale].length)
       );
-      System.out.println(intervalIndex + " playing");
+      
       //Key pressed
       if(intervalIndex > 0){
          //Find closest note to current beat
@@ -377,6 +378,5 @@ public class cg_World extends bg_World{
          ));
          i += 4;
       }
-      System.out.println("pls " + notes.size());
    }
 }
