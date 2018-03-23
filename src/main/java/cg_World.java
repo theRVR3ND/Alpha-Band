@@ -141,7 +141,7 @@ public class cg_World extends bg_World{
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-      g2.drawString(songStartTime + " " + currMilliBeats, 100, 100);
+      g2.drawString(songStartTime + " " + currMilliBeats + " " + notes.size(), 100, 100);
       int s = 0;
       for(byte i = 0; i < notes.size(); i++){
          try{
@@ -155,10 +155,10 @@ public class cg_World extends bg_World{
                   break;
                }
             }
-            g2.drawString(note.getNote() + " " + note.getBeat(), 400, i * 100 + 100);
+            g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
             //Figure out dimensions and location of note
             final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
-                        drawY = (short)(1 - (note.getBeat() - currMilliBeats) * cg_Client.SCREEN_HEIGHT/* * 3 / 4.0*/),
+                        drawY = (short)(1 - (note.getBeat() - currMilliBeats) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
                    drawHeight = (short)(note.getDuration() * 50000 / cg_Client.SCREEN_HEIGHT);
             
             //Render

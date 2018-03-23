@@ -98,6 +98,10 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
             break;
          }
          */
+         if(info[i] == 0){
+            break;
+         }
+         
          //Extract song info
          String difficulty = info[i] + "";
          String songLength = info[i + 1] + ":" + info[i + 2];
@@ -114,6 +118,7 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       //Get vote timout
       cg_Panel.gamePanel.getWorld().setSongStartTime(bg_World.bytesToLong(info, (byte)1));
       System.out.println("setting song start time " + bg_World.bytesToLong(info, (byte)1));
+      
       //Add all song options to list
       voteList.getContents().add(new String[] {"Generate a Song"});
       voteList.getContents().add(new String[] {"Choose Random Song"});

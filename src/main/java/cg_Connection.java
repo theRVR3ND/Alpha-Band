@@ -55,14 +55,16 @@ public class cg_Connection extends Thread implements bg_Constants{
     */
    public void run(){
       try{
+         in.read(new byte[Byte.MAX_VALUE]);
+         
          while(true){
             //Receive input stream from server
             byte[] info = new byte[Byte.MAX_VALUE];
             byte numByte = (byte)in.read(info);
             if(numByte > 0){
-               //for(byte i : info)
-               //   System.out.print(i + " ");
-               //System.out.println();
+               // for(byte i : info)
+//                  System.out.print(i + " ");
+//                System.out.println();
                processInStream(info, numByte);
             }
          }
@@ -113,11 +115,15 @@ public class cg_Connection extends Thread implements bg_Constants{
     */
    public void writeOut(byte[] line){
       //Write out through stream
-      try{
-         out.write(line);
-      }catch(IOException e){
-         e.printStackTrace();
-         System.exit(1);
+      while(true){
+         try{
+            out.write(line);
+         }catch(IOException e){
+            //e.printStackTrace();
+            //System.exit(1);
+            continue;
+         }
+         break;
       }
    }
    

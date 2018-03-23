@@ -479,6 +479,8 @@ public class g_World extends bg_World{
                   sleep(sleepTime);
             }catch(InterruptedException e){}
             beat++;
+            
+            System.out.println("Beenis");
          }
       }
    }

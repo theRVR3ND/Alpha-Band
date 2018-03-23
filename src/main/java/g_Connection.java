@@ -74,10 +74,12 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public void run(){
       try{
+         //in.read(new byte[Byte.MAX_VALUE]);
+         
          while(true){
             //Pause a little
             try{
-               Thread.sleep(30);
+               Thread.sleep(100);
             }catch(InterruptedException e){}
             
             //Receive input stream from client
@@ -116,6 +118,9 @@ public class g_Connection extends Thread implements bg_Constants{
                //Send it!
                writeOut(toSend);
                sentBallot = true;
+               try{
+                  Thread.sleep(100);
+               }catch(InterruptedException e){}
             
             //Send game world updates
             }else{// if(g_Server.server.getWorld().getPlayer(clientID) != null){
@@ -151,6 +156,11 @@ public class g_Connection extends Thread implements bg_Constants{
                         toSend[i++] = b;
                   }
                   
+                  System.out.print("sending:");
+                  for(byte l : toSend)
+                    System.out.print(l + " ");
+                  System.out.println();
+                  
                   writeOut(toSend);
                   
                   try{
@@ -161,7 +171,7 @@ public class g_Connection extends Thread implements bg_Constants{
             }
          }
       }catch(Exception e){
-         //e.printStackTrace();
+         e.printStackTrace();
       
       }finally{
          //Disconnected
@@ -259,9 +269,14 @@ public class g_Connection extends Thread implements bg_Constants{
     */
    public void writeOut(byte[] line){
       //Write out through stream
-      try{
-         out.write(line);
-      }catch(IOException e){}
+      while(true){
+         try{
+            out.write(line);
+         }catch(IOException e){
+            continue;
+         }
+         break;
+      }
    }
    
    //Return byte[] formatted message ready for sending across *the web*
