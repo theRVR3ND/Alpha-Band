@@ -205,6 +205,9 @@ public class cg_Connection extends Thread implements bg_Constants{
       
       //Start vote
       }else if(info[0] == VOTE){
+         for(byte i : info)
+            System.out.print(i + " ");
+         System.out.println("<adsfasdfa");
          ui_Menu.vote.startVote(info);
       
       //Process incomming notes for user to play
@@ -218,7 +221,7 @@ public class cg_Connection extends Thread implements bg_Constants{
       
       //Play note press by other player(s)
       }else if(info[0] == ACTION){
-         
+         cg_MIDI.playNote(info[1], info[0]);
       
       //Uh oh!
       }else{

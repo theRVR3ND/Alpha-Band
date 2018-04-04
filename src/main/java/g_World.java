@@ -158,6 +158,7 @@ public class g_World extends bg_World{
          //Entity's data
          byte[] comp = dataToBytes(entities.get(key).getData(new LinkedList<Object>()));
          
+         /*
          //Check if we just need delta
          if(snapshots.get(clientID).containsKey(key)){
             byte[] delta = findDelta(snapshots.get(clientID).get(key), comp);
@@ -168,6 +169,17 @@ public class g_World extends bg_World{
          }else{
             snapshots.get(clientID).put(key, comp);
          }
+         */
+         
+         byte[] delta;
+         if(snapshots.get(clientID).containsKey(key)){
+            delta = findDelta(snapshots.get(clientID).get(key), comp);
+         }else{
+            delta = findDelta(new byte[comp.length], comp);
+         }
+         //Update snapshot
+         snapshots.get(clientID).put(key, comp);
+         comp = delta;
          
          comp = compress(comp);
          
@@ -209,7 +221,7 @@ public class g_World extends bg_World{
    
    public void startVote(){
       //songStart = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      songStartTime = (long)(System.currentTimeMillis() + 30000);//TEMPORARY
+      songStartTime = (long)(System.currentTimeMillis() + 45000);//TEMPORARY
       
       HashSet<Byte> toVoteOn = new HashSet<>();
       
@@ -253,7 +265,7 @@ public class g_World extends bg_World{
       
       //Assign instruments to players
       //if(super.gamemode == COMPETITION){
-      if(true){
+      if(false){
          //Competition - every player plays piano
          for(Short key : entities.keySet()){
             if(entities.get(key) instanceof bg_Player && entities.get(key) != infoEnt){
@@ -479,8 +491,6 @@ public class g_World extends bg_World{
                   sleep(sleepTime);
             }catch(InterruptedException e){}
             beat++;
-            
-            System.out.println("Beenis");
          }
       }
    }

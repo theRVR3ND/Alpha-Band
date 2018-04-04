@@ -96,7 +96,7 @@ public class cg_World extends bg_World{
       byte spacing = (byte)(fm.getHeight() * 1.2);
       
       //Draw player info
-      toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
+      toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()] + " " + clientPlayer.getInstrument();
       g2.drawString(toDraw, 40, spacing);
       
       //Draw all players' info

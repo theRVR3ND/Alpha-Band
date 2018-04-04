@@ -79,7 +79,7 @@ public class g_Connection extends Thread implements bg_Constants{
          while(true){
             //Pause a little
             try{
-               Thread.sleep(100);
+               Thread.sleep(500);
             }catch(InterruptedException e){}
             
             //Receive input stream from client
@@ -92,7 +92,7 @@ public class g_Connection extends Thread implements bg_Constants{
             }
             
             //Send client vote info
-            if(g_Server.server.getWorld().getCurrVote() != null && !sentBallot){
+            if(!sentBallot){
                byte[] toSend = new byte[Byte.MAX_VALUE];
                byte[][] currVote = g_Server.server.getWorld().getCurrVote();
                byte ind = 9;
@@ -106,17 +106,25 @@ public class g_Connection extends Thread implements bg_Constants{
                   toSend[i + 1] = bytes[i];
                
                //Add all songs on ballot into toSend
-               for(byte r = 0; r < currVote.length; r++){
-                  if(currVote[r][0] == -1)
-                     continue;
-                  byte[] songInfo = g_Server.server.getWorld().getSongList().get(currVote[r][0]);
-                  for(byte i = 0; i < songInfo.length; i++){
-                     toSend[ind++] = songInfo[i];
+               if(currVote != null){
+                  for(byte r = 0; r < currVote.length; r++){
+                     if(currVote[r][0] == -1)
+                        continue;
+                     byte[] songInfo = g_Server.server.getWorld().getSongList().get(currVote[r][0]);
+                     for(byte i = 0; i < songInfo.length; i++){
+                        toSend[ind++] = songInfo[i];
+                     }
                   }
                }
                
+               //Clear note cache
+               //g_Server.server.getWorld().getNotes(clientID);
+               
                //Send it!
                writeOut(toSend);
+               for(byte i : toSend)
+                  System.out.print(i + " ");
+               System.out.println("<lll");
                sentBallot = true;
                try{
                   Thread.sleep(100);
@@ -237,10 +245,15 @@ public class g_Connection extends Thread implements bg_Constants{
          g_Server.server.getWorld().processAction(clientID, info[1], time);
          
          //Send action to other clients for playing
-         byte[] bytes = new byte[] {ACTION, g_Server.server.getWorld().getPlayer(clientID).getInstrument(), info[1]};
+         byte[] bytes = new byte[] {
+            ACTION,
+            g_Server.server.getWorld().getPlayer(clientID).getInstrument(),
+            info[1]
+         };
          for(byte i = 0; i < g_Server.server.getClients().size(); i++){
-            if(i != clientID){
+            if(this != g_Server.server.getClients().get(i)){
                g_Server.server.getClients().get(i).writeOut(bytes);
+               System.out.println("S: " + i);
             }
          }
          
@@ -248,7 +261,7 @@ public class g_Connection extends Thread implements bg_Constants{
       }else if(info[0] == MESSAGE){
          String message =
             "[" + g_Server.server.getWorld().getPlayer(clientID).getName() + "]: " +
-            (new String(info, 1, info.length - 1)).trim();
+            new String(info, 1, numByte - 1);
          
          byte[] bytes = concatenateMessage(message);
          

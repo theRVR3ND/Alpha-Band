@@ -155,26 +155,30 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       //Action key
       if(chatMessage == null){
          //Trigger new note
-         if(noteMap.containsKey(e.getKeyCode())){
-            if(!currNotes.contains(noteMap.get(e.getKeyCode()))){
-               //Send to server and client worlds
-               byte[] bytes = bg_World.longToBytes(e.getWhen());
-               connection.writeOut(new byte[] {
-                  ACTION,
-                  noteMap.get(e.getKeyCode()),
-                  bytes[0],
-                  bytes[1],
-                  bytes[2],
-                  bytes[3],
-                  bytes[4],
-                  bytes[5],
-                  bytes[6],
-                  bytes[7]
-               });
-               world.processAction(noteMap.get(e.getKeyCode()), e.getWhen());
-               
-               currNotes.add(noteMap.get(e.getKeyCode()));
-            }
+         if(noteMap.containsKey(e.getKeyCode()) &&
+            !currNotes.contains(noteMap.get(e.getKeyCode())) &&
+            System.currentTimeMillis() > world.getSongStartTime()){
+            
+            //Send to server world
+            byte[] bytes = bg_World.longToBytes(e.getWhen());
+            
+            connection.writeOut(new byte[] {
+               ACTION,
+               (byte)(noteMap.get(e.getKeyCode()) + world.getKeyShift()),
+               bytes[0],
+               bytes[1],
+               bytes[2],
+               bytes[3],
+               bytes[4],
+               bytes[5],
+               bytes[6],
+               bytes[7]
+            });
+            
+            //Send to client world
+            world.processAction(noteMap.get(e.getKeyCode()), e.getWhen());
+            
+            currNotes.add(noteMap.get(e.getKeyCode()));
          }
       }
    }
@@ -193,9 +197,10 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          }catch(InterruptedException ex){}
          
          byte[] bytes = bg_World.longToBytes(e.getWhen());
+         
          connection.writeOut(new byte[] {
             ACTION,
-            (byte)-noteMap.get(e.getKeyCode()),
+            (byte)(-noteMap.get(e.getKeyCode()) - world.getKeyShift()),
             bytes[0],
             bytes[1],
             bytes[2],
