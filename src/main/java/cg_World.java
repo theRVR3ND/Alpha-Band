@@ -88,16 +88,12 @@ public class cg_World extends bg_World{
       //Default writing font
       g2.setFont(new Font(
          "Century Gothic",
-         Font.PLAIN,
+         Font.BOLD,
          util_Utilities.getFontSize()
       ));
       fm = g2.getFontMetrics();
       
       byte spacing = (byte)(fm.getHeight() * 1.2);
-      
-      //Draw player info
-      toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()] + " " + clientPlayer.getInstrument();
-      g2.drawString(toDraw, 40, spacing);
       
       //Draw all players' info
       int shiftInd = 1;
@@ -141,7 +137,7 @@ public class cg_World extends bg_World{
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-      g2.drawString(songStartTime + " " + currMilliBeats + " " + notes.size(), 100, 100);
+      g2.drawString(cg_Panel.getConnection().getClientID() + " " + currMilliBeats + " " + notes.size(), 100, 100);
       int s = 0;
       for(byte i = 0; i < notes.size(); i++){
          try{
@@ -155,7 +151,7 @@ public class cg_World extends bg_World{
                   break;
                }
             }
-            g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
+            //g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
             //Figure out dimensions and location of note
             final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
                         drawY = (short)(1 - (note.getBeat() - currMilliBeats) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
@@ -164,15 +160,22 @@ public class cg_World extends bg_World{
             //Render
             g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
             g2.fillRect(drawX - NOTE_WIDTH / 2, drawY, NOTE_WIDTH, drawHeight);
-            g2.drawString(drawX - NOTE_WIDTH / 2 + " " + drawY, 500, i * 100 + 100);
+            //g2.drawString(drawX - NOTE_WIDTH / 2 + " " + drawY, 500, i * 100 + 100);
             //Get rid of note if it ded
             if(currMilliBeats > note.getBeat() + 2){
-               //notes.remove(note);
+               notes.remove(note);
                //System.out.println(notes.size() + "");
             }
          }catch(ConcurrentModificationException e){
             System.out.println("ow");
          }
+      }
+      
+      //Draw player info
+      if(currMilliBeats > 0){
+         g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
+         toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
+         g2.drawString(toDraw, 40, spacing);
       }
       
       //Show points messages
@@ -369,6 +372,7 @@ public class cg_World extends bg_World{
    //Spawn new notes from noteData
    public void processNotes(byte[] noteData){
       byte i = 0;
+      /*
       while(i < noteData.length){
          //Spawn new note
          notes.add(new bg_Note(
@@ -377,6 +381,11 @@ public class cg_World extends bg_World{
             noteData[i + 3]
          ));
          i += 4;
+      }
+      */
+      final short beat = bytesToShort(noteData, (byte)(noteData.length - 2));
+      while(i < noteData.length - 2){
+         notes.add(new bg_Note(noteData[i++], beat, (byte)1));
       }
    }
 }

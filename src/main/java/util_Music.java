@@ -75,8 +75,9 @@ public class util_Music{
    public static void main(String[] args){
       ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
       final short seed = (short)(Math.random() * Short.MAX_VALUE);
+      final byte difficulty = 2;
       for(byte i = 0; i < NUM_INSTRUMENTS; i++){
-         song.add(generatePart((byte)2, seed, i));
+         song.add(generatePart(difficulty, seed, i));
       }
       
       //Print song
@@ -96,7 +97,7 @@ public class util_Music{
          System.out.println();
       }
       
-      playSong(song);
+      playSong(song, generateBPM(difficulty, seed));
    }
    
    public static byte generateBPM(byte difficulty, short seed){
@@ -126,11 +127,6 @@ public class util_Music{
       
       HashMap<Short, HashSet<Byte>> song = new HashMap<>();
       
-      //Add neccessary song info into song data structure
-      HashSet<Byte> info = new HashSet<Byte>();
-      info.add(bpm);
-      song.put((short)0, info);
-      
       //Generate each measure's pentatonic chord index
       ArrayList<Byte> pentIndex = new ArrayList<>(songLength / measureLength);
       for(byte i = 0; i < songLength / measureLength; i++){
@@ -140,7 +136,7 @@ public class util_Music{
       //---Generate notes based on instrument---//sammy was here
       //PIANO
       if(instrument == PIANO){
-         for(short beat = 1; beat < songLength; beat++){ 
+         for(short beat = 0; beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
             /*
             final byte root = (byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)]);
@@ -176,7 +172,7 @@ public class util_Music{
          if(cymbalBeat % beatInterval == 0)
             cymbalBeat--;
          
-         for(short beat = 1; beat < songLength; beat++){
+         for(short beat = 0; beat < songLength; beat++){
             HashSet<Byte> chord = new HashSet<>();
             //Cymbal
             if(beat % measureLength == cymbalBeat){
@@ -204,7 +200,7 @@ public class util_Music{
       }else if(instrument == BASS){
          byte root = (byte)(key + PENTATONICS[scale / 2][0]);
          
-         for(short beat = 1; beat < songLength; beat++){ 
+         for(short beat = 0; beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
             
             if(beat % measureLength == 0)
@@ -244,8 +240,8 @@ public class util_Music{
       return song;
    }
    
-   public static void playSong(ArrayList<HashMap<Short, HashSet<Byte>>> song){
-      MusicPlayer mp = new MusicPlayer(song);
+   public static void playSong(ArrayList<HashMap<Short, HashSet<Byte>>> song, final byte bpm){
+      MusicPlayer mp = new MusicPlayer(song, bpm);
       mp.start();
    }
    
@@ -258,9 +254,12 @@ public class util_Music{
       
       private final ArrayList<HashMap<Short, HashSet<Byte>>> song;
       
-      public MusicPlayer(ArrayList<HashMap<Short, HashSet<Byte>>> song){
+      private final short bpm;
+      
+      public MusicPlayer(ArrayList<HashMap<Short, HashSet<Byte>>> song, final byte bpm){
          //Initialize stuff
          this.song = song;
+         this.bpm = (short)(2 * bpm);
       
          try{
             Synthesizer synth = MidiSystem.getSynthesizer();
@@ -281,16 +280,13 @@ public class util_Music{
       
       @Override
       public void run(){
-         //Figure out song metrics
-         final short bpm = (short)(2 * (Byte)(song.get(0).get((short)0).iterator().next()));
-         
          //Track currently playing notes
          ArrayList<HashSet<Byte>> currNotes = new ArrayList<>();
          for(byte i = 0; i < song.size(); i++)
             currNotes.add(new HashSet<Byte>());
          
          //Progress through each beat
-         short beat = 1;
+         short beat = 0;
          while(true){
             //Track start time of loop
             final long startTime = System.currentTimeMillis();

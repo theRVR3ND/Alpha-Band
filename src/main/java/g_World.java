@@ -20,9 +20,11 @@ public class g_World extends bg_World{
    
    private static ArrayList<byte[]> songList;
    
-   private HashMap<Byte, HashSet<bg_Note>> notes; //Key: instrument number, Value: note buffer
+   //private HashMap<Byte, HashSet<bg_Note>> notes; //Key: instrument number, Value: note buffer
    
-   private HashMap<Byte, HashSet<byte[]>> noteData; //Notes to send to client
+   private ArrayList<HashMap<Short, HashSet<Byte>>> song; //All notes ever
+   
+   private ArrayList<HashMap<Short, byte[]>> noteData; //Note data to send to client
    
    /**
     * Master gamestate. Holds all current entity states.
@@ -37,7 +39,7 @@ public class g_World extends bg_World{
     */
    private HashMap<Byte, HashMap<Short, byte[]>> snapshots;
    
-   private NoteSpawner noteSpawner;
+   //private NoteSpawner noteSpawner;
    
    /**
     * Constructor.
@@ -48,13 +50,13 @@ public class g_World extends bg_World{
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
-      notes = new HashMap<Byte, HashSet<bg_Note>>();
-      noteData = new HashMap<Byte, HashSet<byte[]>>();
+      //notes = new HashMap<Byte, HashSet<bg_Note>>();
+      //noteData = new HashMap<Byte, HashSet<byte[]>>();
       
-      for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
-         notes.put(i, new HashSet<bg_Note>());
-         noteData.put(i, new HashSet<byte[]>());
-      }
+      //for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
+      //   notes.put(i, new HashSet<bg_Note>());
+      //   noteData.put(i, new HashSet<byte[]>());
+      //}
       
       this.serverDifficulty = serverDifficulty;
       
@@ -119,7 +121,7 @@ public class g_World extends bg_World{
       }catch(ConcurrentModificationException e){}
       
       //Start game
-      if(System.currentTimeMillis() > songStartTime - 5000){
+      if(System.currentTimeMillis() > songStartTime - 10000){
          startSong();
          songStartTime = Long.MAX_VALUE;
       }
@@ -210,11 +212,24 @@ public class g_World extends bg_World{
    }
    
    //Should only be requested by single player who is playing instrument
-   public HashSet<byte[]> getNotes(byte clientID){
+   public byte[] getNotes(byte clientID){
+      /*
       final byte instrument = getPlayer(clientID).getInstrument();
       HashSet<byte[]> ret = noteData.get(instrument);
       noteData.put(instrument, new HashSet<byte[]>());
       return ret;
+      */
+      //final byte instrument = getPlayer(clientID).getInstrument();
+      //System.out.println("u" + noteData.get(instrument).size());
+      //return noteData.remove(instrument);
+      final byte instrument = getPlayer(clientID).getInstrument();
+      if(noteData != null){
+         if(noteData.get(instrument).remove(super.getCurrBeat()) == null)
+            System.out.println("ads" + super.getCurrBeat());
+         return noteData.get(instrument).remove(super.getCurrBeat());
+      }else{
+         return null;
+      }
    }
    
    //********MUTATORS********//
@@ -306,7 +321,7 @@ public class g_World extends bg_World{
       byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));//Index in currVote
       
       //Generate all song parts
-      ArrayList<HashMap<Short, HashSet<Byte>>> song = new ArrayList<>();
+      song = new ArrayList<>();
       byte scale = 0, //Song's scale
              key = 0; //Song's key
       //if(choice == currVote.length - 1){//Randomly generated song
@@ -323,12 +338,38 @@ public class g_World extends bg_World{
       
       }
       
+      //Translate song into bytes for sending
+      noteData = new ArrayList<>();
+      for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
+         noteData.add(new HashMap<Short, byte[]>());
+         for(short beat = 0; beat < 100; beat++){//CHANGE LATER
+            final byte numNotes; //Number of notes played on beat
+            if(song.get(i).get(beat) != null){
+               numNotes = (byte)song.get(i).get(beat).size();
+            }else{
+               continue;
+            }
+            byte[] notes = new byte[numNotes + 2];
+            
+            byte[] bytes = shortToBytes(beat);
+            notes[notes.length - 2] = bytes[0];
+            notes[notes.length - 1] = bytes[1];
+            
+            byte n = 0;
+            for(Byte note : song.get(i).get(beat)){
+               notes[n++] = note;
+            }
+            
+            noteData.get(i).put(beat, notes);
+         }
+      }
+      
       //"Send" song info to clients
       infoEnt.setColor(new Color(bpm, scale, key));
       
       //Start spawning notes
-      noteSpawner = new NoteSpawner(song);
-      noteSpawner.start();
+      //noteSpawner = new NoteSpawner(song);
+      //noteSpawner.start();
    }
    
    /**
@@ -377,11 +418,11 @@ public class g_World extends bg_World{
       final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
       final bg_Player player = getPlayer(clientID);
       float closestGap = Float.MAX_VALUE;
-      
+      /*
       //Key pressed
       if(noteValue > 0){
          //Find closest note to current beat
-         for(bg_Note note : notes.get(player.getInstrument())){
+         for(bg_Note note : song.get(player.getInstrument())){
             if(note.getNote() == noteValue){
                closestGap = Math.min(closestGap, Math.abs(actionBeat - note.getBeat()));
             }
@@ -402,7 +443,7 @@ public class g_World extends bg_World{
             }
          }
       }
-      
+      */
       //Award points
       if(closestGap < 1){
          player.setScore((short)(player.getScore() + super.calculateScore(closestGap, player.getBonus())));
@@ -412,6 +453,7 @@ public class g_World extends bg_World{
    /**
     * THIS IS A THING THAT SPAWNS NOTES. YES IT IS UGLY BUT IT IS MINE. SO BACK OFF.
     */
+   /*
    private class NoteSpawner extends Thread{
       
       private final ArrayList<HashMap<Short, HashSet<Byte>>> song;
@@ -477,9 +519,11 @@ public class g_World extends bg_World{
                   
                   //Spawn note
                   notes.get(instrument).add(new bg_Note(note, beat, duration));
-                  
+                  System.out.println("spawning" + note + " " + beat + " " + duration);
                   //Byte data of note (to send to client)
                   byte[] bytes = shortToBytes(beat);
+                  if(!noteData.containsKey(instrument))
+                     noteData.put(instrument, new HashSet<byte[]>());
                   noteData.get(instrument).add(new byte[] {note, bytes[0], bytes[1], duration});
                }
             }
@@ -494,4 +538,5 @@ public class g_World extends bg_World{
          }
       }
    }
+   */
 }

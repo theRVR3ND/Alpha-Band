@@ -205,9 +205,9 @@ public class cg_Connection extends Thread implements bg_Constants{
       
       //Start vote
       }else if(info[0] == VOTE){
-         for(byte i : info)
-            System.out.print(i + " ");
-         System.out.println("<adsfasdfa");
+         //for(byte i : info)
+         //   System.out.print(i + " ");
+         //System.out.println("<adsfasdfa");
          ui_Menu.vote.startVote(info);
       
       //Process incomming notes for user to play
