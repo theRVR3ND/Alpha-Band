@@ -224,8 +224,8 @@ public class g_World extends bg_World{
       //return noteData.remove(instrument);
       final byte instrument = getPlayer(clientID).getInstrument();
       if(noteData != null){
-         if(noteData.get(instrument).remove(super.getCurrBeat()) == null)
-            System.out.println("ads" + super.getCurrBeat());
+         //if(noteData.get(instrument).remove(super.getCurrBeat()) == null)
+            //System.out.println(super.getCurrBeat() + " " + noteData.get(instrument));
          return noteData.get(instrument).remove(super.getCurrBeat());
       }else{
          return null;
@@ -235,8 +235,8 @@ public class g_World extends bg_World{
    //********MUTATORS********//
    
    public void startVote(){
-      //songStart = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      songStartTime = (long)(System.currentTimeMillis() + 45000);//TEMPORARY
+      //super.songStart = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
+      super.songStartTime = (long)(System.currentTimeMillis() + 45000);//TEMPORARY
       
       HashSet<Byte> toVoteOn = new HashSet<>();
       
@@ -327,7 +327,7 @@ public class g_World extends bg_World{
       //if(choice == currVote.length - 1){//Randomly generated song
       if(true){
          final short seed = (short)(Math.random() * Short.MAX_VALUE);
-         bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
+         this.bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
          scale = util_Music.chooseScale(seed);
          key = util_Music.chooseKey(seed);
          

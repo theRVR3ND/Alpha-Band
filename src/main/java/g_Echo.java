@@ -29,7 +29,9 @@ public class g_Echo implements Runnable, bg_Constants{
          try{
             socket = new ServerSocket(ECHO_PORT);
             echo = this;
-         }catch(IOException e){}
+         }catch(IOException e){
+            e.printStackTrace();
+         }
       }
    }
    

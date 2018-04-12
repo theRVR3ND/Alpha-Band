@@ -71,13 +71,12 @@ public abstract class bg_World implements bg_Constants{
     */
    public void think(final byte deltaTime){
       //Limit rate of update
-      /*
       if(deltaTime < 1000.0 / THINK_RATE){
          try{
             Thread.sleep((int)(1000.0 / THINK_RATE - deltaTime));
          }catch(InterruptedException e){}
       }
-      */
+      
       //Run think for all entities
       try{
          for(Short key : entities.keySet()){
@@ -89,6 +88,7 @@ public abstract class bg_World implements bg_Constants{
       if(songStartTime < System.currentTimeMillis()){
          currBeat = (short)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       }
+      System.out.println(this.toString() + " " + currBeat + " " + bpm + " " + songStartTime);
    }
    
    /**
