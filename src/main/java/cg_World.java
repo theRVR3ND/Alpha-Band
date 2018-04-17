@@ -338,10 +338,10 @@ public class cg_World extends bg_World{
          }else{
             pointsMessage = -1;
             pointsMessageTimeout = -1;
-            System.out.print(closestGap + " " + noteValue + " /");
-            for(bg_Note note : notes)
-               System.out.print(note + " ");
-            System.out.println();
+            //System.out.print(closestGap + " " + noteValue + " /");
+            //for(bg_Note note : notes)
+            //   System.out.print(note + " ");
+            //System.out.println();
             return;
          }
          

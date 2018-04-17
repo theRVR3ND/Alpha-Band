@@ -86,7 +86,6 @@ public class g_Connection extends Thread implements bg_Constants{
          }catch(InterruptedException e){}
          
          while(true){
-            
             //Receive input stream from client
             if(in.available() > 0){
                byte[] info = new byte[Byte.MAX_VALUE];
@@ -127,7 +126,7 @@ public class g_Connection extends Thread implements bg_Constants{
                
                sentBallot = true;
                try{
-                  Thread.sleep(100);
+                  Thread.sleep(200);
                }catch(InterruptedException e){}
             
             //Send game world updates
@@ -147,7 +146,7 @@ public class g_Connection extends Thread implements bg_Constants{
                   writeOut(outLine);
                   
                   try{
-                     Thread.sleep(100);
+                     Thread.sleep(200);
                   }catch(InterruptedException e){}
                }
                
@@ -159,6 +158,10 @@ public class g_Connection extends Thread implements bg_Constants{
                   for(byte i = 0; i < noteData.length; i++)
                      toSend[i + 1] = noteData[i];
                   writeOut(toSend);
+                  
+                  try{
+                     Thread.sleep(200);
+                  }catch(InterruptedException e){}
                }
             }
          }
