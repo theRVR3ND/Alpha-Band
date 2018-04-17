@@ -137,7 +137,7 @@ public class cg_World extends bg_World{
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-      g2.drawString(cg_Panel.getConnection().getClientID() + " " + currMilliBeats + " " + notes.size(), 100, 100);
+      g2.drawString(notes.size() + " " + keyShift, 100, 100);
       int s = 0;
       for(byte i = 0; i < notes.size(); i++){
          try{
@@ -151,10 +151,10 @@ public class cg_World extends bg_World{
                   break;
                }
             }
-            //g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
+            g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
             //Figure out dimensions and location of note
             final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
-                        drawY = (short)(1 - (note.getBeat() - currMilliBeats) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
+                        drawY = (short)((1 - (note.getBeat() - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
                    drawHeight = (short)(note.getDuration() * 50000 / cg_Client.SCREEN_HEIGHT);
             
             //Render
@@ -162,13 +162,10 @@ public class cg_World extends bg_World{
             g2.fillRect(drawX - NOTE_WIDTH / 2, drawY, NOTE_WIDTH, drawHeight);
             //g2.drawString(drawX - NOTE_WIDTH / 2 + " " + drawY, 500, i * 100 + 100);
             //Get rid of note if it ded
-            if(currMilliBeats > note.getBeat() + 2){
+            if(currMilliBeats > note.getBeat() + 2){//Maybe fix?
                notes.remove(note);
-               //System.out.println(notes.size() + "");
             }
-         }catch(ConcurrentModificationException e){
-            System.out.println("ow");
-         }
+         }catch(ConcurrentModificationException e){}
       }
       
       //Draw player info
@@ -303,7 +300,7 @@ public class cg_World extends bg_World{
    }
    
    public void processAction(final byte intervalIndex, final long actionTime){
-      if(keyShift == -1)
+      if(keyShift < 0)
          return;
       
       final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
@@ -341,6 +338,10 @@ public class cg_World extends bg_World{
          }else{
             pointsMessage = -1;
             pointsMessageTimeout = -1;
+            System.out.print(closestGap + " " + noteValue + " /");
+            for(bg_Note note : notes)
+               System.out.print(note + " ");
+            System.out.println();
             return;
          }
          

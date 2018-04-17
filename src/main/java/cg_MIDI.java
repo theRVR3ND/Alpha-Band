@@ -37,11 +37,11 @@ public class cg_MIDI{
       //Play note
       if(instrument == util_Music.DRUMS){ //Percussion
          channels[9].allNotesOff();
-         channels[9].noteOn(note, 90);
+         channels[9].noteOn(note, ui_Menu.settings.getVolume());
       
       }else{ //Other instrument
          channels[instrument].allNotesOff();
-         channels[instrument].noteOn(note, 100);
+         channels[instrument].noteOn(note, ui_Menu.settings.getVolume());
       }
    }
 }

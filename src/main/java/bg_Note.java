@@ -35,4 +35,8 @@ public class bg_Note{
    public byte getDuration(){
       return duration;
    }
+   
+   public String toString(){
+      return note + " " + beat + " " + duration + "/";
+   }
 }

@@ -85,10 +85,9 @@ public abstract class bg_World implements bg_Constants{
       }catch(ConcurrentModificationException e){}
       
       //Update currBeat count
-      if(songStartTime < System.currentTimeMillis()){
+      //if(songStartTime < System.currentTimeMillis()){
          currBeat = (short)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
-      }
-      System.out.println(this.toString() + " " + currBeat + " " + bpm + " " + songStartTime);
+      //}
    }
    
    /**

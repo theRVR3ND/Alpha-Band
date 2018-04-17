@@ -122,14 +122,9 @@ public class g_Connection extends Thread implements bg_Constants{
                   }
                }
                
-               //Clear note cache
-               //g_Server.server.getWorld().getNotes(clientID);
-               
                //Send it!
                writeOut(toSend);
-               // for(byte i : toSend)
-//                   System.out.print(i + " ");
-//                System.out.println("<lll");
+               
                sentBallot = true;
                try{
                   Thread.sleep(100);
@@ -159,38 +154,12 @@ public class g_Connection extends Thread implements bg_Constants{
                //Send note data
                byte[] noteData = g_Server.server.getWorld().getNotes(clientID);
                if(noteData != null){
-                  System.out.println("sending " + (noteData.length - 2) + " notes");
                   byte[] toSend = new byte[noteData.length + 1];
                   toSend[0] = NOTES;
                   for(byte i = 0; i < noteData.length; i++)
                      toSend[i + 1] = noteData[i];
                   writeOut(toSend);
                }
-               /*
-               HashSet<byte[]> noteData = g_Server.server.getWorld().getNotes(clientID);
-               if(noteData != null && !noteData.isEmpty()){
-                  byte[] toSend = new byte[noteData.size() * 4 + 1];
-                  
-                  toSend[0] = NOTES;
-                  
-                  byte i = 1;
-                  for(byte[] d : noteData){
-                     for(byte b : d)
-                        toSend[i++] = b;
-                  }
-                  
-                  System.out.print("sending:    " + noteData.size() + " " + toSend.length + ";;");
-                  for(byte l : toSend)
-                    System.out.print(l + " ");
-                  System.out.println();
-                  
-                  writeOut(toSend);
-                  
-                  try{
-                     Thread.sleep(100);
-                  }catch(InterruptedException e){}
-               }
-               //**/
             }
          }
       }catch(Exception e){
@@ -268,7 +237,6 @@ public class g_Connection extends Thread implements bg_Constants{
          for(byte i = 0; i < g_Server.server.getClients().size(); i++){
             if(this != g_Server.server.getClients().get(i)){
                g_Server.server.getClients().get(i).writeOut(bytes);
-               System.out.println("S: " + i);
             }
          }
          

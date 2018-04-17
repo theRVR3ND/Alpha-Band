@@ -87,6 +87,10 @@ public class ui_Settings extends ui_Menu implements MouseWheelListener{
       repaint();
    }
    
+   public short getVolume(){
+      return sliders[0].getValue();
+   }
+   
    /**
     * Process mouse click event. Write settings to file if
     * exiting menu.

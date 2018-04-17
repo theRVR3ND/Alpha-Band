@@ -121,9 +121,8 @@ public class g_World extends bg_World{
       }catch(ConcurrentModificationException e){}
       
       //Start game
-      if(System.currentTimeMillis() > songStartTime - 10000){
+      if(song == null && System.currentTimeMillis() > super.songStartTime - 10000){
          startSong();
-         songStartTime = Long.MAX_VALUE;
       }
    }
    
@@ -135,10 +134,6 @@ public class g_World extends bg_World{
    
    public ArrayList<byte[]> getSongList(){
       return songList;
-   }
-   
-   public long getSongStartTime(){
-      return songStartTime;
    }
    
    /**
@@ -213,20 +208,9 @@ public class g_World extends bg_World{
    
    //Should only be requested by single player who is playing instrument
    public byte[] getNotes(byte clientID){
-      /*
-      final byte instrument = getPlayer(clientID).getInstrument();
-      HashSet<byte[]> ret = noteData.get(instrument);
-      noteData.put(instrument, new HashSet<byte[]>());
-      return ret;
-      */
-      //final byte instrument = getPlayer(clientID).getInstrument();
-      //System.out.println("u" + noteData.get(instrument).size());
-      //return noteData.remove(instrument);
       final byte instrument = getPlayer(clientID).getInstrument();
       if(noteData != null){
-         //if(noteData.get(instrument).remove(super.getCurrBeat()) == null)
-            //System.out.println(super.getCurrBeat() + " " + noteData.get(instrument));
-         return noteData.get(instrument).remove(super.getCurrBeat());
+         return noteData.get(instrument).remove((short)(super.getCurrBeat() + 5));
       }else{
          return null;
       }
@@ -236,7 +220,7 @@ public class g_World extends bg_World{
    
    public void startVote(){
       //super.songStart = (long)(System.currentTimeMillis() + 180000); //3 minute timeout
-      super.songStartTime = (long)(System.currentTimeMillis() + 45000);//TEMPORARY
+      super.songStartTime = (long)(System.currentTimeMillis() + 15000);//TEMPORARY
       
       HashSet<Byte> toVoteOn = new HashSet<>();
       
@@ -403,8 +387,6 @@ public class g_World extends bg_World{
       
       //Start taking snapshots of world for client
       snapshots.put(controller, new HashMap<Short, byte[]>());
-      
-      //System.out.println(player);
    }
    
    /**
@@ -415,16 +397,18 @@ public class g_World extends bg_World{
    }
    
    public void processAction(final byte clientID, final byte noteValue, final long actionTime){
-      final float actionBeat = (float)((actionTime - songStartTime) / (60000.0 / bpm));
+      final float actionBeat = (float)((actionTime - super.songStartTime) / (60000.0 / bpm));
       final bg_Player player = getPlayer(clientID);
       float closestGap = Float.MAX_VALUE;
-      /*
+      
       //Key pressed
       if(noteValue > 0){
          //Find closest note to current beat
-         for(bg_Note note : song.get(player.getInstrument())){
-            if(note.getNote() == noteValue){
-               closestGap = Math.min(closestGap, Math.abs(actionBeat - note.getBeat()));
+         for(Short beat : song.get(player.getInstrument()).keySet()){
+            for(Byte note : song.get(player.getInstrument()).get(beat)){
+               if(note == noteValue){
+                  closestGap = Math.min(closestGap, Math.abs(actionBeat - beat));
+               }
             }
          }
          
@@ -437,106 +421,18 @@ public class g_World extends bg_World{
       //Key released
       }else{
          //Find closest note end to current beat
-         for(bg_Note note : notes.get(player.getInstrument())){
-            if(note.getNote() == noteValue){
-               closestGap = Math.min(closestGap, Math.abs(actionBeat - (note.getBeat() + note.getDuration())));
+         for(Short beat : song.get(player.getInstrument()).keySet()){
+            for(Byte note : song.get(player.getInstrument()).get(beat)){
+               if(note == noteValue){
+                  closestGap = Math.min(closestGap, Math.abs(actionBeat - beat));
+               }
             }
          }
       }
-      */
+      
       //Award points
       if(closestGap < 1){
          player.setScore((short)(player.getScore() + super.calculateScore(closestGap, player.getBonus())));
       }
    }
-   
-   /**
-    * THIS IS A THING THAT SPAWNS NOTES. YES IT IS UGLY BUT IT IS MINE. SO BACK OFF.
-    */
-   /*
-   private class NoteSpawner extends Thread{
-      
-      private final ArrayList<HashMap<Short, HashSet<Byte>>> song;
-      
-      public NoteSpawner(ArrayList<HashMap<Short, HashSet<Byte>>> song){
-         //Initialize stuff
-         this.song = song;
-      
-         //Print song
-         System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
-         for(short b = 1; b < 100; b++){
-            System.out.print(b + "\t-      ");
-            for(byte i = 0; i < song.size(); i++){
-               String toPrint = "";
-               if(song.get(i).get(b) != null){
-                  for(Byte n : song.get(i).get(b))
-                     toPrint += n + " ";
-               }
-               while(toPrint.length() < 14)
-                  toPrint += " ";
-               System.out.print(toPrint);
-            }
-            System.out.println();
-         }
-      }
-      
-      @Override
-      public void run(){
-         //Figure out song metrics
-         final short bpm = (short)(2 * (Byte)(song.get(0).get((short)0).iterator().next()));
-         
-         //Track currently "playing" notes
-         ArrayList<HashSet<Byte>> currNotes = new ArrayList<>();
-         for(byte i = 0; i < song.size(); i++)
-            currNotes.add(new HashSet<Byte>());
-         
-         //Progress through each beat
-         short beat = 1;
-         while(true){//YEAH CHANGE THIS LATER BUDDY
-            //Track start time of loop
-            final long startTime = System.currentTimeMillis();
-            
-            //Play chord for each instrument in current beat
-            for(byte instrument = 0; instrument < util_Music.NUM_INSTRUMENTS; instrument++){
-               //Current beat's notes to play
-               HashSet<Byte> chord = song.get(instrument).get(beat);
-               
-               if(chord == null){
-                  currNotes.get(instrument).clear();
-                  continue;
-               }
-               
-               for(Byte note : chord){
-                  //Check if note has already been spawned
-                  if(currNotes.get(instrument).contains(note))
-                     continue;
-                  
-                  //Find duration of note
-                  byte duration = 1;
-                  HashSet<Byte> nextChord = song.get(instrument).get((short)(beat + duration));
-                  while(nextChord != null && nextChord.contains(note))
-                     duration++;
-                  
-                  //Spawn note
-                  notes.get(instrument).add(new bg_Note(note, beat, duration));
-                  System.out.println("spawning" + note + " " + beat + " " + duration);
-                  //Byte data of note (to send to client)
-                  byte[] bytes = shortToBytes(beat);
-                  if(!noteData.containsKey(instrument))
-                     noteData.put(instrument, new HashSet<byte[]>());
-                  noteData.get(instrument).add(new byte[] {note, bytes[0], bytes[1], duration});
-               }
-            }
-            
-            //Wait until next beat
-            try{
-               int sleepTime = (int)(startTime + 60000.0 / bpm - System.currentTimeMillis());
-               if(sleepTime > 0)
-                  sleep(sleepTime);
-            }catch(InterruptedException e){}
-            beat++;
-         }
-      }
-   }
-   */
 }

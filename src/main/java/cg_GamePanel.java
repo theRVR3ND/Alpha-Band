@@ -161,7 +161,6 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
             
             //Send to server world
             byte[] bytes = bg_World.longToBytes(e.getWhen());
-            
             connection.writeOut(new byte[] {
                ACTION,
                (byte)(noteMap.get(e.getKeyCode()) + world.getKeyShift()),
@@ -192,12 +191,12 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
          world.processAction((byte)-noteMap.get(e.getKeyCode()), e.getWhen());
          
          //Send to server world
+         /*
          try{
             Thread.sleep(20);
          }catch(InterruptedException ex){}
-         
+         */
          byte[] bytes = bg_World.longToBytes(e.getWhen());
-         
          connection.writeOut(new byte[] {
             ACTION,
             (byte)(-noteMap.get(e.getKeyCode()) - world.getKeyShift()),

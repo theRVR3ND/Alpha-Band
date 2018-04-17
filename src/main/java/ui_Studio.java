@@ -17,7 +17,29 @@ public class ui_Studio extends ui_Menu implements KeyListener{
    
    private ui_Slider bpmSlider;
    
-   private byte currInstrument;
+   private byte key, scale, instrument;
+   
+   private static final String[] keys = new String[] {
+      "C",
+      "C#",
+      "D",
+      "D#",
+      "E",
+      "F",
+      "F#",
+      "G",
+      "G#",
+      "A",
+      "A#",
+      "B"
+   };
+   
+   private static final String[] scales = new String[] {
+      "Major",
+      "Blues",
+      "Minor",
+      "Harmonic"
+   };
    
    /**
     * Constructor.
@@ -25,9 +47,7 @@ public class ui_Studio extends ui_Menu implements KeyListener{
    public ui_Studio(){
       buttons = new ui_Button[] {
          new ui_Button("SAVE", 0.5f, 0.7f),
-         new ui_Button("BACK", 0.5f, 0.85f),
-         new ui_Button("PREV", 0.08f, 0.58f),
-         new ui_Button("NEXT", 0.21f, 0.58f)
+         new ui_Button("BACK", 0.5f, 0.85f)
       };
       
       nameTextbox = new ui_Textbox(
@@ -45,7 +65,9 @@ public class ui_Studio extends ui_Menu implements KeyListener{
       );
       
       //Initialize stuff
-      currInstrument = 0;
+      key = 0;
+      scale = 0;
+      instrument = 0;
       
       //Add key listener for entering player name
       this.setFocusable(true);
@@ -66,7 +88,29 @@ public class ui_Studio extends ui_Menu implements KeyListener{
       nameTextbox.draw(g2);
       bpmSlider.draw(g2);
       
-      g2.drawString(util_Music.instruments[currInstrument], 100, 100);
+      g2.setFont(new Font(
+         "Courier New",
+         Font.PLAIN,
+         util_Utilities.getFontSize()
+      ));
+      
+      g2.drawString(
+         "Key (- or +): " + keys[key],
+         (int)(0.02f * cg_Client.SCREEN_WIDTH),
+         (int)(0.25f * cg_Client.SCREEN_HEIGHT)
+      );
+      
+      g2.drawString(
+         "Scale (< or >): " + scales[scale],
+         (int)(0.02f * cg_Client.SCREEN_WIDTH),
+         (int)(0.3f * cg_Client.SCREEN_HEIGHT)
+      );
+      
+      g2.drawString(
+         "Instrument ([ or ]): " + util_Music.instruments[instrument],
+         (int)(0.02f * cg_Client.SCREEN_WIDTH),
+         (int)(0.35f * cg_Client.SCREEN_HEIGHT)
+      );
       
       g2.drawRect(
          (short)(0.34 * cg_Client.SCREEN_WIDTH),
@@ -93,18 +137,6 @@ public class ui_Studio extends ui_Menu implements KeyListener{
       //Redirect to main page
       }else if(buttons[1].isDown()){
          cg_Client.frame.setContentPane(ui_Menu.main);
-      
-      //Scroll to previous instrument
-      }else if(buttons[2].isDown()){
-         currInstrument--;
-         if(currInstrument < 0)
-            currInstrument = (byte)(util_Music.NUM_INSTRUMENTS - 1);
-      
-      //Scroll to next instrument
-      }else if(buttons[3].isDown()){
-         currInstrument++;
-         if(currInstrument >= util_Music.NUM_INSTRUMENTS )
-            currInstrument = 0;
       
       }else{
          nameTextbox.checkClick((short)e.getX(), (short)e.getY());
@@ -133,7 +165,40 @@ public class ui_Studio extends ui_Menu implements KeyListener{
    }
    
    public void keyPressed(KeyEvent e){
-      nameTextbox.keyPressed(e);
+      if(nameTextbox.isSelected()){
+         nameTextbox.keyPressed(e);
+      }else{
+         //Lower key
+         if(e.getKeyCode() == KeyEvent.VK_MINUS){
+            key--;
+            if(key < 0)
+               key = (byte)(keys.length - 1);
+         
+         //Raise key
+         }else if(e.getKeyCode() == KeyEvent.VK_EQUALS){
+            key = (byte)((key + 1) % keys.length);
+         
+         //Cycle left through scales
+         }else if(e.getKeyCode() == KeyEvent.VK_COMMA){
+            scale--;
+            if(scale < 0)
+               scale = (byte)(scales.length - 1);
+         
+         //Cycle right through scales
+         }else if(e.getKeyCode() == KeyEvent.VK_PERIOD){
+            scale = (byte)((scale + 1) % scales.length);
+         
+         //Cycle left through instruments
+         }else if(e.getKeyCode() == KeyEvent.VK_OPEN_BRACKET){
+            instrument--;
+            if(instrument < 0)
+               instrument = (byte)(util_Music.instruments.length - 1);
+         
+         //Cycle right through instruments
+         }else if(e.getKeyCode() == KeyEvent.VK_CLOSE_BRACKET){
+            instrument = (byte)((instrument + 1) % util_Music.instruments.length);
+         }
+      }
    }
    
    public void keyReleased(KeyEvent e){}
