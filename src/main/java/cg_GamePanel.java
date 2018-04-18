@@ -93,7 +93,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       //World rendering handled in cg_Renderer
       world.render(g2);
       
-      //Draw current depressed keys
+      //Draw keyboard keys
       g2.setFont(ui_Menu.defaultFont);
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       for(byte i = 0; i < noteMap.size(); i++){

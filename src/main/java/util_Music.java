@@ -141,9 +141,12 @@ public class util_Music{
             final byte root = (byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)]);
             
             //Pedal tone
+            /**/
             if(beat % measureLength == 0){
+               byte pentatonicIndex = pentIndex.get(beat / measureLength);
                for(byte i = 0; i < difficulty / 2 + 1; i++){
-                  chord.add((byte)(root + CHORDS[scale / 2][pentIndex.get(beat / measureLength)][i]));
+                  pentatonicIndex = (byte)((pentatonicIndex + 1) % PENTATONICS[scale / 2].length);
+                  chord.add((byte)(key + PENTATONICS[scale / 2][pentatonicIndex]));
                }
                chord.add((byte)(root));
             
@@ -152,10 +155,11 @@ public class util_Music{
                //chord.add((byte)(key + PENTATONICS[scale / 2][rand.nextInt(PENTATONICS[scale / 2].length)]));
                chord.add((byte)(key + INTERVALS[scale][rand.nextInt(INTERVALS[scale].length)]));
             }
-            /*
+            /**/
+            /**
             if(beat % 5 == 0)
                chord.add((byte)(key + 3));
-            */
+            /**/
             if(!chord.isEmpty())
                song.put(beat, chord);
          }
