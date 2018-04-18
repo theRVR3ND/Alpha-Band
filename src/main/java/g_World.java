@@ -286,11 +286,13 @@ public class g_World extends bg_World{
       //Figure out winner of vote
       byte highestVotes = 0;
       ArrayList<Byte> maxVotes = new ArrayList<>();
+      
       while(currVote == null){
          try{
             Thread.sleep(10);
          }catch(InterruptedException e){}
       }
+      
       for(byte i = 0; i < currVote.length; i++){
          if(currVote[i][1] == highestVotes){
             maxVotes.add(i);
@@ -348,9 +350,27 @@ public class g_World extends bg_World{
          }
       }
       
+      /**/
+      System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
+      for(short b = 1; b < 100; b++){
+         System.out.print(b + "\t-      ");
+         for(byte i = 0; i < song.size(); i++){
+            String toPrint = "";
+            if(song.get(i).get(b) != null){
+               for(Byte n : song.get(i).get(b))
+                  toPrint += n + " ";
+            }
+            while(toPrint.length() < 14)
+               toPrint += " ";
+            System.out.print(toPrint);
+         }
+         System.out.println();
+      }
+      /**/
+      
       //"Send" song info to clients
       infoEnt.setColor(new Color(bpm, scale, key));
-      
+      System.out.println("s: " + key + " " + scale);
       //Start spawning notes
       //noteSpawner = new NoteSpawner(song);
       //noteSpawner.start();
@@ -402,7 +422,7 @@ public class g_World extends bg_World{
       float closestGap = Float.MAX_VALUE;
       
       //Key pressed
-      if(noteValue > 0){
+      //if(noteValue > 0){
          //Find closest note to current beat
          for(Short beat : song.get(player.getInstrument()).keySet()){
             for(Byte note : song.get(player.getInstrument()).get(beat)){
@@ -417,7 +437,7 @@ public class g_World extends bg_World{
             player.setBonus((byte)(player.getBonus() + 1));
          else
             player.setBonus((byte)(0));
-      
+      /*
       //Key released
       }else{
          //Find closest note end to current beat
@@ -429,7 +449,7 @@ public class g_World extends bg_World{
             }
          }
       }
-      
+      */
       //Award points
       if(closestGap < 1){
          player.setScore((short)(player.getScore() + super.calculateScore(closestGap, player.getBonus())));

@@ -10,14 +10,22 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 public class ui_Studio extends ui_Menu implements KeyListener{
    
    private ui_Textbox nameTextbox; //Name of song
    
-   private ui_Slider bpmSlider;
+   private ui_Slider bpmSlider, pageSlider;
    
    private byte key, scale, instrument;
+   
+   private ArrayList<HashMap<Short, HashSet<Byte>>> song;   //Thing
+   
+   private final float areaX = 0.40f,
+                       areaY = 0.03f,
+                       areaW = 0.55f,
+                       areaH = 0.55f;
    
    private static final String[] keys = new String[] {
       "C",
@@ -64,10 +72,19 @@ public class ui_Studio extends ui_Menu implements KeyListener{
          (short)60, (short)210
       );
       
+      pageSlider = new ui_Slider(
+         "Page:",
+         areaX, 0.60f,
+         areaW, 0.02f,
+         (short)0, (short)5
+      );
+      
       //Initialize stuff
       key = 0;
       scale = 0;
       instrument = 0;
+      
+      song = new ArrayList<>();
       
       //Add key listener for entering player name
       this.setFocusable(true);
@@ -87,6 +104,7 @@ public class ui_Studio extends ui_Menu implements KeyListener{
       
       nameTextbox.draw(g2);
       bpmSlider.draw(g2);
+      pageSlider.draw(g2);
       
       g2.setFont(new Font(
          "Courier New",
@@ -112,13 +130,32 @@ public class ui_Studio extends ui_Menu implements KeyListener{
          (int)(0.35f * cg_Client.SCREEN_HEIGHT)
       );
       
+      //Sheet music area
       g2.drawRect(
-         (short)(0.34 * cg_Client.SCREEN_WIDTH),
-         (short)(0.03 * cg_Client.SCREEN_HEIGHT),
-         (short)(0.62 * cg_Client.SCREEN_WIDTH),
-         (short)(0.60 * cg_Client.SCREEN_HEIGHT)
+         (short)(areaX * cg_Client.SCREEN_WIDTH),
+         (short)(areaY * cg_Client.SCREEN_HEIGHT),
+         (short)(areaW * cg_Client.SCREEN_WIDTH),
+         (short)(areaH * cg_Client.SCREEN_HEIGHT)
       );
       
+      //Draw note letter things?
+      for(byte i = 0; i < 10; i++){
+         g2.drawString(
+            keys[(key + util_Music.INTERVALS[scale][i % util_Music.INTERVALS[scale].length]) % keys.length],
+            (short)(0.38 * cg_Client.SCREEN_WIDTH),
+            (short)((areaY + areaH - 0.0275 - 0.055 * i) * cg_Client.SCREEN_HEIGHT)
+         );
+      }
+      /*
+      for(byte i = 1; i < 10; i++){
+         g2.drawLine(
+            (short)(0.40 * cg_Client.SCREEN_WIDTH),
+            (short)((0.03 + 0.055 * i) * cg_Client.SCREEN_HEIGHT),
+            (short)(0.95 * cg_Client.SCREEN_WIDTH),
+            (short)((0.03 + 0.055 * i) * cg_Client.SCREEN_HEIGHT)
+         );
+      }
+      */
       repaint();
    }
    
@@ -150,10 +187,12 @@ public class ui_Studio extends ui_Menu implements KeyListener{
    
    public void mousePressed(MouseEvent e){
       bpmSlider.checkPress((short)e.getX(), (short)e.getY());
+      pageSlider.checkPress((short)e.getX(), (short)e.getY());
    }
    
    public void mouseReleased(MouseEvent e){
       bpmSlider.release();
+      pageSlider.release();
    }
    
    public void mouseMoved(MouseEvent e){
@@ -162,6 +201,7 @@ public class ui_Studio extends ui_Menu implements KeyListener{
    
    public void mouseDragged(MouseEvent e){
       bpmSlider.checkDrag((short)e.getX());
+      pageSlider.checkDrag((short)e.getX());
    }
    
    public void keyPressed(KeyEvent e){

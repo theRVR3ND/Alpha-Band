@@ -43,5 +43,6 @@ public class cg_MIDI{
          channels[instrument].allNotesOff();
          channels[instrument].noteOn(note, ui_Menu.settings.getVolume());
       }
+      System.out.println(note + "");
    }
 }

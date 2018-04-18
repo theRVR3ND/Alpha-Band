@@ -137,19 +137,24 @@ public class cg_World extends bg_World{
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-      g2.drawString(notes.size() + " " + keyShift, 100, 100);
-      int s = 0;
+      g2.drawString(notes.size() + " " + keyShift + " " + scale, 100, 100);
       for(byte i = 0; i < notes.size(); i++){
          try{
             bg_Note note = notes.get(i);
             
-            //Find key that correlates with note
-            byte scaleInd = 0;
+            //Find keyboard button that correlates with note
+            byte scaleInd = -1;
             for(byte j = 0; j < util_Music.INTERVALS[scale].length; j++){
                if(note.getNote() == keyShift + util_Music.INTERVALS[scale][j]){
                   scaleInd = j;
                   break;
                }
+            }
+            if(scaleInd == -1){
+               g2.setColor(Color.RED);
+               g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
+            g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
+               continue;
             }
             g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
             //Figure out dimensions and location of note
@@ -163,7 +168,8 @@ public class cg_World extends bg_World{
             //g2.drawString(drawX - NOTE_WIDTH / 2 + " " + drawY, 500, i * 100 + 100);
             //Get rid of note if it ded
             if(currMilliBeats > note.getBeat() + 2){//Maybe fix?
-               notes.remove(note);
+               notes.remove(i);
+               i--;
             }
          }catch(ConcurrentModificationException e){}
       }
@@ -312,7 +318,7 @@ public class cg_World extends bg_World{
       );
       
       //Key pressed
-      if(intervalIndex > 0){
+      //if(intervalIndex > 0){
          //Find closest note to current beat
          for(bg_Note note : notes){
             if(note.getNote() == noteValue){
@@ -338,10 +344,12 @@ public class cg_World extends bg_World{
          }else{
             pointsMessage = -1;
             pointsMessageTimeout = -1;
-            //System.out.print(closestGap + " " + noteValue + " /");
-            //for(bg_Note note : notes)
-            //   System.out.print(note + " ");
-            //System.out.println();
+            /*
+            System.out.print(closestGap + " " + noteValue + " /");
+            for(bg_Note note : notes)
+               System.out.print(note + " ");
+            System.out.println();
+            */
             return;
          }
          
@@ -352,7 +360,7 @@ public class cg_World extends bg_World{
             player.setBonus((byte)(0));
          
          pointsMessageTimeout = Byte.MAX_VALUE;
-         
+      /*
       //Key released
       }else{
          //Find closest note end to current beat
@@ -362,7 +370,7 @@ public class cg_World extends bg_World{
             }
          }
       }
-      
+      */
       //Award points
       if(closestGap < 1){
          currPoints = super.calculateScore(closestGap, player.getBonus());

@@ -16,7 +16,7 @@ public class util_Music{
    //********STATIC CONSTANTS********//
    /*
    private static final byte MAJOR = 0,
-                             BLUES = 1,
+                             BLUES = 1,            //Major Blues
                              MINOR = 2,
                           HARMONIC = 3,            //Harmoic minor
                         NUM_SCALES = 4;
@@ -39,33 +39,33 @@ public class util_Music{
    };
    
    public static final byte[][] INTERVALS = new byte[][] {
-      {0, 2, 4, 5, 7, 9,  11, 12},
-      {0, 3, 5, 6, 7, 10, 12},
-      {0, 2, 3, 5, 7, 9,  11, 12},
-      {0, 2, 3, 5, 7, 8,  11, 12}
+      {0, 2, 4, 5, 7, 9, 11}, //Major
+      {0, 2, 3, 4, 7, 9},     //Major Blues
+      {0, 2, 3, 5, 7, 9, 11}, //Minor
+      {0, 2, 3, 5, 7, 8, 11}  //Harmonic
    };
    
    private static final byte[][] PENTATONICS = new byte[][] {
-      {0, 2, 4, 7, 9,  12},   //Major pentatonic interval
-      {0, 3, 5, 7, 10, 12}    //Minor pentatonic
+      {0, 4, 7},  //Major pentatonic interval
+      {0, 3, 7}   //Minor pentatonic interval
    };
    
    //Chord intervals for pedal tones
    private static final byte[][][] CHORDS = new byte[][][] {
       {                 //In MusicSketchpad:
          {0, 7,  4},    //maj
-         {0, 12, 7},    //5
-         {0, 12, 0},    //oct
-         {0, 12, 7},    //5
+         {0, 11, 7},    //5
+         {0, 11, 0},    //oct
+         {0, 11, 7},    //5
          {0, 7,  3},    //m
          {0, 7,  4}     //maj
       },
       {
          {0, 7,  3},    //m
          {0, 7,  4},    //maj
-         {0, 12, 7},    //5
-         {0, 12, 0},    //oct
-         {0, 12, 7},    //5
+         {0, 11, 7},    //5
+         {0, 11, 0},    //oct
+         {0, 11, 7},    //5
          {0, 7,  3},    //m
       },
    };
@@ -136,7 +136,7 @@ public class util_Music{
       //---Generate notes based on instrument---//sammy was here
       //PIANO
       if(instrument == PIANO){
-         for(short beat = 0; beat < songLength; beat++){ 
+         for(short beat = (short)(measureLength / 2); beat < songLength; beat++){ 
             HashSet<Byte> chord = new HashSet<>();
             final byte root = (byte)(key + PENTATONICS[scale / 2][pentIndex.get(beat / measureLength)]);
             
@@ -149,7 +149,8 @@ public class util_Music{
             
             //Melody
             }else if(beat % beatInterval == 0){
-               chord.add((byte)(key + PENTATONICS[scale / 2][rand.nextInt(PENTATONICS[scale / 2].length)]));
+               //chord.add((byte)(key + PENTATONICS[scale / 2][rand.nextInt(PENTATONICS[scale / 2].length)]));
+               chord.add((byte)(key + INTERVALS[scale][rand.nextInt(INTERVALS[scale].length)]));
             }
             /*
             if(beat % 5 == 0)

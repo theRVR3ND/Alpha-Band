@@ -30,7 +30,7 @@ public class ui_Slider{
    /**
     * Range limit on slider value.
     */
-   private final short min, max;
+   private short min, max;
    
    /**
     * Slider's current value, from 0 to 1.
@@ -148,6 +148,14 @@ public class ui_Slider{
     */
    public void setValue(short val){
       this.val = (float)(val / (max - min * 1.0));
+   }
+   
+   public void setMinimum(short min){
+      this.min = min;
+   }
+   
+   public void setMaximum(short max){
+      this.max = max;
    }
    
    /**
