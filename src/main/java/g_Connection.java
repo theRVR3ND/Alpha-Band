@@ -234,8 +234,8 @@ public class g_Connection extends Thread implements bg_Constants{
          //Send action to other clients for playing
          byte[] bytes = new byte[] {
             ACTION,
-            g_Server.server.getWorld().getPlayer(clientID).getInstrument(),
-            info[1]
+            info[1],
+            g_Server.server.getWorld().getPlayer(clientID).getInstrument()
          };
          for(byte i = 0; i < g_Server.server.getClients().size(); i++){
             if(this != g_Server.server.getClients().get(i)){

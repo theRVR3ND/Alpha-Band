@@ -306,7 +306,7 @@ public class g_World extends bg_World{
       //Choose song out of all tied maximums
       byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));//Index in currVote
       
-      //Generate all song parts
+      //Generate/load song part for players
       song = new ArrayList<>();
       byte scale = 0, //Song's scale
              key = 0; //Song's key
@@ -318,10 +318,25 @@ public class g_World extends bg_World{
          key = util_Music.chooseKey(seed);
          
          for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
-            song.add(util_Music.generatePart(serverDifficulty, seed, i));
+            //Generate part for each different instrument
+            //if(super.gamemode == COMPETITION){
+            if(true){
+               song.add(util_Music.generatePart(serverDifficulty, seed, i));
+            
+            //Generate same part (piano) for each player
+            }else{
+               song.add(util_Music.generatePart(serverDifficulty, seed, util_Music.PIANO));
+            }
          }
       }else{//Load song
-      
+         /*
+         FINISH THIS STUFF LATER I GUESS
+         Scanner input = new Scanner(new String(
+            songList.get(choice),
+            4,
+            songList.get(choice)[3]
+         ) + );
+         */
       }
       
       //Translate song into bytes for sending
@@ -370,10 +385,6 @@ public class g_World extends bg_World{
       
       //"Send" song info to clients
       infoEnt.setColor(new Color(bpm, scale, key));
-      System.out.println("s: " + key + " " + scale);
-      //Start spawning notes
-      //noteSpawner = new NoteSpawner(song);
-      //noteSpawner.start();
    }
    
    /**

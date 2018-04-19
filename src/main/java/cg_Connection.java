@@ -69,7 +69,7 @@ public class cg_Connection extends Thread implements bg_Constants{
             }
          }
       }catch(IOException e){
-         e.printStackTrace();
+         //e.printStackTrace();
       
       }finally{
          //Exit out to menu
@@ -221,7 +221,7 @@ public class cg_Connection extends Thread implements bg_Constants{
       
       //Play note press by other player(s)
       }else if(info[0] == ACTION){
-         cg_MIDI.playNote(info[1], info[0]);
+         cg_MIDI.playNote(info[1], info[2]);
       
       //Uh oh!
       }else{
