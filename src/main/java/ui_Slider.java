@@ -35,7 +35,7 @@ public class ui_Slider{
    /**
     * Slider's current value, from 0 to 1.
     */
-   private float val;
+   private double val;
    
    /**
     * Current "is being dragged by mouse" state.
@@ -61,7 +61,7 @@ public class ui_Slider{
       this.h = h;
       this.min = min;
       this.max = max;
-      this.val = 0.5f;
+      this.val = 0.5;
       dragging = false;
    }
    
@@ -141,13 +141,21 @@ public class ui_Slider{
       return (short)(min + val * (max - min));
    }
    
+   public short getMinimum(){
+      return min;
+   }
+   
+   public short getMaximum(){
+      return max;
+   }
+   
    /**
     * Set slider's value.
     * 
     * @param val                 New value to set to.
     */
    public void setValue(short val){
-      this.val = (float)(val / (max - min * 1.0));
+      this.val = (double)((val - min) / (max - min * 1.0));
    }
    
    public void setMinimum(short min){
@@ -181,7 +189,7 @@ public class ui_Slider{
     */
    public void checkDrag(short pX){
       if(dragging){
-         val = (float)((1.0 * pX - getX()) / getWidth());
+         val = (double)((1.0 * pX - getX()) / getWidth());
          if(val < 0)
             val = 0;
          else if(val > 1)

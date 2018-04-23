@@ -16,6 +16,15 @@ public class cg_MIDI{
    
    private static Instrument[] instruments;
    
+   private static final byte[] volumes = new byte[] { //Volume balancing array
+      75, //Piano
+      55, //Guitar
+      85, //Drums
+      65, //Bass
+      30, //Distorted Guitar
+      50  //Agogo
+   };
+   
    public static void loadChannels(){
       try{
          Synthesizer synth = MidiSystem.getSynthesizer();
@@ -37,11 +46,20 @@ public class cg_MIDI{
       //Play note
       if(instrument == util_Music.DRUMS){ //Percussion
          channels[9].allNotesOff();
-         channels[9].noteOn(note, ui_Menu.settings.getVolume());
+         channels[9].noteOn(note, (int)(volumes[instrument] * ui_Menu.settings.getVolume() / 100.0));
       
       }else{ //Other instrument
          channels[instrument].allNotesOff();
-         channels[instrument].noteOn(note, ui_Menu.settings.getVolume());
+         channels[instrument].noteOn(note, (int)(volumes[instrument] * ui_Menu.settings.getVolume() / 100.0));
+      }
+   }
+   
+   public static void silence(){
+      for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
+         if(i == util_Music.DRUMS)
+            channels[9].allNotesOff();
+         else
+            channels[i].allNotesOff();
       }
    }
 }

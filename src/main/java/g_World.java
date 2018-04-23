@@ -97,7 +97,7 @@ public class g_World extends bg_World{
       }catch(IOException e){
          System.out.println("Error while loading songs.");
          e.printStackTrace();
-         System.exit(1);
+         //System.exit(1);
       }
       
       //Start voting
@@ -210,7 +210,7 @@ public class g_World extends bg_World{
    public byte[] getNotes(byte clientID){
       final byte instrument = getPlayer(clientID).getInstrument();
       if(noteData != null){
-         return noteData.get(instrument).remove((short)(super.getCurrBeat() + 5));
+         return noteData.get(instrument).remove((short)(super.getCurrBeat() + 3));
       }else{
          return null;
       }
@@ -231,7 +231,6 @@ public class g_World extends bg_World{
       currVote[numChoices + 1][0] = -1;
       
       //Choose three songs to vote on
-      byte difficulty = 0;//Target difficulty for choosing song
       for(byte r = 0; r < numChoices; r++){
          byte voteSong = 0;
          
@@ -240,16 +239,14 @@ public class g_World extends bg_World{
                for(byte tries = 0; tries < 20; tries++){
                   voteSong = (byte)(songList.size() * Math.random());
                   
-                  if(!toVoteOn.contains(voteSong) && Math.abs(songList.get(voteSong)[0] - difficulty) > tolerance)
+                  if(!toVoteOn.contains(voteSong) && Math.abs(songList.get(voteSong)[0] - serverDifficulty) <= tolerance){
+                     //Track song we're voting on
+                     currVote[r][0] = voteSong;
+                     toVoteOn.add(voteSong);
                      break attempt;
+                  }
                }
             }
-         
-         //Track song we're voting on
-         currVote[r][0] = voteSong;
-         toVoteOn.add(voteSong);
-         
-         difficulty += 2;
       }
    }
    
@@ -305,13 +302,13 @@ public class g_World extends bg_World{
       
       //Choose song out of all tied maximums
       byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));//Index in currVote
-      
+      System.out.println("choice: " + choice);
       //Generate/load song part for players
       song = new ArrayList<>();
       byte scale = 0, //Song's scale
              key = 0; //Song's key
-      //if(choice == currVote.length - 1){//Randomly generated song
-      if(true){
+      if(choice == currVote.length - 1){//Randomly generated song
+      //if(true){
          final short seed = (short)(Math.random() * Short.MAX_VALUE);
          this.bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
          scale = util_Music.chooseScale(seed);
@@ -328,15 +325,49 @@ public class g_World extends bg_World{
                song.add(util_Music.generatePart(serverDifficulty, seed, util_Music.PIANO));
             }
          }
+         
+         infoEnt.setName("Randomly generated song");
+      
       }else{//Load song
-         /*
-         FINISH THIS STUFF LATER I GUESS
-         Scanner input = new Scanner(new String(
-            songList.get(choice),
-            4,
-            songList.get(choice)[3]
-         ) + );
-         */
+         try{
+            Scanner input = new Scanner(new File(
+               util_Utilities.getDirectory() + "/resources/songs/" +
+               new String(songList.get(choice), 4, songList.get(choice)[3]) + ".cfg"
+            ));
+            
+            input.nextLine(); //Skip song difficulty
+            input.nextLine(); //Skip song length
+            
+            this.bpm = (short)(input.nextInt());
+            scale = input.nextByte();
+            key = input.nextByte();
+            
+            //Load notes
+            song = new ArrayList<>();
+            for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
+               song.add(new HashMap<Short, HashSet<Byte>>());
+               
+               while(true){
+                  String[] line = input.nextLine().split(" ");
+                  
+                  if(line.length <= 1)
+                     break;
+                  
+                  short beat = Short.parseShort(line[0]);
+                  song.get(i).put(beat, new HashSet<Byte>());
+                  
+                  for(byte j = 1; j < line.length; j++){
+                     song.get(i).get(beat).add(Byte.parseByte(line[j]));
+                  }
+               }
+            }
+            
+         }catch(IOException e){
+            e.printStackTrace();
+         }
+         
+         //Share song name with players
+         infoEnt.setName(new String(songList.get(choice), 4, songList.get(choice)[3]));
       }
       
       //Translate song into bytes for sending
@@ -365,7 +396,7 @@ public class g_World extends bg_World{
          }
       }
       
-      /**/
+      /**
       System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
       for(short b = 1; b < 100; b++){
          System.out.print(b + "\t-      ");

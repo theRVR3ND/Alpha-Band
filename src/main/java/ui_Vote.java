@@ -29,9 +29,9 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       };
       
       voteList = new ui_Table(
-         0.3f, 0.1f, 0.4f, 0.3f,
+         0.2f, 0.1f, 0.6f, 0.3f,
          new String[] {"Song", "Difficulty", "Length"},
-         new float[] {0.31f, 0.5f, 0.6f}
+         new float[] {0.21f, 0.6f, 0.7f}
       );
       
       sentVote = false;
@@ -104,7 +104,11 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
          
          //Extract song info
          String difficulty = info[i] + "";
-         String songLength = info[i + 1] + ":" + info[i + 2];
+         String songLength;
+         if(info[i + 2] < 10)
+            songLength = info[i + 1] + ":0" + info[i + 2];
+         else
+            songLength = info[i + 1] + ":" + info[i + 2];
          i += 3;
          
          //Extract song name

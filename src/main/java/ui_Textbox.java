@@ -71,6 +71,9 @@ public class ui_Textbox{
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       FontMetrics fontMetrics = g2.getFontMetrics();
       final byte spacing = (byte)(getHeight() - fontMetrics.getHeight());
+      while(fontMetrics.stringWidth(getContents()) + 2 * spacing > this.getWidth())
+         contents[--index] = '\u0000';
+      
       g2.drawString(
          getContents(),
          getX() + spacing,
@@ -129,6 +132,10 @@ public class ui_Textbox{
     */
    public boolean isSelected(){
       return selected;
+   }
+   
+   public void setSelected(boolean selected){
+      this.selected = selected;
    }
    
    /**

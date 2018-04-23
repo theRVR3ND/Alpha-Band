@@ -109,6 +109,9 @@ public class cg_World extends bg_World{
                scale = (byte)otherPlayer.getColor().getGreen();
                keyShift = (byte)otherPlayer.getColor().getBlue();
                
+               if(scale >= 0)
+                  g2.drawString(otherPlayer.getName(), (int)(0.02 * cg_Client.SCREEN_WIDTH), spacing);
+               
                continue;
             }
             
@@ -136,9 +139,9 @@ public class cg_World extends bg_World{
       
       //Update/draw notes
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
-      if(scale > 0){
+      if(scale >= 0){
          final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-         g2.drawString(notes.size() + " " + keyShift + " " + scale, 100, 100);
+         //g2.drawString(notes.size() + " " + keyShift + " " + scale, 100, 100);
          for(byte i = 0; i < notes.size(); i++){
             try{
                bg_Note note = notes.get(i);
@@ -180,7 +183,7 @@ public class cg_World extends bg_World{
       if(currMilliBeats > 0){
          g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
          toDraw = "Instrument: " + util_Music.instruments[clientPlayer.getInstrument()];
-         g2.drawString(toDraw, 40, spacing);
+         g2.drawString(toDraw, (int)(0.02 * cg_Client.SCREEN_WIDTH), spacing * 2);
       }
       
       //Show points messages
