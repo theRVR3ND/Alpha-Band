@@ -370,6 +370,24 @@ public class g_World extends bg_World{
             e.printStackTrace();
          }
          
+         /**/
+         System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
+         for(short b = 0; b < 100; b++){
+            System.out.print(b + "\t-      ");
+            for(byte i = 0; i < song.size(); i++){
+               String toPrint = "";
+               if(song.get(i).get(b) != null){
+                  for(Byte n : song.get(i).get(b))
+                     toPrint += n + " ";
+               }
+               while(toPrint.length() < 14)
+                  toPrint += " ";
+               System.out.print(toPrint);
+            }
+            System.out.println();
+         }
+         /**/
+         
          //Share song name with players
          infoEnt.setName(new String(songList.get(choice), 4, songList.get(choice)[3]));
       }

@@ -300,6 +300,8 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
                            byte octaves = (byte)(note / util_Music.INTERVALS[scale].length);
                            byte adjustedNote = (byte)(util_Music.INTERVALS[scale][note % util_Music.INTERVALS[scale].length] + 60 + octaves * 12 + key);
                            cg_MIDI.playNote(adjustedNote, instrument);
+                           if(instrument == 0)
+                              System.out.println(adjustedNote + "");
                            
                         }else{
                            cg_MIDI.playNote((byte)(percussionInstrumentValues[(note - 3) / 2]), instrument);
@@ -407,7 +409,21 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
                      
                      for(byte j = 1; j < line.length; j++){
                         if(i != util_Music.DRUMS){
-                           song.get(i).get(beat).add((byte)(Byte.parseByte(line[j]) - 60));
+                           byte note = Byte.parseByte(line[j]); //Actual MIDI value
+                           //Find studio note value corresponding with file's MIDI note value
+                           for(byte k = 0; k < 20; k++){
+                              byte adjustedNote = (byte)(
+                                 util_Music.INTERVALS[scale][k % util_Music.INTERVALS[scale].length] +
+                                 60 +
+                                 (k / util_Music.INTERVALS[scale].length) * 12 +
+                                 key
+                              );
+                              if(note == adjustedNote){
+                                 song.get(i).get(beat).add(k);
+                                 break;
+                              }
+                           }
+                        
                         }else{
                            byte noteVal = Byte.parseByte(line[j]);
                            for(byte k = 0; k < percussionInstrumentValues.length; k++){
@@ -661,7 +677,9 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
             String line = beat + "";
             for(Byte note : song.get(instrument).get(beat)){
                if(instrument != util_Music.DRUMS){
-                  line += " " + (note + 60);
+                  byte octaves = (byte)(note / util_Music.INTERVALS[scale].length);
+                  byte adjustedNote = (byte)(util_Music.INTERVALS[scale][note % util_Music.INTERVALS[scale].length] + 60 + octaves * 12 + key);
+                  line += " " + adjustedNote;
                }else{
                   line += " " + (percussionInstrumentValues[note / 2 - 1]);
                }

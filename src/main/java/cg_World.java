@@ -141,15 +141,16 @@ public class cg_World extends bg_World{
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       if(scale >= 0){
          final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-         //g2.drawString(notes.size() + " " + keyShift + " " + scale, 100, 100);
+         g2.drawString(notes.size() + " " + keyShift + " " + scale + " " + bpm, 100, 100);
          for(byte i = 0; i < notes.size(); i++){
             try{
                bg_Note note = notes.get(i);
                
                //Find keyboard button that correlates with note
                byte scaleInd = -1;
-               for(byte j = 0; j < util_Music.INTERVALS[scale].length; j++){
-                  if(note.getNote() == keyShift + util_Music.INTERVALS[scale][j]){
+               for(byte j = 0; j < 10; j++){
+                  byte octaves = (byte)(j / util_Music.INTERVALS[scale].length);
+                  if(note.getNote() == keyShift + util_Music.INTERVALS[scale][j % util_Music.INTERVALS[scale].length] + 12 * octaves){
                      scaleInd = j;
                      break;
                   }
@@ -157,7 +158,7 @@ public class cg_World extends bg_World{
                if(scaleInd == -1){
                   g2.setColor(Color.RED);
                   g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
-               g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
+                  g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
                   continue;
                }
                g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
