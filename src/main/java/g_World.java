@@ -302,7 +302,10 @@ public class g_World extends bg_World{
       
       //Choose song out of all tied maximums
       byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));//Index in currVote
+      if(choice == currVote.length - 2)
+         choice = (byte)(Math.random() * songList.size());
       System.out.println("choice: " + choice);
+      
       //Generate/load song part for players
       song = new ArrayList<>();
       byte scale = 0, //Song's scale
@@ -341,6 +344,7 @@ public class g_World extends bg_World{
             this.bpm = (short)(input.nextInt());
             scale = input.nextByte();
             key = input.nextByte();
+            input.nextLine(); //Thing to do thing. Thing.
             
             //Load notes
             song = new ArrayList<>();

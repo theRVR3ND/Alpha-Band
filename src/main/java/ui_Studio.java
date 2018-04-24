@@ -272,6 +272,8 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
                if(pageSlider.getMaximum() <= pageSlider.getValue()){
                   playStartTime = Long.MAX_VALUE;
                   cg_MIDI.silence();
+                  for(HashSet<Byte> noteBuffer : currNotes)
+                     noteBuffer.clear();
                   break;
                }else
                   pageSlider.setValue((short)(pageSlider.getValue() + 1));
@@ -352,8 +354,12 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
             nameTextbox.setSelected(true);
             return;
          }else{
-            saveToFile();
-            message = "Song successfully saved.";
+            try{
+               saveToFile();
+               message = "Song successfully saved.";
+            }catch(IOException ex){
+               message = "Song save failed.";
+            }
          }
       
       //Open specified file
@@ -400,7 +406,17 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
                      song.get(i).put(beat, new HashSet<Byte>());
                      
                      for(byte j = 1; j < line.length; j++){
-                        song.get(i).get(beat).add(Byte.parseByte(line[j]));
+                        if(i != util_Music.DRUMS){
+                           song.get(i).get(beat).add((byte)(Byte.parseByte(line[j]) - 60));
+                        }else{
+                           byte noteVal = Byte.parseByte(line[j]);
+                           for(byte k = 0; k < percussionInstrumentValues.length; k++){
+                              if(percussionInstrumentValues[k] == noteVal){
+                                 song.get(i).get(beat).add((byte)(k * 2 + 3));
+                                 break;
+                              }
+                           }
+                        }
                      }
                      
                      songLength = (short)(Math.max(beat, songLength));
@@ -432,6 +448,7 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
       //Load blank file
       }else if(buttons[2].isDown()){
          if(e.getClickCount() == 2){
+            //Reset defaults
             key = 0;
             scale = 0;
             instrument = 0;
@@ -452,6 +469,7 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
             message = null;
          
          }else{
+            //Tell user to double click
             message = "Double click to load new file.";
          }
       
@@ -583,6 +601,8 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
                playStartTime = Long.MAX_VALUE;
             }
             cg_MIDI.silence();
+            for(HashSet<Byte> noteBuffer : currNotes)
+               noteBuffer.clear();
          }
       }
    }
@@ -591,8 +611,17 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
    
    public void keyTyped(KeyEvent e){}
    
+   public void mouseWheelMoved(MouseWheelEvent e){
+      //Scroll through table
+      fileList.checkScroll(
+         (short)e.getX(),
+         (short)e.getY(),
+         (byte)e.getWheelRotation()
+      );
+   }
+   
    //Save current song to file
-   private void saveToFile(){
+   private void saveToFile() throws IOException{
       File songFile = new File(util_Utilities.getDirectory() + "/resources/songs/" + nameTextbox.getContents() + ".cfg");
       
       //Delete old song file
@@ -601,48 +630,78 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
          songFile = new File(util_Utilities.getDirectory() + "/resources/songs/" + nameTextbox.getContents() + ".cfg");
       }
       
-      try{
-         PrintWriter output = new PrintWriter(songFile);
-         
-         //Write out song info
-         byte difficulty = 2;
-         output.println(difficulty + "");
-         
-         short length = (short)(pageSlider.getMaximum() * 11 / (bpmSlider.getValue() / 60.0)); //in seconds
-         output.println(length / 60 + " " + length % 60);
-         
-         output.println(bpmSlider.getValue() + " " + scale + " " + (key + 60));
-         
-         //Write notes
-         for(byte instrument = 0; instrument < util_Music.NUM_INSTRUMENTS; instrument++){
-            for(Short beat : song.get(instrument).keySet()){
-               if(song.get(instrument).get(beat).isEmpty())
-                  continue;
-               
-               //Print beat's notes
-               output.print(beat);
-               for(Byte note : song.get(instrument).get(beat)){
-                  output.print(" " + note);
-               }
-               output.println();
+      PrintWriter output = new PrintWriter(songFile);
+      
+      //Calculate approximate number of lines required in file
+      int numLines = 0;
+      for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++)
+         numLines += song.get(i).size();
+      ArrayList<String> toWrite = new ArrayList<>(numLines + 9);
+      
+      //Track song difficulty parameters
+      int numChordBeats = 0; //Number of beats that have a chord
+      toWrite.add(""); //Difficulty value will go here
+      
+      short length = (short)(pageSlider.getMaximum() * 11 / (bpmSlider.getValue() / 60.0)); //in seconds
+      toWrite.add(length / 60 + " " + length % 60);
+      
+      toWrite.add(bpmSlider.getValue() + " " + scale + " " + (key + 60));
+      
+      //Fill string buffer
+      for(byte instrument = 0; instrument < util_Music.NUM_INSTRUMENTS; instrument++){
+         for(Short beat : song.get(instrument).keySet()){
+            if(song.get(instrument).get(beat).isEmpty())
+               continue;
+            else{ //Difficulty parameters
+               if(song.get(instrument).get(beat).size() > 1)
+                  numChordBeats++;
             }
-            output.println("");
+            
+            //Concatenate beat's notes
+            String line = beat + "";
+            for(Byte note : song.get(instrument).get(beat)){
+               if(instrument != util_Music.DRUMS){
+                  line += " " + (note + 60);
+               }else{
+                  line += " " + (percussionInstrumentValues[note / 2 - 1]);
+               }
+            }
+            toWrite.add(line);
          }
-         
-         output.close();
-         
-      }catch(IOException e){
-         System.out.println("Failed to write song to file.");
-         //e.printStackTrace();
+         toWrite.add("");
       }
-   }
-   
-   public void mouseWheelMoved(MouseWheelEvent e){
-      //Scroll through table
-      fileList.checkScroll(
-         (short)e.getX(),
-         (short)e.getY(),
-         (byte)e.getWheelRotation()
-      );
+      
+      //Calculate and add difficulty value to buffer
+      byte noteDensity = (byte)(100 * numLines / (66.0 * pageSlider.getMaximum()));
+      byte chordDensity = (byte)(100.0 * numChordBeats / numLines);
+      final byte difficulty;
+      
+      if(noteDensity < 20){
+         if(chordDensity < 5)
+            difficulty = 0;
+         else
+            difficulty = 1;
+      
+      }else if(noteDensity < 50){
+         if(chordDensity < 3)
+            difficulty = 1;
+         else
+            difficulty = 2;
+      
+      }else if(noteDensity < 75){
+         if(chordDensity < 2)
+            difficulty = 3;
+         else
+            difficulty = 4;
+      
+      }else{
+         difficulty = 4;
+      }
+      toWrite.set(0, difficulty + "");
+      
+      //Actually writing stuff
+      for(String line : toWrite)
+         output.println(line);
+      output.close();
    }
 }
