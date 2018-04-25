@@ -146,6 +146,12 @@ public class cg_World extends bg_World{
             try{
                bg_Note note = notes.get(i);
                
+               //Get rid of note if it ded
+               if(currMilliBeats > note.getBeat() + 2){
+                  notes.remove(i);
+                  i--;
+               }
+               
                //Find keyboard button that correlates with note
                byte scaleInd = -1;
                for(byte j = 0; j < 10; j++){
@@ -161,21 +167,16 @@ public class cg_World extends bg_World{
                   g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
                   continue;
                }
-               g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
+               //g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
                //Figure out dimensions and location of note
                final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
-                           drawY = (short)((1 - (note.getBeat() - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
-                      drawHeight = (short)(note.getDuration() * 50000 / cg_Client.SCREEN_HEIGHT);
+                           drawY = (short)((1 - 0.5 * (note.getBeat() - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
+                      drawHeight = (short)(note.getDuration() * 100000 * (bpm / 200.0) / cg_Client.SCREEN_HEIGHT);
                
                //Render
                g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
                g2.fillRect(drawX - NOTE_WIDTH / 2, drawY, NOTE_WIDTH, drawHeight);
                //g2.drawString(drawX - NOTE_WIDTH / 2 + " " + drawY, 500, i * 100 + 100);
-               //Get rid of note if it ded
-               if(currMilliBeats > note.getBeat() + 2){//Maybe fix?
-                  notes.remove(i);
-                  i--;
-               }
             }catch(ConcurrentModificationException e){}
          }
       }

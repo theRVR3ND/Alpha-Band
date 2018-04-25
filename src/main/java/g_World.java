@@ -207,10 +207,15 @@ public class g_World extends bg_World{
    }
    
    //Should only be requested by single player who is playing instrument
-   public byte[] getNotes(byte clientID){
+   public ArrayList<byte[]> getNotes(byte clientID){
       final byte instrument = getPlayer(clientID).getInstrument();
       if(noteData != null){
-         return noteData.get(instrument).remove((short)(super.getCurrBeat() + 3));
+         ArrayList<byte[]> notes = new ArrayList<>();
+         for(short i = (short)(super.getCurrBeat() - 5); i < super.getCurrBeat() + 5; i++){
+            if(noteData.get(instrument).size() < i && noteData.get(instrument).get(i) != null)
+               notes.add(noteData.get(instrument).remove(i));
+         }
+         return notes;
       }else{
          return null;
       }
@@ -335,8 +340,9 @@ public class g_World extends bg_World{
          try{
             Scanner input = new Scanner(new File(
                util_Utilities.getDirectory() + "/resources/songs/" +
-               new String(songList.get(choice), 4, songList.get(choice)[3]) + ".cfg"
+               new String(songList.get(currVote[choice][0]), 4, songList.get(currVote[choice][0])[3]) + ".cfg"
             ));
+            System.out.println(new String(songList.get(choice), 4, songList.get(choice)[3]));
             
             input.nextLine(); //Skip song difficulty
             input.nextLine(); //Skip song length
