@@ -48,7 +48,7 @@ public class ui_Main extends ui_Menu{
       g2.drawImage(
          icon,
          (int)(0.45 * cg_Client.SCREEN_WIDTH),
-         (int)(0.05 * cg_Client.SCREEN_HEIGHT),
+         (int)(0.10 * cg_Client.SCREEN_HEIGHT),
          null
       );
       

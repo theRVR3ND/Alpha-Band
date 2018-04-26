@@ -75,9 +75,8 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
             toDraw = (seconds / 60) + ":0" + (seconds % 60);
          else
             toDraw = (seconds / 60) + ":" + (seconds % 60);
-      }else{
-         toDraw = "ERROR";
-      }
+      }else
+         toDraw = "";
       
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g2.drawString(

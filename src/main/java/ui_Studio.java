@@ -235,24 +235,24 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
       }
       
       //Draw beat demarcations
-      for(byte i = 1; i < 11; i++){
+      for(byte i = 1; i < 12; i++){
          g2.drawLine(
-            (short)((areaX + 0.05 * i) * cg_Client.SCREEN_WIDTH),
+            (short)((areaX + i * areaW / 12) * cg_Client.SCREEN_WIDTH),
             (short)(areaY * cg_Client.SCREEN_HEIGHT),
-            (short)((areaX + 0.05 * i) * cg_Client.SCREEN_WIDTH),
+            (short)((areaX + i * areaW / 12) * cg_Client.SCREEN_WIDTH),
             (short)((areaY + areaH) * cg_Client.SCREEN_HEIGHT)
          );
       }
       
       //Draw notes
       for(byte note = 0; note < 10; note++){
-         for(byte beat = 0; beat < 11; beat++){
-            if(song.get(instrument).containsKey((short)(pageSlider.getValue() * 11 + beat)) &&
-               song.get(instrument).get((short)(pageSlider.getValue() * 11 + beat)).contains((byte)(9 - note))){
+         for(byte beat = 0; beat < 12; beat++){
+            if(song.get(instrument).containsKey((short)(pageSlider.getValue() * 12 + beat)) &&
+               song.get(instrument).get((short)(pageSlider.getValue() * 12 + beat)).contains((byte)(9 - note))){
                g2.fillRect(
-                  (int)((areaX + (beat * areaW / 11)) * cg_Client.SCREEN_WIDTH),
+                  (int)((areaX + (beat * areaW / 12)) * cg_Client.SCREEN_WIDTH),
                   (int)((areaY + (note * areaH / 10)) * cg_Client.SCREEN_HEIGHT),
-                  (int)((areaW / 11) * cg_Client.SCREEN_WIDTH),
+                  (int)((areaW / 12) * cg_Client.SCREEN_WIDTH + 1),
                   (int)((areaH / 10) * cg_Client.SCREEN_HEIGHT + 1)
                );
             }
@@ -263,10 +263,10 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
       if(playStartTime != Long.MAX_VALUE){
          while(true){
             final double millsPerBeat = 1000 / (bpmSlider.getValue() / 60.0);
-            double currBeat = (System.currentTimeMillis() - (playStartTime + millsPerBeat * (pageSlider.getValue() - playStartPage) * 11)) / millsPerBeat ; //From 0 to 10
+            double currBeat = (System.currentTimeMillis() - (playStartTime + millsPerBeat * (pageSlider.getValue() - playStartPage) * 12)) / millsPerBeat ; //From 0 to 10
             
             //Visual demarcation
-            short drawX = (short)((areaX + areaW * (currBeat / 11.0)) * cg_Client.SCREEN_WIDTH);
+            short drawX = (short)((areaX + areaW * (currBeat / 12.0)) * cg_Client.SCREEN_WIDTH);
             
             if(drawX > (areaX + areaW) * cg_Client.SCREEN_WIDTH){
                if(pageSlider.getMaximum() <= pageSlider.getValue()){
@@ -289,7 +289,7 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
             );
             
             //Play notes
-            currBeat += pageSlider.getValue() * 11;
+            currBeat += pageSlider.getValue() * 12;
             for(byte instrument = 0; instrument < util_Music.NUM_INSTRUMENTS; instrument++){
                //Play new notes
                if(song.get(instrument).containsKey((short)(currBeat))){
@@ -300,8 +300,6 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
                            byte octaves = (byte)(note / util_Music.INTERVALS[scale].length);
                            byte adjustedNote = (byte)(util_Music.INTERVALS[scale][note % util_Music.INTERVALS[scale].length] + 60 + octaves * 12 + key);
                            cg_MIDI.playNote(adjustedNote, instrument);
-                           if(instrument == 0)
-                              System.out.println(adjustedNote + "");
                            
                         }else{
                            cg_MIDI.playNote((byte)(percussionInstrumentValues[(note - 3) / 2]), instrument);
@@ -440,7 +438,7 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
                }
                
                pageSlider.setValue((short)0);
-               pageSlider.setMaximum((short)(songLength / 11 + 1));
+               pageSlider.setMaximum((short)(songLength / 12 + 1));
                
                message = null;
             
@@ -499,16 +497,16 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
          
          //Check for note placing/removal
          byte noteVal = (byte)(10 - 10 * (e.getY() - areaY * cg_Client.SCREEN_HEIGHT) / (areaH * cg_Client.SCREEN_HEIGHT));
-         byte beatVal = (byte)(11 * (e.getX() - areaX * cg_Client.SCREEN_WIDTH) / (areaW * cg_Client.SCREEN_WIDTH));
+         byte beatVal = (byte)(12 * (e.getX() - areaX * cg_Client.SCREEN_WIDTH) / (areaW * cg_Client.SCREEN_WIDTH));
          
-         if(playStartTime == Long.MAX_VALUE && noteVal >= 0 && noteVal < 10 && beatVal >= 0 && beatVal < 11){
+         if(playStartTime == Long.MAX_VALUE && noteVal >= 0 && noteVal < 10 && beatVal >= 0 && beatVal < 12){
             //Placing note
             if(e.getButton() == MouseEvent.BUTTON1){
-               if(!song.get(instrument).containsKey((short)(pageSlider.getValue() * 11 + beatVal)))
-                  song.get(instrument).put((short)(pageSlider.getValue() * 11 + beatVal), new HashSet<Byte>());
+               if(!song.get(instrument).containsKey((short)(pageSlider.getValue() * 12 + beatVal)))
+                  song.get(instrument).put((short)(pageSlider.getValue() * 12 + beatVal), new HashSet<Byte>());
                
                //Play note
-               if(!song.get(instrument).get((short)(pageSlider.getValue() * 11 + beatVal)).contains(noteVal)){
+               if(!song.get(instrument).get((short)(pageSlider.getValue() * 12 + beatVal)).contains(noteVal)){
                   //Normie instrument
                   if(instrument != util_Music.DRUMS){
                      byte octaves = (byte)(noteVal / util_Music.INTERVALS[scale].length);
@@ -522,12 +520,12 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
                }
                
                if(instrument != util_Music.DRUMS || (noteVal == 3 || noteVal == 5 || noteVal == 7))
-                  song.get(instrument).get((short)(pageSlider.getValue() * 11 + beatVal)).add((byte)(noteVal));
+                  song.get(instrument).get((short)(pageSlider.getValue() * 12 + beatVal)).add((byte)(noteVal));
             
             //Removing note
             }else if(e.getButton() == MouseEvent.BUTTON3){
-               if(song.get(instrument).containsKey((short)(pageSlider.getValue() * 11 + beatVal)))
-                  song.get(instrument).get((short)(pageSlider.getValue() * 11 + beatVal)).remove(noteVal);
+               if(song.get(instrument).containsKey((short)(pageSlider.getValue() * 12 + beatVal)))
+                  song.get(instrument).get((short)(pageSlider.getValue() * 12 + beatVal)).remove(noteVal);
             }
          }
       }
@@ -658,7 +656,7 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
       int numChordBeats = 0; //Number of beats that have a chord
       toWrite.add(""); //Difficulty value will go here
       
-      short length = (short)(pageSlider.getMaximum() * 11 / (bpmSlider.getValue() / 60.0)); //in seconds
+      short length = (short)(pageSlider.getMaximum() * 12 / (bpmSlider.getValue() / 60.0)); //in seconds
       toWrite.add(length / 60 + " " + length % 60);
       
       toWrite.add(bpmSlider.getValue() + " " + scale + " " + (key + 60));

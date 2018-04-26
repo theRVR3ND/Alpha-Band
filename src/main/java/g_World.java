@@ -207,15 +207,10 @@ public class g_World extends bg_World{
    }
    
    //Should only be requested by single player who is playing instrument
-   public ArrayList<byte[]> getNotes(byte clientID){
+   public byte[] getNotes(byte clientID){
       final byte instrument = getPlayer(clientID).getInstrument();
       if(noteData != null){
-         ArrayList<byte[]> notes = new ArrayList<>();
-         for(short i = (short)(super.getCurrBeat() - 5); i < super.getCurrBeat() + 5; i++){
-            if(noteData.get(instrument).size() < i && noteData.get(instrument).get(i) != null)
-               notes.add(noteData.get(instrument).remove(i));
-         }
-         return notes;
+         return noteData.get(instrument).remove((short)(super.getCurrBeat() + 4));
       }else{
          return null;
       }
@@ -324,8 +319,7 @@ public class g_World extends bg_World{
          
          for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
             //Generate part for each different instrument
-            //if(super.gamemode == COMPETITION){
-            if(true){
+            if(super.gamemode == COMPETITION){
                song.add(util_Music.generatePart(serverDifficulty, seed, i));
             
             //Generate same part (piano) for each player
@@ -342,7 +336,7 @@ public class g_World extends bg_World{
                util_Utilities.getDirectory() + "/resources/songs/" +
                new String(songList.get(currVote[choice][0]), 4, songList.get(currVote[choice][0])[3]) + ".cfg"
             ));
-            System.out.println(new String(songList.get(choice), 4, songList.get(choice)[3]));
+            System.out.println(new String(songList.get(currVote[choice][0]), 4, songList.get(currVote[choice][0])[3]));
             
             input.nextLine(); //Skip song difficulty
             input.nextLine(); //Skip song length
@@ -376,7 +370,7 @@ public class g_World extends bg_World{
             e.printStackTrace();
          }
          
-         /**/
+         /**
          System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
          for(short b = 0; b < 100; b++){
             System.out.print(b + "\t-      ");
@@ -395,7 +389,11 @@ public class g_World extends bg_World{
          /**/
          
          //Share song name with players
-         infoEnt.setName(new String(songList.get(choice), 4, songList.get(choice)[3]));
+         infoEnt.setName(new String(
+            songList.get(currVote[choice][0]),
+            4,
+            songList.get(currVote[choice][0])[3]
+         ));
       }
       
       //Translate song into bytes for sending

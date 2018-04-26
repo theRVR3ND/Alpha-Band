@@ -22,7 +22,7 @@ public class cg_MIDI{
       85, //Drums
       65, //Bass
       30, //Distorted Guitar
-      50  //Agogo
+      80  //Agogo
    };
    
    public static void loadChannels(){

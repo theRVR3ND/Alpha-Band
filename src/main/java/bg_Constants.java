@@ -66,11 +66,11 @@ public interface bg_Constants{
    /**
     * Game modes.
     */
-   public static final byte COMPETITION = 0,
-                          COLLABORATIVE = 1;
+   public static final byte COLLABORATIVE = 0,
+                              COMPETITION = 1;
    
    public static final String[] gamemodes = new String[]{
-      "Competition",
-      "Collaborative"
+      "Collaborative",
+      "Competition"
    };
 }

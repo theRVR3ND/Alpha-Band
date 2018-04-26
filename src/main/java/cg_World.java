@@ -141,7 +141,7 @@ public class cg_World extends bg_World{
       final float currMilliBeats = (float)((System.currentTimeMillis() - songStartTime) / (60000.0 / bpm));
       if(scale >= 0){
          final short NOTE_WIDTH = (short)(0.6 * cg_Client.SCREEN_WIDTH / 10);
-         g2.drawString(notes.size() + " " + keyShift + " " + scale + " " + bpm, 100, 100);
+         //g2.drawString(notes.size() + " " + keyShift + " " + scale + " " + bpm, 100, 100);
          for(byte i = 0; i < notes.size(); i++){
             try{
                bg_Note note = notes.get(i);
@@ -171,7 +171,7 @@ public class cg_World extends bg_World{
                //Figure out dimensions and location of note
                final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
                            drawY = (short)((1 - 0.5 * (note.getBeat() - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
-                      drawHeight = (short)(note.getDuration() * 100000 * (bpm / 200.0) / cg_Client.SCREEN_HEIGHT);
+                      drawHeight = (short)(note.getDuration() * 50000 / cg_Client.SCREEN_HEIGHT);
                
                //Render
                g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
