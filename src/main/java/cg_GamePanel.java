@@ -33,7 +33,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
    
    public static final HashMap<Integer, Byte> noteMap = new HashMap<Integer, Byte>();
    
-   private final char[] KEYS = new char[] {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'};
+   public static final char[] KEYS = new char[] {'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'};
    
    /**
     * Constructor.

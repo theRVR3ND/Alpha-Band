@@ -104,6 +104,10 @@ public class util_Music{
       return (byte)(Math.pow(9, difficulty / 2.0) + 30 + 5 * ((new Random(seed)).nextInt(5) - 2));// * 2 for actual
    }
    
+   public static short generateSongLength(byte difficulty, short seed){
+      return (short)((2 * difficulty + 4) * ((new Random(seed)).nextInt(20) + 40));
+   }
+   
    public static byte chooseScale(short seed){
       return (byte)((new Random(seed)).nextInt(INTERVALS.length));
    }
@@ -120,7 +124,7 @@ public class util_Music{
       //Generate song parameters
       final byte bpm = generateBPM(difficulty, seed);
       final byte measureLength = (byte)(2 * difficulty + 4);//how many columns in gen make up one measure
-      final short songLength = (short)(measureLength * (rand.nextInt(20) + 40));//in beats
+      final short songLength = generateSongLength(difficulty, seed);//in beats
       final byte scale = chooseScale(seed);
       final byte key = chooseKey(seed);
       final byte beatInterval = (byte)(measureLength / (difficulty + 2));

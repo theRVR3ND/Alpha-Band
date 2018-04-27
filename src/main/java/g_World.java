@@ -260,8 +260,7 @@ public class g_World extends bg_World{
       }while(infoEnt == null);
       
       //Assign instruments to players
-      //if(super.gamemode == COMPETITION){
-      if(false){
+      if(super.gamemode == COMPETITION){
          //Competition - every player plays piano
          for(Short key : entities.keySet()){
             if(entities.get(key) instanceof bg_Player && entities.get(key) != infoEnt){
@@ -306,10 +305,13 @@ public class g_World extends bg_World{
          choice = (byte)(Math.random() * songList.size());
       System.out.println("choice: " + choice);
       
-      //Generate/load song part for players
+      //Song parameters
       song = new ArrayList<>();
       byte scale = 0, //Song's scale
              key = 0; //Song's key
+      short songLength = 0;
+      
+      //Generate/load song part for players
       if(choice == currVote.length - 1){//Randomly generated song
       //if(true){
          final short seed = (short)(Math.random() * Short.MAX_VALUE);
@@ -329,6 +331,7 @@ public class g_World extends bg_World{
          }
          
          infoEnt.setName("Randomly generated song");
+         songLength = util_Music.generateSongLength(serverDifficulty, seed);
       
       }else{//Load song
          try{
@@ -363,6 +366,7 @@ public class g_World extends bg_World{
                   for(byte j = 1; j < line.length; j++){
                      song.get(i).get(beat).add(Byte.parseByte(line[j]));
                   }
+                  songLength = (short)(Math.max(songLength, beat));
                }
             }
             

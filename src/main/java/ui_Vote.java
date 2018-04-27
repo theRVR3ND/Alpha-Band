@@ -14,8 +14,6 @@ import java.awt.event.*;
 
 public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener, bg_Constants{
    
-   private boolean sentVote;
-   
    private ui_Table voteList;
    
    private byte[] currVotes;
@@ -33,8 +31,6 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
          new String[] {"Song", "Difficulty", "Length"},
          new float[] {0.21f, 0.6f, 0.7f}
       );
-      
-      sentVote = false;
       
       //Add key listener for entering player name
       this.setFocusable(true);
@@ -153,17 +149,14 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       if(buttons[0].isDown()){
          //Send vote back to server
          if(voteList.getHoverRow() >= 0){
-            if(!sentVote){
-               cg_Panel.getConnection().writeOut(
-                  new byte[] {
-                     VOTE,
-                     voteList.getHoverRow()
-                  }
-               );
-               sentVote = true;
-            }
+            cg_Panel.getConnection().writeOut(
+               new byte[] {
+                  VOTE,
+                  voteList.getHoverRow()
+               }
+            );
             
-            //Return to game panel
+            //Direct to game panel
             cg_Client.frame.setContentPane(cg_Panel.gamePanel);
             cg_Panel.gamePanel.requestFocus();
             cg_Client.frame.revalidate();

@@ -173,9 +173,31 @@ public class cg_World extends bg_World{
                            drawY = (short)((1 - 0.5 * (note.getBeat() - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
                       drawHeight = (short)(note.getDuration() * 50000 / cg_Client.SCREEN_HEIGHT);
                
-               //Render
+               //Draw note body
                g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
                g2.fillRect(drawX - NOTE_WIDTH / 2, drawY, NOTE_WIDTH, drawHeight);
+               
+               //Draw note's corresponding key value
+               /*
+                  HAVE THIS AS AN OPTION IN THE MENU
+               */
+               /*
+               byte ind = 0;
+               for(byte j = 0; j < cg_GamePanel.KEYS.length; j++){
+                  byte check = (byte)(util_Music.INTERVALS[scale][j % util_Music.INTERVALS[scale].length] + keyShift + 12 * (j / util_Music.INTERVALS[scale].length));
+                  if(note.getNote() == check){
+                     ind = j;
+                     break;
+                  }
+               }
+               byte width = (byte)fm.stringWidth(cg_GamePanel.KEYS[ind] + "");
+               g2.setColor(ui_Theme.getColor(ui_Theme.BACKGROUND));
+               g2.drawString(
+                  cg_GamePanel.KEYS[ind] + "",
+                  drawX - width / 2,
+                  drawY + (drawHeight - fm.getHeight())
+               );
+               */
                //g2.drawString(drawX - NOTE_WIDTH / 2 + " " + drawY, 500, i * 100 + 100);
             }catch(ConcurrentModificationException e){}
          }
@@ -214,7 +236,7 @@ public class cg_World extends bg_World{
             g2.setColor(Color.RED);                     //Red
          }
          
-         g2.drawString(message, 40, spacing * 2);
+         g2.drawString(message, 40, spacing * 3);
          
          if(currPoints > 0){
             g2.setColor(new Color(
@@ -223,9 +245,9 @@ public class cg_World extends bg_World{
                ui_Theme.getColor(ui_Theme.TEXT).getBlue(),
                alpha
             ));
-            g2.drawString("+" + currPoints, 40, spacing * 3);
+            g2.drawString("+" + currPoints, 40, spacing * 4);
             if(clientPlayer.getBonus() > 0){
-               g2.drawString("x" + clientPlayer.getBonus() + " Bonus Combo", 40, spacing * 4);
+               g2.drawString("x" + clientPlayer.getBonus() + " Bonus Combo", 40, spacing * 5);
             }
          }
          
