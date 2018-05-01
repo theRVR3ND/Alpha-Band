@@ -1,2 +1,3 @@
 cd\
 arp -a
+pause

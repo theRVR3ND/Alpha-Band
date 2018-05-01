@@ -44,7 +44,7 @@ public class g_World extends bg_World{
     */
    public g_World(byte gamemode, byte serverDifficulty){
       super(gamemode);
-      
+      System.out.println(gamemode + "");
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
@@ -118,18 +118,20 @@ public class g_World extends bg_World{
       
       //End song
       }else{
-         //Start next song process
-         if(super.getCurrBeat() > songLength + bpm * (1  / 3.0)){
-            if(currVote == null){
-               startVote();
+         if(songLength != null){
+            //Start next song process
+            if(super.getCurrBeat() > songLength + bpm * (1  / 3.0)){
+               if(currVote == null){
+                  startVote();
+               }
+            
+            //Get rid of 
+            }else if(super.getCurrBeat() > songLength){
+               currVote = null;
+               song = null;
+               noteData = null;
+               songLength = 0;
             }
-         
-         //Get rid of 
-         }else if(super.getCurrBeat() > songLength){
-            currVote = null;
-            song = null;
-            noteData = null;
-            songLength = 0;
          }
       }
    }
@@ -223,7 +225,7 @@ public class g_World extends bg_World{
    public byte[] getNotes(byte clientID){
       final byte instrument = getPlayer(clientID).getInstrument();
       if(noteData != null){
-         return noteData.get(instrument).remove((short)(super.getCurrBeat() + 4));
+         return noteData.get(instrument).remove((short)(super.getCurrBeat() + 6));
       }else{
          return null;
       }

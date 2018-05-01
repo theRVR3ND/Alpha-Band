@@ -91,7 +91,7 @@ public class ui_Button{
     * @return                          Pixel-wise x-coordinate of button's top left corner.
     */
    public short getX(){
-      return (short)(x * cg_Client.SCREEN_WIDTH - WIDTH * 0.5);
+      return (short)(x * cg_Client.SCREEN_WIDTH - getWidth()  / 2);
    }
    
    /**
@@ -100,7 +100,7 @@ public class ui_Button{
     * @return                          Pixel-wise y-coordinate of button's top left corner.
     */
    public short getY(){
-      return (short)(y * cg_Client.SCREEN_HEIGHT - HEIGHT * 0.5);
+      return (short)(y * cg_Client.SCREEN_HEIGHT - getHeight()  / 2);
    }
    
    /**
