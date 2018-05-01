@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | ui_Pause
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Pause menu.
  */
@@ -57,11 +57,14 @@ public class ui_Pause extends ui_Menu{
          //Shut down server
          if(g_Server.server != null){
             g_Server.server.shutdown();
-            
-         //Disconnect
-         }else{
-            cg_Panel.getConnection().close();
          }
+         
+         if(g_Echo.echo != null){
+            g_Echo.echo.shutdown();
+         }
+         
+         //Disconnect
+         cg_Panel.getConnection().close();
          
          cg_Client.frame.setContentPane(ui_Menu.servers);
          ui_Menu.servers.requestFocus();

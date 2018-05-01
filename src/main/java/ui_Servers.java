@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | ui_Servers
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Menu panel for server listing and selection.
  */
@@ -22,16 +22,6 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
    private ui_Table list;
    
    /**
-    * Thread to concurrently search for servers while panel is running.
-    */
-   private Refresher refresher;
-   
-   /**
-    * Small icon thing to display refresher status.
-    */
-   private String searchingIcon;
-   
-   /**
     * Constructor. Initializes buttons and lists.
     */
    public ui_Servers(){
@@ -48,7 +38,25 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
          new float[] {0.11f, 0.3f, 0.45f, 0.70f, 0.85f}
       );
       
-      refresher = new Refresher();
+      //Start server searcher
+      Thread refresher = new Thread(){
+         public void run(){
+            while(true){
+               //Wait a bit
+               try{
+                  sleep(5000);
+                  
+                  //Only refresh if this panel is being shown
+                  while(cg_Client.frame.getContentPane() != ui_Menu.servers){
+                     sleep(2000);
+                  }
+               }catch(InterruptedException e){}
+               
+               //Update server list
+               findServers();
+            }
+         }
+      };
       refresher.start();
    }
    
@@ -66,15 +74,14 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
       //Draw server list
       list.draw(g2);
       
-      //Update/draw searchingIcon
-      if(searchingIcon != null){
-         g2.setFont(new Font("Courier New", Font.BOLD, util_Utilities.getFontSize(4.0 / 5)));
-         g2.drawString(searchingIcon, list.getX(), list.getY() + (short)(list.getHeight() * 1.06));
-         
-         //Animate searching icon
-         if(Math.random() < 0.1)
-            searchingIcon = searchingIcon.substring(2) + searchingIcon.substring(0, 2);
-      }
+      //Draw searching icon
+      byte ind = (byte)(((System.currentTimeMillis() % 10000) / 100) % 4);
+      String searchingIcon = "oooo";
+      searchingIcon = searchingIcon.substring(0, ind) + "0" + searchingIcon.substring(ind + 1);
+      
+      g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
+      g2.setFont(new Font("Courier New", Font.BOLD, util_Utilities.getFontSize(4.0 / 5)));
+      g2.drawString(searchingIcon, list.getX(), list.getY() + (short)(list.getHeight() * 1.06));
       
       repaint();
    }
@@ -152,10 +159,10 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
    public void joinServer(String IP){
       byte gamemode = 0;
       for(String g : gamemodes){
-         if(!list.getContents().get(list.getHoverRow()).equals(g))
-            gamemode++;
-         else
+         if(list.getContents().get(list.getHoverRow())[2].equals(g))
             break;
+         else
+            gamemode++;
       }
       joinServer(IP, gamemode);
    }
@@ -175,110 +182,105 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
       }catch(IOException e){}
    }
    
-   /**
-    * Thread-based server list refresh class.
-    */
-   private class Refresher extends Thread{
+   private void findServers(){
+      ArrayList<String> IPs = new ArrayList<>();
       
-      /**
-       * Search for servers and update servers list. The code is a trainwreck.
-       * Approach with caution.
-       */
-      public void run(){
-         //Maximum time to wait for connection (in milliseconds)
-         short timeout = 300;
+      //Get IP of all machines on local network
+      try{
+         //Run cmd "arp -a" command
+         Runtime runtime = Runtime.getRuntime();
+         Process process = runtime.exec("arp.bat");
          
-         //Find subnet (LAN) IP
-         String networkIP = "";
-         try{
-            networkIP = InetAddress.getLocalHost().toString();
-            networkIP = networkIP.substring(
-               networkIP.indexOf("/") + 1,
-               networkIP.lastIndexOf(".") + 1
-            );
-         }catch(UnknownHostException e){}
+         //Read in ARP output
+         BufferedReader input = new BufferedReader(
+            new InputStreamReader(process.getInputStream())
+         );
          
-         //To replace table's contents once done updating
-         HashMap<Byte, String[]> cont = new HashMap<Byte, String[]>();
+         //Skip some lines in output
+         for(byte i = 0; i < 7; i++)
+            input.readLine();
          
-         //Constantly echo out
+         //Read in the good stuff
          while(true){
+            String pingIP = input.readLine();
             
-            searchingIcon = "0oo";
+            if(pingIP.equals("") || pingIP.contains("static"))
+               break;
             
-            for(byte i = Byte.MIN_VALUE; i < Byte.MAX_VALUE; i++){
-               //Check if this panel is still being displayed
-               if(cg_Client.frame.getContentPane() != ui_Menu.servers)
-                  continue;
-               
-               String pingIP = networkIP + (i - Byte.MIN_VALUE + 1);
-               
-               //Try to ping echo server
-               Socket echo = new Socket();
-               try{
-                  echo.connect(new InetSocketAddress(pingIP, ECHO_PORT), timeout);
-                  
-                  InputStream in = echo.getInputStream();
-                  OutputStream out = echo.getOutputStream();
-                  
-                  //CONNECTED! Send request
-                  out.write(REQUEST_MESSAGE.getBytes());
-                  final long sendTime = System.currentTimeMillis();
-                  
-                  //Get server info response
-                  byte[] buff = new byte[Byte.MAX_VALUE];
-                  byte numByte = (byte)in.read(buff);
-                  final long receiveTime = System.currentTimeMillis();
-                  
-                  //Do stuff
-                  String gamemode = gamemodes[buff[numByte - 1]];
-                  
-                  //Format server info
-                  String[] serverInfo = new String[5];
-                  
-                  serverInfo[0] = new String(buff, 1, buff[0]);            //Server name
-                  serverInfo[1] = pingIP;                                  //Server IP
-                  serverInfo[2] = gamemode;                                //Server gamemode
-                  serverInfo[3] = buff[numByte - 1] + "/" + MAX_PLAYERS;   //Server capacity
-                  serverInfo[4] = receiveTime - sendTime + "";             //Server ping
-                  
-                  //Add server info to list
-                  cont.put((byte)(i - Byte.MIN_VALUE), serverInfo);
-                  
-                  //Close connection
-                  echo.close();
-                  in.close();
-                  out.close();
-               
-               //Could not connect in time
-               }catch(IOException e){
-                  //Remove server from list
-                  if(cont.containsKey((byte)(i - Byte.MIN_VALUE)))
-                     cont.remove((byte)(i - Byte.MIN_VALUE));
+            //Extract local IP address
+            pingIP = pingIP.substring(2, pingIP.indexOf(" ", 3));
+            
+            IPs.add(pingIP);
+         }
+         
+         //Include ourselves
+         IPs.add("127.0.0.1"); //Loopback address
+      
+      }catch(IOException e){
+         e.printStackTrace();
+      }
+      
+      //Try to connect to machines
+      final short timeout = 500; //Time given for server to respond, in milliseconds
+      for(String pingIP : IPs){
+         try{
+            Socket echo = new Socket();
+            echo.connect(new InetSocketAddress(pingIP, ECHO_PORT), timeout);
+            
+            InputStream in = echo.getInputStream();
+            OutputStream out = echo.getOutputStream();
+            
+            //CONNECTED! Send request
+            out.write(REQUEST_MESSAGE.getBytes());
+            final long sendTime = System.currentTimeMillis();
+            
+            //Get server info response
+            byte[] buff = new byte[Byte.MAX_VALUE];
+            byte numByte = (byte)in.read(buff);
+            final long receiveTime = System.currentTimeMillis();
+            
+            //Format server info
+            String[] serverInfo = new String[] {
+               new String(buff, 1, buff[0]),          //Server name
+               pingIP,                                //Server IP
+               gamemodes[buff[numByte - 1]],          //Server gamemode
+               buff[numByte - 1] + "/" + MAX_PLAYERS, //Server capacity
+               receiveTime - sendTime + ""            //Server ping
+            };
+            
+            //Add/replace server info in list
+            byte ind = -1;
+            for(byte i = 0; i < list.getContents().size(); i++){
+               if(list.getContents().get(i)[1].equals(pingIP)){
+                  ind = i;
+                  break;
                }
-               
-               //Update server list
-               list.setContents(new ArrayList<String[]> (cont.values()));
-               
-               if(list.getContents().size() < list.getHoverRow())
-                  list.setHoverRow((byte)(list.getContents().size() - list.getScrollInd()));
-               
-               //Searched all network
-               if(i == Byte.MAX_VALUE - 1){
-                  searchingIcon = null;
-                  
-                  //If no servers found, lower our timeout standards
-                  if(list.getContents().size() == 0 && timeout < 100){
-                     timeout += 10;
-                  }
-                  
-                  //Take a break
-                  try{
-                     Thread.sleep(2000);
-                  }catch(InterruptedException e){}
+            }
+            System.out.println(ind + "");
+            if(ind != -1)
+               list.getContents().set(ind, serverInfo);
+            else
+               list.getContents().add(serverInfo);
+            
+            //Close connection
+            echo.close();
+            in.close();
+            out.close();
+         
+         //Could not connect in time
+         }catch(IOException e){
+            //Remove server from list
+            for(String[] s : list.getContents()){
+               if(s[0].equals(pingIP)){
+                  list.getContents().remove(s);
+                  break;
                }
             }
          }
       }
+      
+      //Reset list scroll
+      if(list.getContents().size() - list.getScrollInd() < list.getHoverRow())
+         list.setHoverRow((byte)(list.getContents().size() - list.getScrollInd()));
    }
 }

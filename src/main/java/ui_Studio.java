@@ -1,10 +1,10 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | ui_Studio
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
- *
+ * 2017 - 18
+ * 
  * Song studio for transcribing/creating songs into game format.
  */
 
@@ -444,6 +444,7 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
             
             }catch(FileNotFoundException ex){
                message = "Load failed. Could not find song file.";
+               fileList.getContents().remove(fileList.getHoverRow());
                //System.out.println("Could not load song file.");
             
             }catch(NoSuchElementException ex){
@@ -636,12 +637,22 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
    
    //Save current song to file
    private void saveToFile() throws IOException{
-      File songFile = new File(util_Utilities.getDirectory() + "/resources/songs/" + nameTextbox.getContents() + ".cfg");
+      File songFile = new File(
+         util_Utilities.getDirectory() +
+         "/resources/songs/" +
+         nameTextbox.getContents() +
+         ".cfg"
+      );
       
       //Delete old song file
       if(songFile.exists()){
          songFile.delete();
-         songFile = new File(util_Utilities.getDirectory() + "/resources/songs/" + nameTextbox.getContents() + ".cfg");
+         songFile = new File(
+            util_Utilities.getDirectory() +
+            "/resources/songs/" +
+            nameTextbox.getContents() +
+            ".cfg"
+         );
       }
       
       PrintWriter output = new PrintWriter(songFile);
@@ -719,5 +730,15 @@ public class ui_Studio extends ui_Menu implements bg_Constants, KeyListener, Mou
       for(String line : toWrite)
          output.println(line);
       output.close();
+      
+      //Add song file to file list
+      boolean alreadyContained = false;
+      for(String[] fileEntry : fileList.getContents())
+         if(fileEntry[0].equals(nameTextbox.getContents())){
+            alreadyContained = true;
+            break;
+         }
+      if(!alreadyContained)
+         fileList.getContents().add(new String[] {nameTextbox.getContents()});
    }
 }

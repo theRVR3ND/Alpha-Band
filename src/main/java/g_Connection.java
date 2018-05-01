@@ -1,11 +1,11 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | g_Connection
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
- * W.T.Woodson H.S.
- * 2017
  * 
- * Update thread for a single server-client connection
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
+ * W.T.Woodson H.S.
+ * 2017 - 18
+ * 
+ * Server's connection handler.
  */
  
 import java.net.*;
@@ -97,40 +97,40 @@ public class g_Connection extends Thread implements bg_Constants{
             
             //Send client vote info
             if(!sentBallot){
-               byte[] toSend = new byte[Byte.MAX_VALUE];
-               byte[][] currVote = g_Server.server.getWorld().getCurrVote();
-               byte ind = 9;
-               
-               //Add tags and stuff
-               toSend[0] = VOTE;
-               
-               //Include time to start game
-               byte[] bytes = bg_World.longToBytes(g_Server.server.getWorld().getSongStartTime());
-               for(byte i = 0; i < bytes.length; i++)
-                  toSend[i + 1] = bytes[i];
-               
-               //Add all songs on ballot into toSend
-               if(currVote != null){
-                  for(byte r = 0; r < currVote.length; r++){
-                     if(currVote[r][0] == -1)
-                        continue;
-                     byte[] songInfo = g_Server.server.getWorld().getSongList().get(currVote[r][0]);
-                     for(byte i = 0; i < songInfo.length; i++){
-                        toSend[ind++] = songInfo[i];
+               if(g_Server.server.getWorld().getCurrVote() != null){
+                  byte[] toSend = new byte[Byte.MAX_VALUE];
+                  byte[][] currVote = g_Server.server.getWorld().getCurrVote();
+                  byte ind = 9;
+                  
+                  //Add tags and stuff
+                  toSend[0] = VOTE;
+                  
+                  //Include time to start game
+                  byte[] bytes = bg_World.longToBytes(g_Server.server.getWorld().getSongStartTime());
+                  for(byte i = 0; i < bytes.length; i++)
+                     toSend[i + 1] = bytes[i];
+                  
+                  //Add all songs on ballot into toSend
+                  if(currVote != null){
+                     for(byte r = 0; r < currVote.length - 2; r++){
+                        byte[] songInfo = g_Server.server.getWorld().getSongList().get(currVote[r][0]);
+                        for(byte i = 0; i < songInfo.length; i++){
+                           toSend[ind++] = songInfo[i];
+                        }
                      }
                   }
+                  
+                  //Send it!
+                  writeOut(toSend);
+                  sentBallot = true;
+                  
+                  try{
+                     Thread.sleep(200);
+                  }catch(InterruptedException e){}
                }
-               
-               //Send it!
-               writeOut(toSend);
-               
-               sentBallot = true;
-               try{
-                  Thread.sleep(200);
-               }catch(InterruptedException e){}
             
             //Send game world updates
-            }else{// if(g_Server.server.getWorld().getPlayer(clientID) != null){
+            }else{
                //Send entity data
                LinkedList<byte[]> data = g_Server.server.getWorld().getRelevantData(clientID);
                for(byte i = 0; i < data.size(); i++){
@@ -162,6 +162,11 @@ public class g_Connection extends Thread implements bg_Constants{
                   try{
                      Thread.sleep(200);
                   }catch(InterruptedException e){}
+               }
+               
+               //Song ended. Restart things.
+               if(g_Server.server.getWorld().getCurrVote() == null){
+                  sentBallot = false;
                }
             }
          }

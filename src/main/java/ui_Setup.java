@@ -1,10 +1,10 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | ui_Setup
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
- *
+ * 2017 - 18
+ * 
  * Menu panel for redirecting to other menus. That make sense?
  */
 

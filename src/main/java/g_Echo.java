@@ -1,10 +1,10 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | g_Echo
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
- *
+ * 2017 - 18
+ * 
  * Echo server. Responds to client requests for connection.
  */
 
@@ -77,5 +77,12 @@ public class g_Echo implements Runnable, bg_Constants{
             
          }catch(IOException e){}
       }
+   }
+   
+   public void shutdown(){
+      try{
+         socket.close();
+         echo = null;
+      }catch(IOException e){}
    }
 }

@@ -1,8 +1,9 @@
 /**
  * Kilo - Java Multiplayer Engine | ui_Guide
- * by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Menu panel for displaying game instructions.
  */

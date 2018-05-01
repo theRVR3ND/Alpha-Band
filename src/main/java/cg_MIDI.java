@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | cg_MIDI
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Client MIDI player.
  */
@@ -18,9 +18,9 @@ public class cg_MIDI{
    
    private static final byte[] volumes = new byte[] { //Volume balancing array
       75, //Piano
-      55, //Guitar
+      50, //Guitar
       85, //Drums
-      65, //Bass
+      70, //Bass
       30, //Distorted Guitar
       80  //Agogo
    };
@@ -42,13 +42,18 @@ public class cg_MIDI{
       }
    }
    
-   public static void playNote(final byte note, final byte instrument){
-      //Play note
-      if(instrument == util_Music.DRUMS){ //Percussion
-         channels[9].allNotesOff();
+   public static void playNote(byte note, final byte instrument){
+      //Percussion
+      if(instrument == util_Music.DRUMS){
          channels[9].noteOn(note, (int)(volumes[instrument] * ui_Menu.settings.getVolume() / 100.0));
       
-      }else{ //Other instrument
+      //Other instrument
+      }else{
+         //Drop bass a bit
+         if(instrument == util_Music.BASS)
+            note -= 24;
+         
+         //Play note
          channels[instrument].allNotesOff();
          channels[instrument].noteOn(note, (int)(volumes[instrument] * ui_Menu.settings.getVolume() / 100.0));
       }

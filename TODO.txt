@@ -1,3 +1,0 @@
-- Make song file list update when saving song in studio panel
-- Show 12 beats in studio panel
-- Bass is busted

@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | bg_World
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Game world. Where the magic happens.
  */
@@ -31,7 +31,7 @@ public abstract class bg_World implements bg_Constants{
    
    protected final byte gamemode;
    
-   protected final float ALLOWED_ERROR = 0.02f; //For hit scoring. Lower = more stringent.
+   protected final float ALLOWED_ERROR = 0.08f; //For hit scoring. Lower = more stringent.
    
    /**
     * Maximum update rate of world.
@@ -46,6 +46,8 @@ public abstract class bg_World implements bg_Constants{
       entities = new HashMap<Short, bg_Entity>();
       lastThinkTime = System.currentTimeMillis();
       songStartTime = Long.MAX_VALUE;
+      
+      currBeat = Short.MIN_VALUE;
       
       this.gamemode = gamemode;
       

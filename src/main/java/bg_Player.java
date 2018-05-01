@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | bg_Player
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Player entity in game world.
  */

@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | bg_Note
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Musical note.
  */
@@ -34,9 +34,5 @@ public class bg_Note{
    
    public byte getDuration(){
       return duration;
-   }
-   
-   public String toString(){
-      return note + " " + beat + " " + duration + "/";
    }
 }

@@ -1,13 +1,11 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | g_Server
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
- *
+ * 2017 - 18
+ * 
  * Server run program.
- *
- * @author Kelvin Peng
  */
 
 import java.util.*;
@@ -90,7 +88,7 @@ public class g_Server extends Thread implements bg_Constants{
          world = null;
       }catch(IOException e){
          //Stay perfectly calm. Exceptions' vision is based on printlns.
-         e.printStackTrace();
+         //e.printStackTrace();
       }
    }
    

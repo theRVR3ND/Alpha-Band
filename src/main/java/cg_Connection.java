@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | cg_Connection
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Client's connection handler.
  */
@@ -62,9 +62,6 @@ public class cg_Connection extends Thread implements bg_Constants{
             byte[] info = new byte[Byte.MAX_VALUE];
             byte numByte = (byte)in.read(info);
             if(numByte > 0){
-               // for(byte i : info)
-//                  System.out.print(i + " ");
-//                System.out.println();
                processInStream(info, numByte);
             }
          }
@@ -205,9 +202,6 @@ public class cg_Connection extends Thread implements bg_Constants{
       
       //Start vote
       }else if(info[0] == VOTE){
-         //for(byte i : info)
-         //   System.out.print(i + " ");
-         //System.out.println("<adsfasdfa");
          ui_Menu.vote.startVote(info);
       
       //Process incomming notes for user to play

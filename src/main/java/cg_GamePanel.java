@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | cg_GamePanel
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Game world display.
  */
@@ -45,16 +45,16 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       currNotes = new HashSet<Byte>();
       
       //Map note values to keys
-      noteMap.put(KeyEvent.VK_A,         (byte)1);
-      noteMap.put(KeyEvent.VK_S,         (byte)2);
-      noteMap.put(KeyEvent.VK_D,         (byte)3);
-      noteMap.put(KeyEvent.VK_F,         (byte)4);
-      noteMap.put(KeyEvent.VK_G,         (byte)5);
-      noteMap.put(KeyEvent.VK_H,         (byte)6);
-      noteMap.put(KeyEvent.VK_J,         (byte)7);
-      noteMap.put(KeyEvent.VK_K,         (byte)8);
-      noteMap.put(KeyEvent.VK_L,         (byte)9);
-      noteMap.put(KeyEvent.VK_SEMICOLON, (byte)10);
+      noteMap.put(KeyEvent.VK_A,         (byte)0);
+      noteMap.put(KeyEvent.VK_S,         (byte)1);
+      noteMap.put(KeyEvent.VK_D,         (byte)2);
+      noteMap.put(KeyEvent.VK_F,         (byte)3);
+      noteMap.put(KeyEvent.VK_G,         (byte)4);
+      noteMap.put(KeyEvent.VK_H,         (byte)5);
+      noteMap.put(KeyEvent.VK_J,         (byte)6);
+      noteMap.put(KeyEvent.VK_K,         (byte)7);
+      noteMap.put(KeyEvent.VK_L,         (byte)8);
+      noteMap.put(KeyEvent.VK_SEMICOLON, (byte)9);
       
       //Add listeners
       this.addMouseListener(this);
@@ -98,7 +98,7 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       for(byte i = 0; i < noteMap.size(); i++){
          //Key is pressed
-         if(currNotes.contains((byte)(i + 1))){
+         if(currNotes.contains(i)){
             g2.drawRect(
                (int)((i + 0.05) * cg_Client.SCREEN_WIDTH / 10.0),
                (int)(cg_Client.SCREEN_HEIGHT * 14.5 / 20.0),
@@ -155,15 +155,18 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
       //Action key
       if(chatMessage == null){
          //Trigger new note
-         if(noteMap.containsKey(e.getKeyCode()) &&
-            !currNotes.contains(noteMap.get(e.getKeyCode())) &&
-            System.currentTimeMillis() > world.getSongStartTime()){
-            
+         if(noteMap.containsKey(e.getKeyCode()) && !currNotes.contains(noteMap.get(e.getKeyCode())) && world.getKeyShift() > 0){
             //Send to server world
             byte[] bytes = bg_World.longToBytes(e.getWhen());
+            final byte noteValue = (byte)( //Actual MIDI note value
+               util_Music.INTERVALS[world.getScale()][noteMap.get(e.getKeyCode()) % util_Music.INTERVALS[world.getScale()].length] +
+               12 * (noteMap.get(e.getKeyCode()) / util_Music.INTERVALS[world.getScale()].length) +
+               world.getKeyShift()
+            );
+            
             connection.writeOut(new byte[] {
                ACTION,
-               (byte)(noteMap.get(e.getKeyCode()) + world.getKeyShift()),
+               noteValue,
                bytes[0],
                bytes[1],
                bytes[2],
@@ -175,8 +178,9 @@ public class cg_GamePanel extends cg_Panel implements MouseListener,
             });
             
             //Send to client world
-            world.processAction(noteMap.get(e.getKeyCode()), e.getWhen());
+            world.processAction(noteValue, e.getWhen());
             
+            //Keep track of note
             currNotes.add(noteMap.get(e.getKeyCode()));
          }
       }

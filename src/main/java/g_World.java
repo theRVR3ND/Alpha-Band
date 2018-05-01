@@ -1,11 +1,11 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | g_World
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
- * W.T.Woodson H.S.
- * 2017
  * 
- * Server-side version of world. Has world data saving feature.
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
+ * W.T.Woodson H.S.
+ * 2017 - 18
+ * 
+ * Server-side version of world.
  */
 
 import java.util.*;
@@ -18,13 +18,13 @@ public class g_World extends bg_World{
    
    private byte[][] currVote; //Current song vote. Row 1 = index of song, row 2 = # votes.
    
-   private static ArrayList<byte[]> songList;
-   
-   //private HashMap<Byte, HashSet<bg_Note>> notes; //Key: instrument number, Value: note buffer
+   private static ArrayList<byte[]> songList; //Info of all songs on file
    
    private ArrayList<HashMap<Short, HashSet<Byte>>> song; //All notes ever
    
    private ArrayList<HashMap<Short, byte[]>> noteData; //Note data to send to client
+   
+   private Short songLength;
    
    /**
     * Master gamestate. Holds all current entity states.
@@ -39,8 +39,6 @@ public class g_World extends bg_World{
     */
    private HashMap<Byte, HashMap<Short, byte[]>> snapshots;
    
-   //private NoteSpawner noteSpawner;
-   
    /**
     * Constructor.
     */
@@ -50,13 +48,6 @@ public class g_World extends bg_World{
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
-      //notes = new HashMap<Byte, HashSet<bg_Note>>();
-      //noteData = new HashMap<Byte, HashSet<byte[]>>();
-      
-      //for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
-      //   notes.put(i, new HashSet<bg_Note>());
-      //   noteData.put(i, new HashSet<byte[]>());
-      //}
       
       this.serverDifficulty = serverDifficulty;
       
@@ -121,8 +112,25 @@ public class g_World extends bg_World{
       }catch(ConcurrentModificationException e){}
       
       //Start game
-      if(song == null && System.currentTimeMillis() > super.songStartTime - 10000){
-         startSong();
+      if(song == null && currVote != null){
+         if(System.currentTimeMillis() > super.songStartTime - 10000)
+            startSong();
+      
+      //End song
+      }else{
+         //Start next song process
+         if(super.getCurrBeat() > songLength + bpm * (1  / 3.0)){
+            if(currVote == null){
+               startVote();
+            }
+         
+         //Get rid of 
+         }else if(super.getCurrBeat() > songLength){
+            currVote = null;
+            song = null;
+            noteData = null;
+            songLength = 0;
+         }
       }
    }
    
@@ -134,6 +142,10 @@ public class g_World extends bg_World{
    
    public ArrayList<byte[]> getSongList(){
       return songList;
+   }
+   
+   public short getSongLength(){
+      return songLength;
    }
    
    /**
@@ -174,6 +186,7 @@ public class g_World extends bg_World{
          }else{
             delta = findDelta(new byte[comp.length], comp);
          }
+         
          //Update snapshot
          snapshots.get(clientID).put(key, comp);
          comp = delta;
@@ -235,7 +248,7 @@ public class g_World extends bg_World{
          byte voteSong = 0;
          
          attempt:
-            for(byte tolerance = 0; tolerance < 3; tolerance++){
+            for(byte tolerance = 0; tolerance < 5; tolerance++){
                for(byte tries = 0; tries < 20; tries++){
                   voteSong = (byte)(songList.size() * Math.random());
                   
@@ -303,13 +316,12 @@ public class g_World extends bg_World{
       byte choice = maxVotes.get((byte)(maxVotes.size() * Math.random()));//Index in currVote
       if(choice == currVote.length - 2)
          choice = (byte)(Math.random() * songList.size());
-      System.out.println("choice: " + choice);
       
       //Song parameters
       song = new ArrayList<>();
       byte scale = 0, //Song's scale
              key = 0; //Song's key
-      short songLength = 0;
+      songLength = 0;
       
       //Generate/load song part for players
       if(choice == currVote.length - 1){//Randomly generated song
@@ -339,7 +351,6 @@ public class g_World extends bg_World{
                util_Utilities.getDirectory() + "/resources/songs/" +
                new String(songList.get(currVote[choice][0]), 4, songList.get(currVote[choice][0])[3]) + ".cfg"
             ));
-            System.out.println(new String(songList.get(currVote[choice][0]), 4, songList.get(currVote[choice][0])[3]));
             
             input.nextLine(); //Skip song difficulty
             input.nextLine(); //Skip song length
@@ -366,7 +377,7 @@ public class g_World extends bg_World{
                   for(byte j = 1; j < line.length; j++){
                      song.get(i).get(beat).add(Byte.parseByte(line[j]));
                   }
-                  songLength = (short)(Math.max(songLength, beat));
+                  songLength = (short)(Math.max(songLength, beat + 1));
                }
             }
             
@@ -404,7 +415,7 @@ public class g_World extends bg_World{
       noteData = new ArrayList<>();
       for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
          noteData.add(new HashMap<Short, byte[]>());
-         for(short beat = 0; beat < 100; beat++){//CHANGE LATER
+         for(short beat = 0; beat < songLength; beat++){
             final byte numNotes; //Number of notes played on beat
             if(song.get(i).get(beat) != null){
                numNotes = (byte)song.get(i).get(beat).size();

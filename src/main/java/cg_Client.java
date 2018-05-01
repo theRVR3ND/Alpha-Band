@@ -1,13 +1,11 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | cg_Client
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
- *
+ * 2017 - 18
+ * 
  * Client's run class.
- *
- * @author Kelvin Peng
  */
 
 import java.net.*;

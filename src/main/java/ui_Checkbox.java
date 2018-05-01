@@ -1,9 +1,9 @@
 /**
  * Alpha Band - Multiplayer Rythym Game | ui_Checkbox
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * A box that can be checked.
  */

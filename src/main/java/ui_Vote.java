@@ -1,9 +1,9 @@
 /**
- * Alpha Band - Multiplayer Rythym Game | ui_Player
- * Concept and game by Shae McMillan
- * Engine by Kelvin Peng
+ * Alpha Band - Multiplayer Rythym Game | ui_Vote
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Menu panel for player info viewing and changing.
  */
@@ -46,16 +46,6 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
    public void paintComponent(Graphics g){
       super.paintComponent(g);
       
-      //Redirect to game screen if timed out
-      /*
-      if(System.currentTimeMillis() > cg_Panel.gamePanel.getWorld().getSongStartTime()){
-         cg_Client.frame.setContentPane(cg_Panel.gamePanel);
-         cg_Panel.gamePanel.requestFocus();
-         cg_Client.frame.revalidate();
-         
-         return;
-      }
-      */
       //Improve rendering quality
       Graphics2D g2 = util_Utilities.improveQuality(g);
       
@@ -91,13 +81,8 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       //Extract vote info
       byte i = 9;
       for(byte j = 0; j < 3; j++){
-         /*
          //Check if there is info to extract
          if(info[i + 1] == 0 && info[i + 2] == 0){
-            break;
-         }
-         */
-         if(info[i] == 0){
             break;
          }
          
@@ -124,6 +109,13 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       //Add all song options to list
       voteList.getContents().add(new String[] {"Generate a Song"});
       voteList.getContents().add(new String[] {"Choose Random Song"});
+      
+      //Redirect to this screen if needed
+      if(cg_Client.frame.getContentPane() != ui_Menu.vote){
+         cg_Client.frame.setContentPane(ui_Menu.vote);
+         requestFocus();
+         cg_Client.frame.revalidate();
+      }
    }
    
    /**
@@ -131,7 +123,14 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
     *
     * @param e                   KeyEvent to process
     */
-   public void keyPressed(KeyEvent e){}
+   public void keyPressed(KeyEvent e){
+      //Escape to menu
+      if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+         cg_Client.frame.setContentPane(ui_Menu.pause);
+         ui_Menu.pause.requestFocus();
+         cg_Client.frame.revalidate();
+      }
+   }
    
    public void keyReleased(KeyEvent e){}
    

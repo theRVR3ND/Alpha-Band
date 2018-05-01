@@ -1,8 +1,9 @@
 /**
  * Kilo - Java Multiplayer Engine | bg_Entity
- * by Kelvin Peng
+ * 
+ * By: Shae McMillan, Christina Nguyen, and Kelvin Peng
  * W.T.Woodson H.S.
- * 2017
+ * 2017 - 18
  * 
  * Entity in game world.
  */
