@@ -1,3 +1,0 @@
-cd\
-arp -a
-pause

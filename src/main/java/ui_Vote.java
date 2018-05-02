@@ -55,14 +55,20 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
       
       //Show vote timeout
       short seconds = (short)((cg_Panel.gamePanel.getWorld().getSongStartTime() - System.currentTimeMillis()) / 1000.0);
-      String toDraw;
+      String toDraw = "";
       if(seconds > 0){
          if(seconds % 60 < 10)
             toDraw = (seconds / 60) + ":0" + (seconds % 60);
          else
             toDraw = (seconds / 60) + ":" + (seconds % 60);
-      }else
-         toDraw = "";
+      }else{
+         //Redirect to game
+         if(seconds > -System.currentTimeMillis() / 1000.0){
+            cg_Client.frame.setContentPane(cg_Panel.gamePanel);
+            cg_Panel.gamePanel.requestFocus();
+            cg_Client.frame.revalidate();
+         }
+      }
       
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       g2.drawString(

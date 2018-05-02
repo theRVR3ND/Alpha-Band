@@ -7,7 +7,7 @@
  * 
  * Menu panel for server listing and selection.
  */
- 
+
 import java.util.*;
 import java.net.*;
 import java.awt.*;
@@ -199,11 +199,10 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
          );
       }catch(UnknownHostException e){}
       
-      final byte timeout = 50;
+      final byte timeout = 40;
       for(byte i = Byte.MIN_VALUE; i < Byte.MAX_VALUE; i++){
          Socket echo = new Socket();
          String pingIP = networkIP + (i - Byte.MIN_VALUE + 1);
-         
          try{
             echo.connect(new InetSocketAddress(pingIP, ECHO_PORT), timeout);
             
@@ -261,105 +260,5 @@ public class ui_Servers extends ui_Menu implements MouseWheelListener, bg_Consta
          }
       }
       searching = false;
-      /*
-      ArrayList<String> IPs = new ArrayList<>();
-      
-      //Get IP of all machines on local network
-      try{
-         //Run cmd "arp -a" command
-         Runtime runtime = Runtime.getRuntime();
-         Process process = runtime.exec("arp.bat");
-         
-         //Read in ARP output
-         BufferedReader input = new BufferedReader(
-            new InputStreamReader(process.getInputStream())
-         );
-         
-         //Skip some lines in output
-         for(byte i = 0; i < 7; i++)
-            input.readLine();
-         
-         //Read in the good stuff
-         while(true){
-            String pingIP = input.readLine();
-            
-            if(pingIP.equals("") || pingIP.contains("static"))
-               break;
-            
-            //Extract local IP address
-            pingIP = pingIP.substring(2, pingIP.indexOf(" ", 3));
-            
-            IPs.add(pingIP);
-         }
-         
-         //Include ourselves
-         IPs.add("127.0.0.1"); //Loopback address
-      
-      }catch(IOException e){
-         e.printStackTrace();
-      }
-      
-      //Try to connect to machines
-      final short timeout = 500; //Time given for server to respond, in milliseconds
-      for(String pingIP : IPs){
-         try{
-            Socket echo = new Socket();
-            echo.connect(new InetSocketAddress(pingIP, ECHO_PORT), timeout);
-            
-            InputStream in = echo.getInputStream();
-            OutputStream out = echo.getOutputStream();
-            
-            //CONNECTED! Send request
-            out.write(REQUEST_MESSAGE.getBytes());
-            final long sendTime = System.currentTimeMillis();
-            
-            //Get server info response
-            byte[] buff = new byte[Byte.MAX_VALUE];
-            byte numByte = (byte)in.read(buff);
-            final long receiveTime = System.currentTimeMillis();
-            
-            //Format server info
-            String[] serverInfo = new String[] {
-               new String(buff, 1, buff[0]),          //Server name
-               pingIP,                                //Server IP
-               gamemodes[buff[numByte - 1]],          //Server gamemode
-               buff[numByte - 1] + "/" + MAX_PLAYERS, //Server capacity
-               receiveTime - sendTime + ""            //Server ping
-            };
-            
-            //Add/replace server info in list
-            byte ind = -1;
-            for(byte i = 0; i < list.getContents().size(); i++){
-               if(list.getContents().get(i)[1].equals(pingIP)){
-                  ind = i;
-                  break;
-               }
-            }
-            System.out.println(ind + "");
-            if(ind != -1)
-               list.getContents().set(ind, serverInfo);
-            else
-               list.getContents().add(serverInfo);
-            
-            //Close connection
-            echo.close();
-            in.close();
-            out.close();
-         
-         }catch(IOException e){
-            //Remove server from list
-            for(String[] s : list.getContents()){
-               if(s[0].equals(pingIP)){
-                  list.getContents().remove(s);
-                  break;
-               }
-            }
-         }
-      }
-      
-      //Reset list scroll
-      if(list.getContents().size() - list.getScrollInd() < list.getHoverRow())
-         list.setHoverRow((byte)(list.getContents().size() - list.getScrollInd()));
-      */
    }
 }

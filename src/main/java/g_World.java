@@ -278,18 +278,20 @@ public class g_World extends bg_World{
       if(super.gamemode == COMPETITION){
          //Competition - every player plays piano
          for(Short key : entities.keySet()){
-            if(entities.get(key) instanceof bg_Player && entities.get(key) != infoEnt){
+            if(entities.get(key) instanceof bg_Player){
                bg_Player player = (bg_Player)(entities.get(key));
-               player.setInstrument(util_Music.PIANO);
+               if(player.getController() != -1)
+                  player.setInstrument(util_Music.PIANO);
             }
          }
       }else{
          //Collaborative (band) mode - each player gets unique instrument
          byte currInstrument = 0;
          for(Short key : entities.keySet()){
-            if(entities.get(key) instanceof bg_Player && entities.get(key) != infoEnt){
+            if(entities.get(key) instanceof bg_Player){
                bg_Player player = (bg_Player)(entities.get(key));
-               player.setInstrument(currInstrument++);
+               if(player.getController() != -1)
+                  player.setInstrument(currInstrument++);
             }
          }
       }
@@ -327,7 +329,6 @@ public class g_World extends bg_World{
       
       //Generate/load song part for players
       if(choice == currVote.length - 1){//Randomly generated song
-      //if(true){
          final short seed = (short)(Math.random() * Short.MAX_VALUE);
          this.bpm = (short)(util_Music.generateBPM((byte)2, seed) * 2);
          scale = util_Music.chooseScale(seed);
@@ -335,7 +336,7 @@ public class g_World extends bg_World{
          
          for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
             //Generate part for each different instrument
-            if(super.gamemode == COMPETITION){
+            if(super.gamemode == COLLABORATIVE){
                song.add(util_Music.generatePart(serverDifficulty, seed, i));
             
             //Generate same part (piano) for each player
@@ -363,9 +364,9 @@ public class g_World extends bg_World{
             input.nextLine(); //Thing to do thing. Thing.
             
             //Load notes
-            song = new ArrayList<>();
+            ArrayList<HashMap<Short, HashSet<Byte>>> songFile = new ArrayList<>();
             for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
-               song.add(new HashMap<Short, HashSet<Byte>>());
+               songFile.add(new HashMap<Short, HashSet<Byte>>());
                
                while(true){
                   String[] line = input.nextLine().split(" ");
@@ -374,36 +375,31 @@ public class g_World extends bg_World{
                      break;
                   
                   short beat = Short.parseShort(line[0]);
-                  song.get(i).put(beat, new HashSet<Byte>());
+                  songFile.get(i).put(beat, new HashSet<Byte>());
                   
                   for(byte j = 1; j < line.length; j++){
-                     song.get(i).get(beat).add(Byte.parseByte(line[j]));
+                     songFile.get(i).get(beat).add(Byte.parseByte(line[j]));
                   }
                   songLength = (short)(Math.max(songLength, beat + 1));
                }
             }
             
+            //Assign part for each different instrument
+            if(super.gamemode == COLLABORATIVE){
+               song = songFile;
+            }else{
+               //Assign same part (piano) for each player
+               HashMap<Short, HashSet<Byte>> noteMap = new HashMap<>();
+               for(Short beat : songFile.get(util_Music.PIANO).keySet())
+                  noteMap.put(beat, songFile.get(util_Music.PIANO).get(beat));
+               for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
+                  song.add(noteMap);
+               }
+            }
+         
          }catch(IOException e){
             e.printStackTrace();
          }
-         
-         /**
-         System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
-         for(short b = 0; b < 100; b++){
-            System.out.print(b + "\t-      ");
-            for(byte i = 0; i < song.size(); i++){
-               String toPrint = "";
-               if(song.get(i).get(b) != null){
-                  for(Byte n : song.get(i).get(b))
-                     toPrint += n + " ";
-               }
-               while(toPrint.length() < 14)
-                  toPrint += " ";
-               System.out.print(toPrint);
-            }
-            System.out.println();
-         }
-         /**/
          
          //Share song name with players
          infoEnt.setName(new String(
@@ -438,24 +434,6 @@ public class g_World extends bg_World{
             noteData.get(i).put(beat, notes);
          }
       }
-      
-      /**
-      System.out.println("BEAT      PIANO         GUITAR        DRUMS         BASS          DIST_GUIT     AGOGO");
-      for(short b = 1; b < 100; b++){
-         System.out.print(b + "\t-      ");
-         for(byte i = 0; i < song.size(); i++){
-            String toPrint = "";
-            if(song.get(i).get(b) != null){
-               for(Byte n : song.get(i).get(b))
-                  toPrint += n + " ";
-            }
-            while(toPrint.length() < 14)
-               toPrint += " ";
-            System.out.print(toPrint);
-         }
-         System.out.println();
-      }
-      /**/
       
       //"Send" song info to clients
       infoEnt.setColor(new Color(bpm, scale, key));
@@ -506,35 +484,21 @@ public class g_World extends bg_World{
       final bg_Player player = getPlayer(clientID);
       float closestGap = Float.MAX_VALUE;
       
-      //Key pressed
-      //if(noteValue > 0){
-         //Find closest note to current beat
-         for(Short beat : song.get(player.getInstrument()).keySet()){
-            for(Byte note : song.get(player.getInstrument()).get(beat)){
-               if(note == noteValue){
-                  closestGap = Math.min(closestGap, Math.abs(actionBeat - beat));
-               }
-            }
-         }
-         
-         //Award bonus combo
-         if(closestGap < ALLOWED_ERROR)
-            player.setBonus((byte)(player.getBonus() + 1));
-         else
-            player.setBonus((byte)(0));
-      /*
-      //Key released
-      }else{
-         //Find closest note end to current beat
-         for(Short beat : song.get(player.getInstrument()).keySet()){
-            for(Byte note : song.get(player.getInstrument()).get(beat)){
-               if(note == noteValue){
-                  closestGap = Math.min(closestGap, Math.abs(actionBeat - beat));
-               }
+      //Find closest note to current beat
+      for(Short beat : song.get(player.getInstrument()).keySet()){
+         for(Byte note : song.get(player.getInstrument()).get(beat)){
+            if(note == noteValue){
+               closestGap = Math.min(closestGap, Math.abs(actionBeat - beat));
             }
          }
       }
-      */
+      
+      //Award bonus combo
+      if(closestGap < ALLOWED_ERROR)
+         player.setBonus((byte)(player.getBonus() + 1));
+      else
+         player.setBonus((byte)(0));
+      
       //Award points
       if(closestGap < 1){
          player.setScore((short)(player.getScore() + super.calculateScore(closestGap, player.getBonus())));
