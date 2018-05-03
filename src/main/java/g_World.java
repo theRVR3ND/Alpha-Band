@@ -44,7 +44,7 @@ public class g_World extends bg_World{
     */
    public g_World(byte gamemode, byte serverDifficulty){
       super(gamemode);
-      System.out.println(gamemode + "");
+      
       //Initialize gamestate tracking structures
       gamestate = new HashMap<Short, byte[]>();
       snapshots = new HashMap<Byte, HashMap<Short, byte[]>>();
@@ -120,17 +120,26 @@ public class g_World extends bg_World{
       }else{
          if(songLength != null){
             //Start next song process
-            if(super.getCurrBeat() > songLength + bpm * (1  / 3.0)){
+            if(super.getCurrBeat() > songLength + bpm / 3.0){
                if(currVote == null){
                   startVote();
                }
             
             //Get rid of 
-            }else if(super.getCurrBeat() > songLength){
+            //}else if(super.getCurrBeat() > songLength){
                currVote = null;
                song = null;
                noteData = null;
                songLength = 0;
+      
+               //Reset scores
+               for(Short key : entities.keySet()){
+                  if(entities.get(key) instanceof bg_Player){
+                     bg_Player player = (bg_Player)(entities.get(key));
+                     if(player.getController() != -1)
+                        player.setScore((short)0);
+                  }
+               }
             }
          }
       }
@@ -225,7 +234,7 @@ public class g_World extends bg_World{
    public byte[] getNotes(byte clientID){
       final byte instrument = getPlayer(clientID).getInstrument();
       if(noteData != null){
-         return noteData.get(instrument).remove((short)(super.getCurrBeat() + 6));
+         return noteData.get(instrument).get((short)(super.getCurrBeat() + 6));
       }else{
          return null;
       }
@@ -334,15 +343,15 @@ public class g_World extends bg_World{
          scale = util_Music.chooseScale(seed);
          key = util_Music.chooseKey(seed);
          
-         for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
-            //Generate part for each different instrument
-            if(super.gamemode == COLLABORATIVE){
+         //Generate part for each different instrument
+         if(super.gamemode == COLLABORATIVE){
+            for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
                song.add(util_Music.generatePart(serverDifficulty, seed, i));
-            
-            //Generate same part (piano) for each player
-            }else{
-               song.add(util_Music.generatePart(serverDifficulty, seed, util_Music.PIANO));
             }
+         
+         //Generate same part (piano) for each player
+         }else{
+            song.add(util_Music.generatePart(serverDifficulty, seed, util_Music.PIANO));
          }
          
          infoEnt.setName("Randomly generated song");
@@ -389,12 +398,7 @@ public class g_World extends bg_World{
                song = songFile;
             }else{
                //Assign same part (piano) for each player
-               HashMap<Short, HashSet<Byte>> noteMap = new HashMap<>();
-               for(Short beat : songFile.get(util_Music.PIANO).keySet())
-                  noteMap.put(beat, songFile.get(util_Music.PIANO).get(beat));
-               for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
-                  song.add(noteMap);
-               }
+               song.add(songFile.get(0));
             }
          
          }catch(IOException e){
@@ -412,6 +416,11 @@ public class g_World extends bg_World{
       //Translate song into bytes for sending
       noteData = new ArrayList<>();
       for(byte i = 0; i < util_Music.NUM_INSTRUMENTS; i++){
+         //No need to convert same note data for each player
+         if(gamemode == COMPETITION && i > 0)
+            break;
+         
+         //Convert notes to byte array
          noteData.add(new HashMap<Short, byte[]>());
          for(short beat = 0; beat < songLength; beat++){
             final byte numNotes; //Number of notes played on beat

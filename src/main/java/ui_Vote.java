@@ -63,11 +63,13 @@ public class ui_Vote extends ui_Menu implements KeyListener, MouseWheelListener,
             toDraw = (seconds / 60) + ":" + (seconds % 60);
       }else{
          //Redirect to game
+         /*
          if(seconds > -System.currentTimeMillis() / 1000.0){
             cg_Client.frame.setContentPane(cg_Panel.gamePanel);
             cg_Panel.gamePanel.requestFocus();
             cg_Client.frame.revalidate();
          }
+         */
       }
       
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));

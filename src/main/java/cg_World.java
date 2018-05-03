@@ -78,7 +78,7 @@ public class cg_World extends bg_World{
       ));
       fm = g2.getFontMetrics();
       
-      String toDraw = "BANDMATES/SCORE";
+      String toDraw = "SCOREBOARD";
       g2.drawString(
          toDraw,
          cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
@@ -147,15 +147,13 @@ public class cg_World extends bg_World{
                
                //Get rid of note if it ded
                if(currMilliBeats > note.getBeat() + 2){
-                  notes.remove(i);
-                  i--;
-               
-               //Flame player for missing note
-               }else if(currMilliBeats > note.getBeat() + 1){
+                  //Flame player for missing note
                   if(!note.getIsHit()){
                      pointsMessage = 5;
                      pointsMessageTimeout = Byte.MAX_VALUE;
                   }
+                  notes.remove(i);
+                  i--;
                }
                
                //Find keyboard button that correlates with note
