@@ -29,6 +29,8 @@ public abstract class bg_World implements bg_Constants{
    
    protected short bpm;
    
+   protected short songLength;
+   
    protected final byte gamemode;
    
    protected final float ALLOWED_ERROR = 0.08f; //For hit scoring. Lower = more stringent.
@@ -46,6 +48,7 @@ public abstract class bg_World implements bg_Constants{
       entities = new HashMap<Short, bg_Entity>();
       lastThinkTime = System.currentTimeMillis();
       songStartTime = Long.MAX_VALUE;
+      songLength = Short.MAX_VALUE;
       
       currBeat = Short.MIN_VALUE;
       

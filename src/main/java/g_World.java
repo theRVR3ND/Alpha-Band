@@ -24,8 +24,6 @@ public class g_World extends bg_World{
    
    private ArrayList<HashMap<Short, byte[]>> noteData; //Note data to send to client
    
-   private Short songLength;
-   
    /**
     * Master gamestate. Holds all current entity states.
     * Data is NOT compressed.
@@ -118,27 +116,25 @@ public class g_World extends bg_World{
       
       //End song
       }else{
-         if(songLength != null){
-            //Start next song process
-            if(super.getCurrBeat() > songLength + bpm / 3.0){
-               if(currVote == null){
-                  startVote();
-               }
-            
-            //Get rid of 
-            //}else if(super.getCurrBeat() > songLength){
-               currVote = null;
-               song = null;
-               noteData = null;
-               songLength = 0;
-      
-               //Reset scores
-               for(Short key : entities.keySet()){
-                  if(entities.get(key) instanceof bg_Player){
-                     bg_Player player = (bg_Player)(entities.get(key));
-                     if(player.getController() != -1)
-                        player.setScore((short)0);
-                  }
+         //Start next song process
+         if(super.getCurrBeat() > songLength + bpm / 3.0){
+            if(currVote == null){
+               startVote();
+            }
+         
+         //Get rid of 
+         //}else if(super.getCurrBeat() > songLength){
+            currVote = null;
+            song = null;
+            noteData = null;
+            songLength = 0;
+   
+            //Reset scores
+            for(Short key : entities.keySet()){
+               if(entities.get(key) instanceof bg_Player){
+                  bg_Player player = (bg_Player)(entities.get(key));
+                  if(player.getController() != -1)
+                     player.setScore((short)0);
                }
             }
          }
@@ -446,6 +442,7 @@ public class g_World extends bg_World{
       
       //"Send" song info to clients
       infoEnt.setColor(new Color(bpm, scale, key));
+      infoEnt.setScore(songLength);
    }
    
    /**

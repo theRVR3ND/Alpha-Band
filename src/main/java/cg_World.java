@@ -70,22 +70,8 @@ public class cg_World extends bg_World{
       g2.setColor(ui_Theme.getColor(ui_Theme.TEXT));
       FontMetrics fm;
       
-      //Scoreboard header
-      g2.setFont(new Font(
-         "Century Gothic",
-         Font.BOLD,
-         util_Utilities.getFontSize()
-      ));
-      fm = g2.getFontMetrics();
-      
-      String toDraw = "SCOREBOARD";
-      g2.drawString(
-         toDraw,
-         cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
-         50
-      );
-      
       //Default writing font
+      String toDraw = null;
       g2.setFont(new Font(
          "Century Gothic",
          Font.BOLD,
@@ -95,8 +81,8 @@ public class cg_World extends bg_World{
       
       byte spacing = (byte)(fm.getHeight() * 1.2);
       
-      //Draw all players' info
-      int shiftInd = 1;
+      //Retrieve player scores
+      ArrayList<String> scoreList = new ArrayList<>();
       for(Short key : entities.keySet()){
          //Draw player scores and stuff
          if(entities.get(key) instanceof bg_Player){
@@ -108,6 +94,7 @@ public class cg_World extends bg_World{
                bpm = (short)(otherPlayer.getColor().getRed());
                scale = (byte)otherPlayer.getColor().getGreen();
                keyShift = (byte)otherPlayer.getColor().getBlue();
+               songLength = (short)otherPlayer.getScore();
                
                if(scale >= 0)
                   g2.drawString(otherPlayer.getName(), (int)(0.02 * cg_Client.SCREEN_WIDTH), spacing);
@@ -116,24 +103,90 @@ public class cg_World extends bg_World{
             }
             
             //Draw player score on right side of screen
-            toDraw = otherPlayer.getName() + ": " + otherPlayer.getScore();
+            scoreList.add(otherPlayer.getName() + ": " + otherPlayer.getScore());
+         }
+      }
+      
+      //Display player scores
+      if(super.getCurrBeat() > songLength + bpm / 12.0){ //Final scoreboard (sorted)
+         //Sort score list
+         byte index = 0;
+         short maxScore = Short.MIN_VALUE;
+         for(byte i = 0; i < scoreList.size() - 1; i++){
+            for(byte j = (byte)(i + 1); j < scoreList.size(); j++){
+               short score = Short.parseShort(scoreList.get(j).substring(scoreList.get(j).lastIndexOf('.') + 1));
+               if(score > maxScore){
+                  index = j;
+                  maxScore = score;
+               }
+            }
+            String temp = scoreList.get(i);
+            scoreList.set(i, scoreList.get(index));
+            scoreList.set(index, temp);
+         }
+         
+         //Draw scoreboard
+         g2.drawLine(
+            (int)(0.3 * cg_Client.SCREEN_WIDTH),
+            (int)(0.3 * cg_Client.SCREEN_HEIGHT),
+            (int)(0.7 * cg_Client.SCREEN_WIDTH),
+            (int)(0.3 * cg_Client.SCREEN_HEIGHT)
+         );
+         g2.drawString(
+            "PLAYER",
+            (int)(0.31 * cg_Client.SCREEN_WIDTH),
+            (int)(0.29 * cg_Client.SCREEN_HEIGHT)
+         );
+         g2.drawString(
+            "SCORE",
+            (int)(0.69 * cg_Client.SCREEN_WIDTH - fm.stringWidth("SCORE")),
+            (int)(0.29 * cg_Client.SCREEN_HEIGHT)
+         );
+         for(byte i = 0; i < scoreList.size(); i++){
+            //Draw player name
+            toDraw = scoreList.get(i);
+            g2.drawString(
+               toDraw.substring(0, toDraw.indexOf(':')),
+               (int)(0.31 * cg_Client.SCREEN_WIDTH),
+               (int)(0.3 * cg_Client.SCREEN_HEIGHT + spacing * (i + 1))
+            );
+            //Draw score
+            toDraw = toDraw.substring(toDraw.indexOf(':') + 1);
             g2.drawString(
                toDraw,
-               cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
-               50 + shiftInd * spacing
+               (int)(0.69 * cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw)),
+               (int)(0.3 * cg_Client.SCREEN_HEIGHT + spacing * (i + 1))
+            );
+         }
+      
+      }else{ //In-game scoreboard (not sorted)
+         //Scoreboard header
+         toDraw = "SCOREBOARD";
+         g2.drawString(
+            toDraw,
+            (int)(0.97 * cg_Client.SCREEN_WIDTH) - fm.stringWidth(toDraw),
+            50
+         );
+         
+         //Player scores
+         for(byte i = 0; i < scoreList.size(); i++){
+            //Draw player score on right side of screen
+            toDraw = scoreList.get(i);
+            g2.drawString(
+               toDraw,
+               (int)(0.97 * cg_Client.SCREEN_WIDTH) - fm.stringWidth(toDraw),
+               50 + (i + 1) * spacing
             );
             
             //Underline client's player score
-            if(clientPlayer.getController() == otherPlayer.getController()){
+            if(toDraw.startsWith(clientPlayer.getName())){
                g2.drawLine(
-                  cg_Client.SCREEN_WIDTH - fm.stringWidth(toDraw) - 40,
-                  54 + shiftInd * spacing,
-                  cg_Client.SCREEN_WIDTH - 40,
-                  54 + shiftInd * spacing
+                  (int)(0.97 * cg_Client.SCREEN_WIDTH) - fm.stringWidth(toDraw),
+                  54 + (i + 1) * spacing,
+                  (int)(0.97 * cg_Client.SCREEN_WIDTH),
+                  54 + (i + 1) * spacing
                );
             }
-            
-            shiftInd++;
          }
       }
       
