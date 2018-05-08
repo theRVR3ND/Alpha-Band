@@ -121,22 +121,24 @@ public class g_World extends bg_World{
             if(currVote == null){
                startVote();
             }
-         
-         //Get rid of 
-         //}else if(super.getCurrBeat() > songLength){
-            currVote = null;
+            
             song = null;
             noteData = null;
             songLength = 0;
    
-            //Reset scores
+            //Reset stuff
             for(Short key : entities.keySet()){
                if(entities.get(key) instanceof bg_Player){
                   bg_Player player = (bg_Player)(entities.get(key));
-                  if(player.getController() != -1)
+                  if(player.getController() != -1){
                      player.setScore((short)0);
+                  }else{
+                     player.setName("");
+                  }
                }
             }
+         }else if(super.getCurrBeat() > songLength){
+            currVote = null;
          }
       }
    }
@@ -174,19 +176,7 @@ public class g_World extends bg_World{
          //Entity's data
          byte[] comp = dataToBytes(entities.get(key).getData(new LinkedList<Object>()));
          
-         /*
-         //Check if we just need delta
-         if(snapshots.get(clientID).containsKey(key)){
-            byte[] delta = findDelta(snapshots.get(clientID).get(key), comp);
-            
-            //Update snapshot
-            snapshots.get(clientID).put(key, comp);
-            comp = delta;
-         }else{
-            snapshots.get(clientID).put(key, comp);
-         }
-         */
-         
+         //Find change in world data since last update
          byte[] delta;
          if(snapshots.get(clientID).containsKey(key)){
             delta = findDelta(snapshots.get(clientID).get(key), comp);
@@ -197,7 +187,6 @@ public class g_World extends bg_World{
          //Update snapshot
          snapshots.get(clientID).put(key, comp);
          comp = delta;
-         
          comp = compress(comp);
          
          //Check if sending data is neccessary
@@ -268,6 +257,14 @@ public class g_World extends bg_World{
                }
             }
       }
+      
+      for(byte r = 0; r < currVote.length; r++){
+         for(byte c = 0; c < currVote[0].length; c++){
+            System.out.print(currVote[r][c] + " ");
+         }
+         System.out.println();
+      }
+      System.out.println();
    }
    
    /**

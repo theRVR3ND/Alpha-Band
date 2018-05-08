@@ -98,6 +98,12 @@ public class g_Connection extends Thread implements bg_Constants{
             //Send client vote info
             if(!sentBallot){
                if(g_Server.server.getWorld().getCurrVote() != null){
+                  //Wait a little
+                  try{
+                     Thread.sleep(200);
+                  }catch(InterruptedException e){}
+                  
+                  //Information buffers
                   byte[] toSend = new byte[Byte.MAX_VALUE];
                   byte[][] currVote = g_Server.server.getWorld().getCurrVote();
                   byte ind = 9;
@@ -146,7 +152,7 @@ public class g_Connection extends Thread implements bg_Constants{
                   writeOut(outLine);
                   
                   try{
-                     Thread.sleep(200);
+                     Thread.sleep(400);
                   }catch(InterruptedException e){}
                }
                
@@ -160,7 +166,7 @@ public class g_Connection extends Thread implements bg_Constants{
                   writeOut(toSend);
                   
                   try{
-                     Thread.sleep(200);
+                     Thread.sleep(400);
                   }catch(InterruptedException e){}
                }
                

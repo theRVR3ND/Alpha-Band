@@ -202,6 +202,7 @@ public class cg_World extends bg_World{
                if(currMilliBeats > note.getBeat() + 2){
                   //Flame player for missing note
                   if(!note.getIsHit()){
+                     System.out.println(note.getIsHit()+"");
                      pointsMessage = 5;
                      pointsMessageTimeout = Byte.MAX_VALUE;
                   }
@@ -218,13 +219,16 @@ public class cg_World extends bg_World{
                      break;
                   }
                }
+               
+               /* FOR DEBUGGING
                if(scaleInd == -1){
                   g2.setColor(Color.RED);
                   g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
                   g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
                   continue;
                }
-               //g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
+               */
+               
                //Figure out dimensions and location of note
                final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
                            drawY = (short)((1 - 0.25 * (note.getBeat() - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
@@ -236,9 +240,9 @@ public class cg_World extends bg_World{
                
                //Draw note's corresponding key value
                /*
+                  
                   HAVE THIS AS AN OPTION IN THE MENU
-               */
-               /*
+               
                byte ind = 0;
                for(byte j = 0; j < cg_GamePanel.KEYS.length; j++){
                   byte check = (byte)(util_Music.INTERVALS[scale][j % util_Music.INTERVALS[scale].length] + keyShift + 12 * (j / util_Music.INTERVALS[scale].length));
@@ -255,7 +259,6 @@ public class cg_World extends bg_World{
                   drawY + (drawHeight + fm.getHeight())
                );
                */
-               //g2.drawString(drawX - NOTE_WIDTH / 2 + " " + drawY, 500, i * 100 + 100);
             }catch(ConcurrentModificationException e){}
          }
       }
@@ -297,7 +300,7 @@ public class cg_World extends bg_World{
             g2.setColor(new Color(15, 15, 15, alpha));  //Dark gray
          }
          
-         g2.drawString(message, 40, spacing * 3);
+         g2.drawString(message, (int)(0.01 * cg_Client.SCREEN_HEIGHT), spacing * 3);
          
          if(currPoints > 0){
             g2.setColor(new Color(
@@ -307,10 +310,14 @@ public class cg_World extends bg_World{
                alpha
             ));
             
-            g2.drawString("+" + currPoints, 40, spacing * 4);
+            g2.drawString("+" + currPoints, (int)(0.01 * cg_Client.SCREEN_HEIGHT), spacing * 4);
             
             if(clientPlayer.getBonus() > 0){
-               g2.drawString("x" + clientPlayer.getBonus() + " Bonus Combo", 40, spacing * 5);
+               g2.drawString(
+                  "x" + clientPlayer.getBonus() + " Bonus Combo",
+                  (int)(0.01 * cg_Client.SCREEN_HEIGHT),
+                  spacing * 5
+               );
             }
          }
          
@@ -433,12 +440,8 @@ public class cg_World extends bg_World{
          pointsMessage = 3;
       }else if(closestGap != Float.MAX_VALUE){
          pointsMessage = 4;
-      }else{
-         pointsMessage = -1;
-         pointsMessageTimeout = -1;
-         
+      }else
          return;
-      }
       
       //Flag note as hit
       closestNote.setIsHit(true);
@@ -454,7 +457,7 @@ public class cg_World extends bg_World{
       //Award points
       if(closestGap < 1){
          currPoints = super.calculateScore(closestGap, player.getBonus());
-         player.setScore((short)(player.getScore())); 
+         player.setScore((short)(player.getScore() + currPoints)); 
       }
    }
    
