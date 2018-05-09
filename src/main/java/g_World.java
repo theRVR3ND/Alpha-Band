@@ -219,7 +219,7 @@ public class g_World extends bg_World{
    public byte[] getNotes(byte clientID){
       final byte instrument = getPlayer(clientID).getInstrument();
       if(noteData != null){
-         return noteData.get(instrument).get((short)(super.getCurrBeat() + 6));
+         return noteData.get(instrument).get((short)(super.getCurrBeat() + 5));
       }else{
          return null;
       }
@@ -257,14 +257,6 @@ public class g_World extends bg_World{
                }
             }
       }
-      
-      for(byte r = 0; r < currVote.length; r++){
-         for(byte c = 0; c < currVote[0].length; c++){
-            System.out.print(currVote[r][c] + " ");
-         }
-         System.out.println();
-      }
-      System.out.println();
    }
    
    /**

@@ -152,7 +152,7 @@ public class g_Connection extends Thread implements bg_Constants{
                   writeOut(outLine);
                   
                   try{
-                     Thread.sleep(400);
+                     Thread.sleep(200);
                   }catch(InterruptedException e){}
                }
                
@@ -166,7 +166,7 @@ public class g_Connection extends Thread implements bg_Constants{
                   writeOut(toSend);
                   
                   try{
-                     Thread.sleep(400);
+                     Thread.sleep(200);
                   }catch(InterruptedException e){}
                }
                

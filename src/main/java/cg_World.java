@@ -114,7 +114,7 @@ public class cg_World extends bg_World{
          short maxScore = Short.MIN_VALUE;
          for(byte i = 0; i < scoreList.size() - 1; i++){
             for(byte j = (byte)(i + 1); j < scoreList.size(); j++){
-               short score = Short.parseShort(scoreList.get(j).substring(scoreList.get(j).lastIndexOf('.') + 1));
+               short score = Short.parseShort(scoreList.get(j).substring(scoreList.get(j).lastIndexOf(':') + 2));
                if(score > maxScore){
                   index = j;
                   maxScore = score;
@@ -132,16 +132,19 @@ public class cg_World extends bg_World{
             (int)(0.7 * cg_Client.SCREEN_WIDTH),
             (int)(0.3 * cg_Client.SCREEN_HEIGHT)
          );
+         
          g2.drawString(
             "PLAYER",
             (int)(0.31 * cg_Client.SCREEN_WIDTH),
             (int)(0.29 * cg_Client.SCREEN_HEIGHT)
          );
+         
          g2.drawString(
             "SCORE",
             (int)(0.69 * cg_Client.SCREEN_WIDTH - fm.stringWidth("SCORE")),
             (int)(0.29 * cg_Client.SCREEN_HEIGHT)
          );
+         
          for(byte i = 0; i < scoreList.size(); i++){
             //Draw player name
             toDraw = scoreList.get(i);
@@ -150,6 +153,7 @@ public class cg_World extends bg_World{
                (int)(0.31 * cg_Client.SCREEN_WIDTH),
                (int)(0.3 * cg_Client.SCREEN_HEIGHT + spacing * (i + 1))
             );
+            
             //Draw score
             toDraw = toDraw.substring(toDraw.indexOf(':') + 1);
             g2.drawString(
@@ -179,7 +183,7 @@ public class cg_World extends bg_World{
             );
             
             //Underline client's player score
-            if(toDraw.startsWith(clientPlayer.getName())){
+            if(toDraw.substring(0, toDraw.indexOf(":")).equals(clientPlayer.getName())){
                g2.drawLine(
                   (int)(0.97 * cg_Client.SCREEN_WIDTH) - fm.stringWidth(toDraw),
                   54 + (i + 1) * spacing,
@@ -202,7 +206,7 @@ public class cg_World extends bg_World{
                if(currMilliBeats > note.getBeat() + 2){
                   //Flame player for missing note
                   if(!note.getIsHit()){
-                     System.out.println(note.getIsHit()+"");
+                     //System.out.println(note.getIsHit()+"");
                      pointsMessage = 5;
                      pointsMessageTimeout = Byte.MAX_VALUE;
                   }
@@ -220,19 +224,18 @@ public class cg_World extends bg_World{
                   }
                }
                
-               /* FOR DEBUGGING
+               //Debugging
                if(scaleInd == -1){
                   g2.setColor(Color.RED);
                   g2.drawString(note.getNote() + " " + note.getBeat(), 800, i * 100 + 100);
                   g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
                   continue;
                }
-               */
                
                //Figure out dimensions and location of note
                final short drawX = (short)((scaleInd + 0.5) * cg_Client.SCREEN_WIDTH / 10),
-                           drawY = (short)((1 - 0.25 * (note.getBeat() - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
-                      drawHeight = (short)(note.getDuration() * 50000 / cg_Client.SCREEN_HEIGHT);
+                           drawY = (short)((1 - 0.5 * (note.getBeat() - currMilliBeats)) * cg_Client.SCREEN_HEIGHT * 3 / 4.0),
+                      drawHeight = (short)(note.getDuration() * 50000.0 / cg_Client.SCREEN_HEIGHT);
                
                //Draw note body
                g2.setColor(ui_Theme.getColor(ui_Theme.NOTE_COLOR));
@@ -300,7 +303,7 @@ public class cg_World extends bg_World{
             g2.setColor(new Color(15, 15, 15, alpha));  //Dark gray
          }
          
-         g2.drawString(message, (int)(0.01 * cg_Client.SCREEN_HEIGHT), spacing * 3);
+         g2.drawString(message, (int)(0.02 * cg_Client.SCREEN_HEIGHT), spacing * 3);
          
          if(currPoints > 0){
             g2.setColor(new Color(
@@ -310,12 +313,12 @@ public class cg_World extends bg_World{
                alpha
             ));
             
-            g2.drawString("+" + currPoints, (int)(0.01 * cg_Client.SCREEN_HEIGHT), spacing * 4);
+            g2.drawString("+" + currPoints, (int)(0.02 * cg_Client.SCREEN_HEIGHT), spacing * 4);
             
             if(clientPlayer.getBonus() > 0){
                g2.drawString(
                   "x" + clientPlayer.getBonus() + " Bonus Combo",
-                  (int)(0.01 * cg_Client.SCREEN_HEIGHT),
+                  (int)(0.02 * cg_Client.SCREEN_HEIGHT),
                   spacing * 5
                );
             }
@@ -326,7 +329,7 @@ public class cg_World extends bg_World{
          currPoints = 0;
       }
       
-      //Show countdown
+      //Show countdown and stuff
       if(System.currentTimeMillis() < songStartTime && songStartTime - System.currentTimeMillis() < 10000){
          g2.setFont(new Font(
             "Century Gothic",
@@ -334,6 +337,7 @@ public class cg_World extends bg_World{
             util_Utilities.getFontSize() * 8
          ));
          
+         //Draw countdown number
          short alpha = (short)(255.0 * ((songStartTime - System.currentTimeMillis()) % 1000) / 1000);
          g2.setColor(new Color(
             ui_Theme.getColor(ui_Theme.TEXT).getRed(),
@@ -349,6 +353,27 @@ public class cg_World extends bg_World{
             cg_Client.SCREEN_WIDTH / 2 - g2.getFontMetrics().stringWidth(toDraw) / 2,
             cg_Client.SCREEN_HEIGHT / 2
          );
+         
+         //Draw finger placement guide
+         final float[] fingerHeights = new float[] {
+            0.13f, 0.16f, 0.18f, 0.16f, 0f, 0f, 0.16f, 0.18f, 0.16f, 0.13f
+         };
+         
+         for(byte i = 0; i < 10; i++){
+            //Don't show fingers on middle two keys (G and H)
+            if(i == 4)
+               i += 2;
+            
+            //Draw a crappy finger representation
+            g2.drawRoundRect(
+               (int)((i + 0.3) * cg_Client.SCREEN_WIDTH / 10.0),
+               (int)(cg_Client.SCREEN_HEIGHT * (1 - fingerHeights[i])),
+               (int)(cg_Client.SCREEN_WIDTH * 0.04),
+               (int)(cg_Client.SCREEN_HEIGHT * (1 - fingerHeights[i])),
+               (int)(cg_Client.SCREEN_WIDTH * 0.04),
+               (int)(cg_Client.SCREEN_WIDTH * 0.04)
+            );
+         }
       }
    }
    

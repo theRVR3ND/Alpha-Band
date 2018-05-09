@@ -72,8 +72,10 @@ public class cg_Connection extends Thread implements bg_Constants{
          //Exit out to menu
          cg_Panel.disconnect();
          
-         cg_Client.frame.setContentPane(ui_Menu.servers);
-         cg_Client.frame.revalidate();
+         if(cg_Client.frame.getContentPane() != ui_Menu.servers){
+            cg_Client.frame.setContentPane(ui_Menu.servers);
+            cg_Client.frame.revalidate();
+         }
       }
    }
    
