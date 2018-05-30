@@ -444,7 +444,7 @@ public class cg_World extends bg_World{
       
       //Find closest note to current beat
       for(cg_Note note : notes){
-         if(note.getNote() == noteValue && !note.getIsHit()){
+         if(note.getNote() == noteValue && !note.getIsHit() && closestGap > Math.abs(actionBeat - note.getBeat())){
             closestNote = note;
             closestGap = Math.min(closestGap, Math.abs(actionBeat - note.getBeat()));
          }
